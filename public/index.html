@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fovea - Retinal Nutrition Intelligence</title>
+<title>Fovea — Retinal Nutrition Intelligence</title>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -1205,20 +1205,20 @@ window.runAnalysis=async function runAnalysis(imgDataUrl){
   const prompt=buildPrompt(ctx,diet,goals);
 
   try{
-    // Run both Gemini models in parallel
-    const [resA, resB]=await Promise.all([
-      callGemini('gemini-2.0-flash', base64, mediaType, prompt),
-      callGemini('gemini-1.5-flash', base64, mediaType, prompt)
-    ]);
+    // Primary model with fallback
+    let result=await callGemini('gemini-2.0-flash-exp', base64, mediaType, prompt);
+    if(!result){
+      console.warn('Primary model failed, trying fallback...');
+      result=await callGemini('gemini-1.5-flash-latest', base64, mediaType, prompt);
+    }
     clearInterval(timer);
-    const result=mergeResults(resA,resB);
+    if(!result) throw new Error('Analysis failed — please try again in a moment.');
     pendingResult=result;
     renderAnalysis(result);
-    const modelCount=[resA,resB].filter(Boolean).length;
-    toast(`Analysis complete — ${modelCount===2?'dual-model consensus':'single model'}`);
+    toast('Analysis complete');
   }catch(err){
     clearInterval(timer);console.error(err);
-    el.innerHTML=`<div class="analysis-idle" style="color:var(--red)">⚠ Analysis failed<br><span style="font-size:11px;color:var(--text-3);display:block;margin-top:6px;font-family:'DM Mono',monospace">${err.message}</span><br><button onclick="runAnalysis(pendingImgData)" style="margin-top:14px;padding:9px 22px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;">Retry</button></div>`;
+    el.innerHTML=`<div class="analysis-idle" style="color:var(--red)">⚠ Analysis failed<br><span style="font-size:11px;color:var(--text-3);display:block;margin-top:6px;font-family:'DM Mono',monospace">${err.message}</span><br><button onclick="window.runAnalysis(pendingImgData)" style="margin-top:14px;padding:9px 22px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;">Retry</button></div>`;
     toast('Analysis failed','err');
   }
 }
@@ -1226,7 +1226,7 @@ window.runAnalysis=async function runAnalysis(imgDataUrl){
 function renderAnalysis(r){
   const typeMap={fundus:'Fundus / retinal',anterior:'Anterior segment',general:'General eye photo'};
   const qualMap={poor:'⚠ Poor',fair:'◑ Fair',good:'● Good',excellent:'◉ Excellent'};
-  const ensemblePill=r._ensemble?`<span class="meta-pill" style="background:var(--green-dim);color:var(--green);border-color:rgba(0,217,139,.2)">⊕ Dual-model consensus</span>`:'';
+  const ensemblePill='';
   const meta=`<div class="meta-pills">${r.imageType?`<span class="meta-pill">${typeMap[r.imageType]||r.imageType}</span>`:''}${r.imageQuality?`<span class="meta-pill">${qualMap[r.imageQuality]||r.imageQuality}</span>`:''}${r.nutrients?`<span class="meta-pill">${r.nutrients.length} biomarkers</span>`:''}${ensemblePill}</div>`;
   const confNote=r.confidenceNote?`<div class="caveat-box" style="margin-bottom:14px;border-left-color:var(--blue)">ℹ ${r.confidenceNote}</div>`:'';
   const rows=buildRows(r.nutrients||[],true);
