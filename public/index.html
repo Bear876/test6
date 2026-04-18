@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fovea — Retinal Nutrition Intelligence</title>
+<title>Fovea — Retinal Eye Health Tracking</title>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -394,18 +394,18 @@ input[type="number"]:focus{border-color:var(--green);}
     <div class="grid-bg"></div>
     <div class="hero" style="position:relative;">
       <div class="hero-text">
-        <div class="hero-eyebrow"><div class="hero-eyebrow-dot"></div>Retinal nutrition intelligence</div>
-        <h1>Your eyes reveal what your body <em>needs</em></h1>
-        <p class="hero-sub">Fovea uses AI to analyze retinal photographs and identify micronutrient signals — giving you a personalized nutrition roadmap from a single scan.</p>
+        <div class="hero-eyebrow"><div class="hero-eyebrow-dot"></div>Retinal health tracking · Early access</div>
+        <h1>Track your eye health, <em>over time</em></h1>
+        <p class="hero-sub">Fovea uses AI to analyze retinal photographs and track changes in your ocular biomarkers over time — spotting trends that a single snapshot never could.</p>
         <div class="hero-actions">
-          <button class="btn btn-green" onclick="showView('auth-signup')">Start your analysis</button>
+          <button class="btn btn-green" onclick="showView('auth-signup')">Start tracking</button>
           <button class="btn btn-outline" onclick="doGuest()">Try as guest</button>
         </div>
-        <p class="hero-note">✦ For wellness use only &nbsp;·&nbsp; Not a medical device &nbsp;·&nbsp; Free to start</p>
+        <p class="hero-note">✦ Experimental · For wellness exploration only &nbsp;·&nbsp; Not a medical device &nbsp;·&nbsp; Free to start</p>
       </div>
       <div class="hero-visual" style="display:flex;justify-content:center;">
         <div class="eye-card">
-          <div class="float-badge"><div class="float-badge-dot"></div>Scan complete &nbsp;·&nbsp; 4 signals found</div>
+          <div class="float-badge"><div class="float-badge-dot"></div>Week 6 · 4 markers tracked</div>
           <div class="eye-card-img">
             <div class="scan-line"></div>
             <svg class="retina-svg" viewBox="0 0 150 150" fill="none">
@@ -426,10 +426,10 @@ input[type="number"]:focus{border-color:var(--green);}
             </svg>
           </div>
           <div class="card-nutrients">
-            <div class="nutrient-chip chip-low"><div class="nutrient-dot"></div><div><div class="nutrient-label">Vitamin A</div><div class="nutrient-val">Low</div></div></div>
-            <div class="nutrient-chip chip-ok"><div class="nutrient-dot"></div><div><div class="nutrient-label">Lutein</div><div class="nutrient-val">Optimal</div></div></div>
-            <div class="nutrient-chip chip-low"><div class="nutrient-dot"></div><div><div class="nutrient-label">Omega-3</div><div class="nutrient-val">Low</div></div></div>
-            <div class="nutrient-chip chip-ok"><div class="nutrient-dot"></div><div><div class="nutrient-label">Zinc</div><div class="nutrient-val">Normal</div></div></div>
+            <div class="nutrient-chip chip-ok"><div class="nutrient-dot"></div><div><div class="nutrient-label">Macular Pigment</div><div class="nutrient-val">↑ Improving</div></div></div>
+            <div class="nutrient-chip chip-ok"><div class="nutrient-dot"></div><div><div class="nutrient-label">Vessel Caliber</div><div class="nutrient-val">Stable</div></div></div>
+            <div class="nutrient-chip chip-low"><div class="nutrient-dot"></div><div><div class="nutrient-label">Disc Color</div><div class="nutrient-val">↓ Watch</div></div></div>
+            <div class="nutrient-chip chip-ok"><div class="nutrient-dot"></div><div><div class="nutrient-label">Foveal Reflex</div><div class="nutrient-val">Normal</div></div></div>
           </div>
         </div>
       </div>
@@ -440,23 +440,23 @@ input[type="number"]:focus{border-color:var(--green);}
   <div class="features">
     <div class="features-inner">
       <div class="section-label">How it works</div>
-      <div class="section-title">Three steps to your nutrition blueprint</div>
-      <div class="section-sub">No blood tests. No appointments. Just a clear, close-up photo of your eye.</div>
+      <div class="section-title">Build your retinal health record</div>
+      <div class="section-sub">Scan regularly. Watch your biomarkers evolve. Catch changes before they become problems.</div>
       <div class="feature-grid">
         <div class="feature-card">
           <div class="feature-icon">📸</div>
-          <h3>Upload or capture a photo</h3>
-          <p>Use a fundus photograph from an eye exam, or simply take a close-up with your phone camera. No special hardware required.</p>
+          <h3>Scan regularly</h3>
+          <p>Upload a fundus photo from your eye clinic, or take a close-up with your phone. Fovea works best with weekly or monthly scans to build a meaningful baseline.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">🔬</div>
-          <h3>AI analyzes ocular biomarkers</h3>
-          <p>Our model examines vessel morphology, pigment density, scleral coloration, and ocular patterns correlated with nutritional status across 18+ biomarkers.</p>
+          <div class="feature-icon">📈</div>
+          <h3>AI tracks changes over time</h3>
+          <p>Fovea's AI examines vessel caliber, macular pigment, disc color, and other ocular markers — flagging shifts between scans that single snapshots miss entirely.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">🥗</div>
-          <h3>Get a personalized food plan</h3>
-          <p>Receive specific dietary recommendations with foods and quantities tailored to what your eyes reveal, adjusted for your age, sex, and lifestyle.</p>
+          <div class="feature-icon">🔍</div>
+          <h3>Spot trends, not just snapshots</h3>
+          <p>Your dashboard shows how each biomarker is moving — improving, stable, or worth watching — so you can act early and track whether lifestyle changes are working.</p>
         </div>
       </div>
     </div>
@@ -466,7 +466,7 @@ input[type="number"]:focus{border-color:var(--green);}
   <div class="trust-strip">
     <div class="trust-item">
       <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="2,7 5.5,10.5 12,3.5"/></svg>
-      18+ ocular biomarkers
+      Tracks 12+ ocular markers
     </div>
     <div class="trust-item">
       <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="2,7 5.5,10.5 12,3.5"/></svg>
@@ -474,7 +474,7 @@ input[type="number"]:focus{border-color:var(--green);}
     </div>
     <div class="trust-item">
       <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="2,7 5.5,10.5 12,3.5"/></svg>
-      Personalized to your profile
+      Trend analysis across scans
     </div>
     <div class="trust-item">
       <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="2,7 5.5,10.5 12,3.5"/></svg>
@@ -488,7 +488,7 @@ input[type="number"]:focus{border-color:var(--green);}
 
   <div class="landing-footer">
     <div class="logo"><div class="logo-pip" style="width:5px;height:5px;"></div>Fovea</div>
-    <div class="footer-text">© 2026 Fovea · For wellness exploration only · Not a medical device</div>
+    <div class="footer-text">© 2026 Fovea · Experimental retinal health tracking · Not a medical device · Results are for wellness exploration only</div>
     <div class="footer-text">Made with care</div>
   </div>
 </div>
@@ -500,7 +500,7 @@ input[type="number"]:focus{border-color:var(--green);}
     <div class="auth-box">
       <div class="auth-logo"><div class="logo-pip"></div>Fovea</div>
       <div class="auth-headline">Create your account</div>
-      <p class="auth-sub">Start your first retinal analysis in minutes. Free forever.</p>
+      <p class="auth-sub">Start building your retinal health record. Free forever.</p>
       <div class="auth-err" id="su-err"></div>
       <div class="field"><label>Full name</label><input type="text" id="su-name" placeholder="Jane Smith"><div class="ferr" id="e-su-name"></div></div>
       <div class="field"><label>Email address</label><input type="email" id="su-email" placeholder="jane@example.com"><div class="ferr" id="e-su-email"></div></div>
@@ -520,7 +520,7 @@ input[type="number"]:focus{border-color:var(--green);}
     <div class="auth-box">
       <div class="auth-logo"><div class="logo-pip"></div>Fovea</div>
       <div class="auth-headline">Welcome back</div>
-      <p class="auth-sub">Sign in to view your scan history and run new analyses.</p>
+      <p class="auth-sub">Sign in to view your retinal health trends and run new scans.</p>
       <div class="auth-err" id="li-err"></div>
       <div class="field"><label>Email address</label><input type="email" id="li-email" placeholder="jane@example.com"><div class="ferr" id="e-li-email"></div></div>
       <div class="field"><label>Password</label><input type="password" id="li-pass" placeholder="Your password"><div class="ferr" id="e-li-pass"></div></div>
@@ -581,7 +581,7 @@ input[type="number"]:focus{border-color:var(--green);}
       <!-- DASHBOARD -->
       <div id="tab-dashboard" class="tab-content active">
         <div class="page-title">Good to see you, <span id="dash-first">there</span></div>
-        <p class="page-sub">Your nutritional overview from retinal scan history.</p>
+        <p class="page-sub">Your retinal health trends over time. Scan regularly for the most meaningful insights.</p>
         <div class="stats-row">
           <div class="stat-card">
             <div class="stat-label">Total Scans</div>
@@ -589,7 +589,7 @@ input[type="number"]:focus{border-color:var(--green);}
             <div class="stat-change" id="s-count-sub">No scans yet</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">Deficiencies found</div>
+            <div class="stat-label">Markers to watch</div>
             <div class="stat-val" id="s-def">—</div>
             <div class="stat-change warn" id="s-def-sub">Run a scan first</div>
           </div>
@@ -614,7 +614,7 @@ input[type="number"]:focus{border-color:var(--green);}
       <!-- ANALYZER -->
       <div id="tab-analyzer" class="tab-content">
         <div class="page-title">New scan</div>
-        <p class="page-sub">Upload a retinal photograph or use your camera to detect micronutrient signals.</p>
+        <p class="page-sub">Upload a retinal photograph or use your camera. Best results with fundus photos from an eye clinic — but any clear eye photo works.</p>
         <div class="disclaimer-banner">
           <span style="font-size:15px;flex-shrink:0">ℹ️</span>
           <div><strong>For wellness use only.</strong> Results are AI-generated estimates and do not constitute medical diagnosis. Always consult a qualified healthcare professional. <a onclick="openDisclaimer()" style="color:var(--green);cursor:pointer;font-weight:600">Full disclaimer →</a></div>
@@ -665,12 +665,12 @@ input[type="number"]:focus{border-color:var(--green);}
 
           <!-- ANALYSIS PANEL -->
           <div class="analysis-panel">
-            <h3>Nutrition analysis</h3>
+            <h3>Ocular health analysis</h3>
             <div id="analysisState">
               <div class="analysis-idle">
                 <div class="idle-icon">🔬</div>
                 Upload or capture a retinal photo to begin.<br>
-                <span style="font-size:11px;color:var(--text-3);display:block;margin-top:4px">Best results with clear, well-lit fundus or close-up eye photos.</span>
+                <span style="font-size:11px;color:var(--text-3);display:block;margin-top:4px">Fundus photos give the best results. Phone photos work but have lower accuracy. Scan regularly to track changes.</span>
               </div>
             </div>
           </div>
@@ -684,7 +684,7 @@ input[type="number"]:focus{border-color:var(--green);}
       <!-- HISTORY -->
       <div id="tab-history" class="tab-content">
         <div class="page-title">Scan history</div>
-        <p class="page-sub">All your previous retinal analyses, newest first.</p>
+        <p class="page-sub">Your full scan history — newest first. The more you scan, the more meaningful your trends become.</p>
         <div id="hist-list" class="scan-list"></div>
       </div>
 
@@ -1038,14 +1038,15 @@ function resetPanel(){
 // ── ANALYSIS ────────────────────────────────────────────────────────────────────
 
 function buildPrompt(ctx,diet,goals){
-  return `You are a specialist ophthalmologist and nutritional medicine expert performing a rigorous ocular biomarker analysis. You have deep training in reading both fundus photographs and anterior segment images for nutritional deficiency signals.
+  return `You are a specialist ophthalmologist performing a rigorous ocular biomarker assessment. Your role is to objectively describe what you observe in this retinal or eye photograph — not to diagnose, not to guess, and not to fabricate findings.
 
 CRITICAL RULES — read before proceeding:
 1. NEVER fabricate or guess findings. If you cannot clearly see an anatomical feature, OMIT it entirely.
 2. Only assign "high" confidence if you would stake clinical credibility on it being visible in this exact image.
 3. Think step-by-step through each anatomical region before concluding anything.
 4. A selfie or casual photo means ALL confidence scores drop one tier (high→medium, medium→low, low→omit).
-5. Scores of 80–100 mean normal/healthy — do not force deficiency findings where none exist.
+5. Scores of 80–100 mean normal/healthy — do not force findings where none exist.
+6. Frame findings as OBSERVATIONS for tracking over time, not as definitive diagnoses. Use language like "signal worth monitoring" rather than "deficiency confirmed".
 
 USER PROFILE: ${ctx}
 
@@ -1101,7 +1102,7 @@ Only for nutrients with status "low". Be precise:
 
 ━━━ OUTPUT ━━━
 Return ONLY valid JSON — no markdown, no backticks, no explanation before or after:
-{"imageType":"fundus|anterior|general","imageQuality":"poor|fair|good|excellent","confidenceNote":"one sentence on image suitability","summary":"3-4 sentence clinical summary citing exact visible features and their nutritional meaning","nutrients":[{"name":"Nutrient Name","level":0-100,"status":"low|ok|high","confidence":"low|medium|high","evidence":"exact anatomical feature and location observed"}],"recommendations":["food + amount + frequency tied to specific finding","second recommendation","supplement if warranted"],"caveats":"specific limitations of this image for nutritional assessment"}`;
+{"imageType":"fundus|anterior|general","imageQuality":"poor|fair|good|excellent","confidenceNote":"one sentence on image suitability","summary":"3-4 sentence objective summary of what is visible in this image and what ocular markers are worth monitoring over time. Avoid implying definitive diagnoses.","nutrients":[{"name":"Nutrient Name","level":0-100,"status":"low|ok|high","confidence":"low|medium|high","evidence":"exact anatomical feature and location observed"}],"recommendations":["food + amount + frequency tied to specific finding","second recommendation","supplement if warranted"],"caveats":"specific limitations of this image for nutritional assessment"}`;
 }
 
 async function callGemini(model, base64, mediaType, prompt, retries=2){
