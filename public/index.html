@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fovea - Retinal Nutrition Intelligence</title>
+<title>Fovea — Retinal Nutrition Intelligence</title>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -139,6 +139,7 @@ h1 em{font-style:italic;color:var(--green);}
 .auth-btn{width:100%;padding:14px;border-radius:40px;background:var(--green);color:var(--bg);font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:'Syne',sans-serif;transition:all .15s;margin-top:8px;letter-spacing:.02em;}
 .auth-btn:hover{background:var(--green-2);}
 .auth-btn:disabled{opacity:.4;cursor:not-allowed;}
+@keyframes spin{to{transform:rotate(360deg);}}
 .auth-err{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,82,82,.2);border-radius:8px;padding:10px 14px;font-size:12px;margin-bottom:16px;display:none;}
 .auth-err.show{display:block;}
 .auth-switch{text-align:center;margin-top:20px;font-size:12px;color:var(--text-3);}
@@ -848,7 +849,7 @@ window.doSignup=async()=>{
   if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ferr('su-email','Please enter a valid email.');ok=false;}else fok('su-email');
   const pe=pwCheck(pass);if(pe){ferr('su-pass',pe);ok=false;}else fok('su-pass');
   if(!ok)return;
-  const btn=document.getElementById('su-btn');btn.disabled=true;btn.textContent='Creating account…';
+  const btn=document.getElementById('su-btn');btn.disabled=true;btn.innerHTML='<span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,0.3);border-top-color:#000;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px"></span>Creating account…';
   try{
     const cred=await createUserWithEmailAndPassword(auth,email,pass);
     await updateProfile(cred.user,{displayName:name});
@@ -868,7 +869,7 @@ window.doLogin=async()=>{
   if(!email){ferr('li-email','Please enter your email.');ok=false;}else fok('li-email');
   if(!pass){ferr('li-pass','Please enter your password.');ok=false;}else fok('li-pass');
   if(!ok)return;
-  const btn=document.getElementById('li-btn');btn.disabled=true;btn.textContent='Signing in…';
+  const btn=document.getElementById('li-btn');btn.disabled=true;btn.innerHTML='<span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,0.3);border-top-color:#000;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px"></span>Signing in…';
   try{
     const cred=await signInWithEmailAndPassword(auth,email,pass);
     currentUser=cred.user;isGuest=false;await enterApp();
@@ -985,14 +986,38 @@ function buildRows(nutrients,animate=false){
 }
 
 // ── FILE UPLOAD ─────────────────────────────────────────────────────────────────
+function compressImage(dataUrl, maxSizeKB=2500, quality=0.85){
+  return new Promise(resolve=>{
+    const img=new Image();
+    img.onload=()=>{
+      let w=img.width,h=img.height;
+      const maxDim=1400;
+      if(w>maxDim||h>maxDim){const r=Math.min(maxDim/w,maxDim/h);w=Math.round(w*r);h=Math.round(h*r);}
+      const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      let q=quality;
+      function tryCompress(){
+        const out=canvas.toDataURL('image/jpeg',q);
+        const kb=(out.length*3/4)/1024;
+        if(kb<=maxSizeKB||q<=0.4){resolve(out);}
+        else{q=Math.max(0.4,q-0.1);tryCompress();}
+      }
+      tryCompress();
+    };
+    img.src=dataUrl;
+  });
+}
+
 window.handleFile=input=>{
   const file=input.files[0];if(!file)return;
+  if(file.size>20*1024*1024){toast('Image too large — max 20MB','err');return;}
   const reader=new FileReader();
-  reader.onload=e=>{
-    pendingImgData=e.target.result;
-    document.getElementById('imgPrev').src=e.target.result;document.getElementById('imgPrev').classList.add('show');
+  reader.onload=async e=>{
+    const compressed=await compressImage(e.target.result);
+    pendingImgData=compressed;
+    document.getElementById('imgPrev').src=compressed;document.getElementById('imgPrev').classList.add('show');
     document.getElementById('uploadZone').style.display='none';document.getElementById('reUpBtn').style.display='block';
-    runAnalysis(e.target.result);
+    runAnalysis(compressed);
   };reader.readAsDataURL(file);
 };
 
@@ -1323,10 +1348,13 @@ window.captureWebcam=()=>{
   const sz=Math.min(v.videoWidth,v.videoHeight);c.width=sz;c.height=sz;
   const ctx=c.getContext('2d');ctx.save();ctx.scale(-1,1);
   ctx.drawImage(v,(v.videoWidth-sz)/2,(v.videoHeight-sz)/2,sz,sz,-sz,0,sz,sz);ctx.restore();
-  const url=c.toDataURL('image/jpeg',.92);pendingImgData=url;
-  document.getElementById('webcamPrev').src=url;document.getElementById('webcamPrev').classList.add('show');
-  document.getElementById('webcamWrap').classList.remove('show');document.getElementById('webcamLiveCtrl').style.display='none';
-  document.getElementById('webcamReUp').style.display='block';stopWebcam();runAnalysis(url);
+  const rawUrl=c.toDataURL('image/jpeg',.92);
+  compressImage(rawUrl).then(url=>{
+    pendingImgData=url;
+    document.getElementById('webcamPrev').src=url;document.getElementById('webcamPrev').classList.add('show');
+    document.getElementById('webcamWrap').classList.remove('show');document.getElementById('webcamLiveCtrl').style.display='none';
+    document.getElementById('webcamReUp').style.display='block';stopWebcam();runAnalysis(url);
+  });
 };
 
 function stopWebcam(){
