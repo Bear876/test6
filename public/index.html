@@ -621,7 +621,7 @@ input[type="number"]:focus{border-color:var(--green);}
           <div class="premium-banner-left">
             <div class="premium-banner-tag">✦ Fovea Premium</div>
             <div class="premium-banner-title">Unlock the full picture</div>
-            <div class="premium-banner-sub">Your free plan includes unlimited scans. Upgrade to unlock trend graphs, scan comparisons, and PDF health reports.</div>
+            <div class="premium-banner-sub">Upgrade to unlock trend graphs, side-by-side scan comparisons, and exportable PDF health reports.</div>
             <div class="premium-features">
               <div class="premium-feature">Biomarker trend graphs across all your scans</div>
               <div class="premium-feature">Side-by-side scan comparison</div>
@@ -748,7 +748,7 @@ input[type="number"]:focus{border-color:var(--green);}
               <div class="profile-name" id="prof-name">—</div>
               <div class="profile-email" id="prof-email">—</div>
               <div class="profile-stat"><strong id="prof-count">0</strong> scans completed</div>
-              <div class="profile-stat"><strong>Free</strong> plan · <a onclick="openPremiumModal()" style="color:var(--green);cursor:pointer;font-weight:600">Upgrade to Premium →</a></div>
+              <div class="profile-stat"><a onclick="openPremiumModal()" style="color:var(--green);cursor:pointer;font-weight:600">✦ Upgrade to Premium →</a></div>
               <button class="logout-btn" onclick="doLogout()">Sign out</button>
             </div>
           </div>
@@ -945,7 +945,7 @@ window.doSignup=async()=>{
   try{
     const cred=await createUserWithEmailAndPassword(auth,email,pass);
     await updateProfile(cred.user,{displayName:name});
-    await setDoc(doc(db,'users',cred.user.uid),{name,email,createdAt:new Date().toISOString(),preferences:{}});
+    setDoc(doc(db,'users',cred.user.uid),{name,email,createdAt:new Date().toISOString(),preferences:{}}).catch(()=>{});
     currentUser=cred.user;isGuest=false;await enterApp();
   }catch(err){
     aerr('su-err',err.code==='auth/email-already-in-use'?'An account with this email already exists.':err.code==='auth/invalid-email'?'Invalid email address.':'Something went wrong. Please try again.');
@@ -1044,19 +1044,27 @@ window.openScan=id=>{
 };
 
 function buildRows(nutrients,animate=false){
-  return nutrients.map(n=>`
+  return nutrients.map(n=>{
+    const confLabel={low:'Low confidence',medium:'Medium confidence',high:'High confidence'}[n.confidence]||'';
+    const statusLabel=n.status==='low'?'↓ Below normal':n.status==='high'?'↑ Above normal':'✓ Normal range';
+    const statusClass=n.status==='low'?'st-low':n.status==='high'?'st-high':'st-ok';
+    const barClass=n.status==='low'?'bar-low':n.status==='high'?'bar-high':'bar-ok';
+    return `
     <div class="nutrient-row">
       <div class="nr-top">
         <div class="nr-name">${n.name}</div>
-        ${n.confidence?`<span class="conf-badge conf-${n.confidence}">${n.confidence}</span>`:''}
-        <div class="nr-status ${n.status==='low'?'st-low':n.status==='high'?'st-high':'st-ok'}">${n.status==='low'?'↓ LOW':n.status==='high'?'↑ HIGH':'✓ OK'}</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-left:auto;">
+          ${n.confidence?`<span style="font-size:10px;color:var(--text-3);font-family:'DM Mono',monospace;">${confLabel}</span>`:''}
+          <div class="nr-status ${statusClass}">${statusLabel}</div>
+        </div>
       </div>
       <div class="nr-bar-row">
-        <div class="nutrient-bar-wrap"><div class="nutrient-bar ${n.status==='low'?'bar-low':n.status==='high'?'bar-high':'bar-ok'}" style="width:${animate?0:n.level}%" ${animate?`data-t="${n.level}"`:''} ></div></div>
-        <div class="nr-score">${n.level}</div>
+        <div class="nutrient-bar-wrap"><div class="nutrient-bar ${barClass}" style="width:${animate?0:n.level}%" ${animate?`data-t="${n.level}"`:''} ></div></div>
+        <div class="nr-score">${n.level}/100</div>
       </div>
       ${n.evidence?`<div class="nr-evidence">▸ ${n.evidence}</div>`:''}
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 // ── FILE UPLOAD ─────────────────────────────────────────────────────────────────
@@ -1170,7 +1178,13 @@ Only for nutrients with status "low". Be precise:
 - Adjust for diet type: ${diet||'omnivore'} and goals: ${goals||'general wellness'}
 - Add a supplement only if dietary sources are realistically insufficient
 
-━━━ OUTPUT ━━━
+━━━ OUTPUT RULES ━━━
+- You MUST assess ALL 18 biomarker items listed above (① through ⑱). If a biomarker region is not visible, assign level:85, status:"ok", confidence:"low", evidence:"not visible in this image type".
+- For fundus photos, items ①–⑫ may not be visible — set those to level:85/ok/low/not visible. Assess ⑬–⑱ thoroughly.
+- For anterior/general photos, items ⑬–⑱ are not visible — set those to level:85/ok/low/not visible. Assess ①–⑫ thoroughly.
+- ALWAYS output exactly the nutrients you assessed — do not truncate the list.
+- Be deterministic: given the same image, your findings should be consistent.
+
 Return ONLY valid JSON — no markdown, no backticks, no explanation before or after:
 {"imageType":"fundus|anterior|general","imageQuality":"poor|fair|good|excellent","confidenceNote":"one sentence on image suitability","summary":"3-4 sentence objective summary of what is visible in this image and what ocular markers are worth monitoring over time. Avoid implying definitive diagnoses.","nutrients":[{"name":"Nutrient Name","level":0-100,"status":"low|ok|high","confidence":"low|medium|high","evidence":"exact anatomical feature and location observed"}],"recommendations":["food + amount + frequency tied to specific finding","second recommendation","supplement if warranted"],"caveats":"specific limitations of this image for nutritional assessment"}`;
 }
