@@ -22,7 +22,7 @@ export default async function handler(req, res) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [{ parts: [{ inline_data: { mime_type: mediaType, data: base64 } }, { text: prompt }] }],
-          generationConfig: { temperature: 0.05, maxOutputTokens: 4000 }
+          generationConfig: { temperature: 0.05, maxOutputTokens: 8192 }
         })
       }
     );
