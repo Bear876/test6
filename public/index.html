@@ -1179,14 +1179,15 @@ Only for nutrients with status "low". Be precise:
 - Add a supplement only if dietary sources are realistically insufficient
 
 ━━━ OUTPUT RULES ━━━
-- You MUST assess ALL 18 biomarker items listed above (① through ⑱). If a biomarker region is not visible, assign level:85, status:"ok", confidence:"low", evidence:"not visible in this image type".
-- For fundus photos, items ①–⑫ may not be visible — set those to level:85/ok/low/not visible. Assess ⑬–⑱ thoroughly.
-- For anterior/general photos, items ⑬–⑱ are not visible — set those to level:85/ok/low/not visible. Assess ①–⑫ thoroughly.
-- ALWAYS output exactly the nutrients you assessed — do not truncate the list.
-- Be deterministic: given the same image, your findings should be consistent.
+- Map your ocular findings to the NUTRIENTS they indicate (e.g. pale disc → "Vitamin B12", drusen → "Zinc", pale conjunctiva → "Iron"). Do NOT report eye anatomy as the nutrient name.
+- Use these nutrient names exactly: Iron, Vitamin B12, Folate, Vitamin C, Bioflavonoids, Vitamin A, Riboflavin, Niacin, Omega-3, Zinc, Magnesium, Vitamin D, Lutein, Zeaxanthin, Vitamin K, B6, Biotin, Choline, Antioxidants
+- If a finding maps to multiple nutrients, create a separate entry for each.
+- If a region is NOT visible in this image type, OMIT those nutrients entirely — do not include them with fake scores.
+- Only report nutrients where you observed a genuine ocular signal.
+- Include ALL nutrients you did find — do not truncate the list.
 
 Return ONLY valid JSON — no markdown, no backticks, no explanation before or after:
-{"imageType":"fundus|anterior|general","imageQuality":"poor|fair|good|excellent","confidenceNote":"one sentence on image suitability","summary":"3-4 sentence objective summary of what is visible in this image and what ocular markers are worth monitoring over time. Avoid implying definitive diagnoses.","nutrients":[{"name":"Nutrient Name","level":0-100,"status":"low|ok|high","confidence":"low|medium|high","evidence":"exact anatomical feature and location observed"}],"recommendations":["food + amount + frequency tied to specific finding","second recommendation","supplement if warranted"],"caveats":"specific limitations of this image for nutritional assessment"}`;
+{"imageType":"fundus|anterior|general","imageQuality":"poor|fair|good|excellent","confidenceNote":"one sentence on image suitability","summary":"3-4 sentence summary of observed signals and which nutrients they suggest monitoring.","nutrients":[{"name":"Nutrient Name","level":0-100,"status":"low|ok|high","confidence":"low|medium|high","evidence":"the specific ocular feature you observed that indicates this nutrient signal"}],"recommendations":["specific food + amount + frequency for low nutrients only"],"caveats":"limitations of this specific image for nutrient assessment"}`;
 }
 
 async function callGemini(model, base64, mediaType, prompt, retries=2){
