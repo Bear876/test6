@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fovea</title>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -587,6 +587,14 @@ input[type="number"]:focus{border-color:var(--green);}
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><polyline points="8,4 8,8 11,10"/></svg>
           History
         </div>
+        <div class="nav-item" onclick="switchTab('trends')">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="1,12 5,7 8,9 11,4 15,6"/></svg>
+          Trends
+        </div>
+        <div class="nav-item" onclick="switchTab('compare')">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="1" y="3" width="6" height="10" rx="1"/><rect x="9" y="3" width="6" height="10" rx="1"/></svg>
+          Compare
+        </div>
         <div class="nav-item" onclick="switchTab('profile')">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
           Profile
@@ -618,20 +626,7 @@ input[type="number"]:focus{border-color:var(--green);}
       <div id="tab-dashboard" class="tab-content active">
         <div class="page-title">Good to see you, <span id="dash-first">there</span></div>
         <p class="page-sub">Your retinal health trends over time. Scan regularly for the most meaningful insights.</p>
-        <div class="premium-banner">
-          <div class="premium-banner-left">
-            <div class="premium-banner-tag">✦ Fovea Premium</div>
-            <div class="premium-banner-title">Unlock the full picture</div>
-            <div class="premium-banner-sub">Upgrade to unlock trend graphs, side-by-side scan comparisons, and exportable PDF health reports.</div>
-            <div class="premium-features">
-              <div class="premium-feature">Biomarker trend graphs across all your scans</div>
-              <div class="premium-feature">Side-by-side scan comparison</div>
-              <div class="premium-feature">Exportable PDF health report</div>
-              <div class="premium-feature">Priority analysis — no rate limit queue</div>
-            </div>
-          </div>
-          <button class="btn-upgrade" onclick="openPremiumModal()">Upgrade to Premium →</button>
-        </div>
+
         <div class="stats-row">
           <div class="stat-card">
             <div class="stat-label">Total Scans</div>
@@ -738,6 +733,52 @@ input[type="number"]:focus{border-color:var(--green);}
         <div id="hist-list" class="scan-list"></div>
       </div>
 
+      <!-- TRENDS -->
+      <div id="tab-trends" class="tab-content">
+        <div class="page-title">Nutrient trends</div>
+        <p class="page-sub">Track how each nutrient signal changes across your scans over time.</p>
+        <div id="trends-empty" style="display:none" class="empty-state">
+          <div style="font-size:36px;margin-bottom:12px;opacity:.4">📈</div>
+          <p>You need at least 2 saved scans to see trends.</p>
+          <button class="btn btn-green" onclick="switchTab('analyzer')">Run a scan</button>
+        </div>
+        <div id="trends-content" style="display:none">
+          <div style="margin-bottom:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <label style="font-size:12px;color:var(--text-2);font-weight:600;">Nutrient:</label>
+            <select id="trend-nutrient-select" onchange="renderTrendChart()" style="background:var(--bg-3);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-size:13px;font-family:'Syne',sans-serif;outline:none;cursor:pointer;"></select>
+            <button onclick="downloadPDF()" style="margin-left:auto;padding:9px 20px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;">↓ Download PDF report</button>
+          </div>
+          <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:24px;">
+            <canvas id="trendChart" height="280"></canvas>
+          </div>
+          <div id="trend-all-nutrients" style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;"></div>
+        </div>
+      </div>
+
+      <!-- COMPARE -->
+      <div id="tab-compare" class="tab-content">
+        <div class="page-title">Compare scans</div>
+        <p class="page-sub">Pick two scans to compare side by side and see what changed.</p>
+        <div id="compare-empty" style="display:none" class="empty-state">
+          <div style="font-size:36px;margin-bottom:12px;opacity:.4">🔍</div>
+          <p>You need at least 2 saved scans to compare.</p>
+          <button class="btn btn-green" onclick="switchTab('analyzer')">Run a scan</button>
+        </div>
+        <div id="compare-content" style="display:none">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
+            <div>
+              <label style="font-size:11px;font-weight:600;color:var(--text-3);letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:8px;">Scan A</label>
+              <select id="compare-a" onchange="renderComparison()" style="width:100%;background:var(--bg-3);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-size:13px;font-family:'Syne',sans-serif;outline:none;"></select>
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:600;color:var(--text-3);letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:8px;">Scan B</label>
+              <select id="compare-b" onchange="renderComparison()" style="width:100%;background:var(--bg-3);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-size:13px;font-family:'Syne',sans-serif;outline:none;"></select>
+            </div>
+          </div>
+          <div id="compare-result"></div>
+        </div>
+      </div>
+
       <!-- PROFILE -->
       <div id="tab-profile" class="tab-content">
         <div class="page-title">Profile</div>
@@ -788,6 +829,10 @@ input[type="number"]:focus{border-color:var(--green);}
       <div class="mobile-nav-item" id="mob-history" onclick="switchTab('history');setMobActive('mob-history')">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><polyline points="8,4 8,8 11,10"/></svg>
         History
+      </div>
+      <div class="mobile-nav-item" id="mob-trends" onclick="switchTab('trends');setMobActive('mob-trends')">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="1,12 5,7 8,9 11,4 15,6"/></svg>
+        Trends
       </div>
       <div class="mobile-nav-item" id="mob-profile" onclick="switchTab('profile');setMobActive('mob-profile')">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
@@ -910,6 +955,7 @@ input[type="number"]:focus{border-color:var(--green);}
 </script>
 
 <!-- ═══════════════════════════════════ SCRIPT ═══════════════════════════════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -1051,6 +1097,8 @@ function renderScans(){
   document.getElementById('dash-list').innerHTML=html;
   document.getElementById('hist-list').innerHTML=html;
   document.getElementById('prof-count').textContent=scans.length;
+  populateTrends();
+  populateCompare();
 }
 
 window.openScan=id=>{
@@ -1294,15 +1342,7 @@ function mergeResults(a, b){
 window.retryAnalysis=function(){if(window._pendingImgData)window.runAnalysis(window._pendingImgData);};
 window.runAnalysis=async function runAnalysis(imgDataUrl){
   window._pendingImgData=imgDataUrl;
-  const now=Date.now();
-  const cooldown=15000;
-  const elapsed=now-lastScanTime;
-  if(elapsed<cooldown&&lastScanTime>0){
-    const wait=Math.ceil((cooldown-elapsed)/1000);
-    toast(`Please wait ${wait}s before scanning again`,'err');
-    return;
-  }
-  lastScanTime=now;
+
   const el=document.getElementById('analysisState');
 
   const steps=[
@@ -1421,7 +1461,7 @@ window.switchTab=tab=>{
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+tab)?.classList.add('active');
-  const map={dashboard:0,analyzer:1,history:2,profile:3};
+  const map={dashboard:0,analyzer:1,history:2,trends:3,compare:4,profile:5};
   document.querySelectorAll('.nav-item')[map[tab]]?.classList.add('active');
   if(tab==='analyzer'&&!disclaimerSeen){setTimeout(openDisclaimer,300);disclaimerSeen=true;}
 };
@@ -1492,6 +1532,185 @@ window.resetWebcam=()=>{
 const zone=document.getElementById('uploadZone');
 zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag');});
 zone.addEventListener('dragleave',()=>zone.classList.remove('drag'));
+// ── TRENDS ────────────────────────────────────────────────────────────────────
+let trendChartInstance=null;
+
+function populateTrends(){
+  const tc=document.getElementById('trends-content');
+  const te=document.getElementById('trends-empty');
+  if(!tc||!te)return;
+  if(scans.length<2){tc.style.display='none';te.style.display='block';return;}
+  tc.style.display='block';te.style.display='none';
+  const allNames=[...new Set(scans.flatMap(s=>(s.nutrients||[]).map(n=>n.name)))].sort();
+  const sel=document.getElementById('trend-nutrient-select');
+  const prev=sel.value;
+  sel.innerHTML=allNames.map(n=>`<option value="${n}">${n}</option>`).join('');
+  if(prev&&allNames.includes(prev))sel.value=prev;
+  renderTrendChart();
+  renderAllNutrientMini();
+}
+
+window.renderTrendChart=function(){
+  const nutrient=document.getElementById('trend-nutrient-select')?.value;
+  if(!nutrient)return;
+  const points=scans.slice().reverse().map(s=>({
+    x:fmtDate(s.createdAt),
+    y:(s.nutrients||[]).find(n=>n.name===nutrient)?.level??null
+  })).filter(p=>p.y!==null);
+  const ctx=document.getElementById('trendChart');
+  if(!ctx)return;
+  if(trendChartInstance)trendChartInstance.destroy();
+  trendChartInstance=new Chart(ctx,{
+    type:'line',
+    data:{
+      labels:points.map(p=>p.x),
+      datasets:[{
+        label:nutrient,
+        data:points.map(p=>p.y),
+        borderColor:'#00d98b',
+        backgroundColor:'rgba(0,217,139,0.08)',
+        borderWidth:2,
+        pointBackgroundColor:'#00d98b',
+        pointRadius:5,
+        pointHoverRadius:7,
+        fill:true,
+        tension:0.35
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`Level: ${ctx.raw}/100`}}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#515b6e',font:{size:11}}},
+        y:{min:0,max:100,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#515b6e',font:{size:11}},
+          afterBuildTicks:axis=>{axis.ticks=[{value:0},{value:30},{value:55},{value:80},{value:100}];}
+        }
+      }
+    }
+  });
+};
+
+function renderAllNutrientMini(){
+  const allNames=[...new Set(scans.flatMap(s=>(s.nutrients||[]).map(n=>n.name)))].sort();
+  const html=allNames.map(name=>{
+    const vals=scans.slice().reverse().map(s=>(s.nutrients||[]).find(n=>n.name===name)?.level??null).filter(v=>v!==null);
+    if(vals.length<2)return'';
+    const trend=vals[vals.length-1]-vals[0];
+    const arrow=trend>3?'↑':trend<-3?'↓':'→';
+    const col=trend>3?'var(--green)':trend<-3?'var(--red)':'var(--text-2)';
+    const last=vals[vals.length-1];
+    const status=last<=55?'st-low':last>=80?'st-ok':'st-ok';
+    return`<div style="background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
+      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:6px;">${name}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="font-size:22px;font-family:'Instrument Serif',serif;color:var(--text);">${last}</div>
+        <div style="font-size:18px;color:${col};font-weight:700;">${arrow}</div>
+      </div>
+      <div style="font-size:10px;color:var(--text-3);margin-top:4px;">${vals.length} scans · ${trend>0?'+':''}${trend} change</div>
+    </div>`;
+  }).join('');
+  const el=document.getElementById('trend-all-nutrients');
+  if(el)el.innerHTML=html||'<div style="color:var(--text-3);font-size:13px;">Not enough data for mini trends yet.</div>';
+}
+
+// ── COMPARE ────────────────────────────────────────────────────────────────────
+function populateCompare(){
+  const cc=document.getElementById('compare-content');
+  const ce=document.getElementById('compare-empty');
+  if(!cc||!ce)return;
+  if(scans.length<2){cc.style.display='none';ce.style.display='block';return;}
+  cc.style.display='block';ce.style.display='none';
+  const opts=scans.map((s,i)=>`<option value="${i}">${fmtDate(s.createdAt)} · ${(s.nutrients||[]).length} nutrients</option>`).join('');
+  const sa=document.getElementById('compare-a');
+  const sb=document.getElementById('compare-b');
+  sa.innerHTML=opts;sb.innerHTML=opts;
+  if(scans.length>=2)sb.selectedIndex=1;
+  renderComparison();
+}
+
+window.renderComparison=function(){
+  const ia=parseInt(document.getElementById('compare-a')?.value||0);
+  const ib=parseInt(document.getElementById('compare-b')?.value||1);
+  const sa=scans[ia],sb=scans[ib];
+  if(!sa||!sb)return;
+  const allNames=[...new Set([...(sa.nutrients||[]).map(n=>n.name),...(sb.nutrients||[]).map(n=>n.name)])].sort();
+  const rows=allNames.map(name=>{
+    const na=(sa.nutrients||[]).find(n=>n.name===name);
+    const nb=(sb.nutrients||[]).find(n=>n.name===name);
+    const va=na?.level??null;
+    const vb=nb?.level??null;
+    const diff=va!==null&&vb!==null?vb-va:null;
+    const diffStr=diff===null?'—':diff>0?`+${diff}`:`${diff}`;
+    const diffCol=diff===null?'var(--text-3)':diff>3?'var(--green)':diff<-3?'var(--red)':'var(--text-2)';
+    const bar=(v,status)=>{
+      if(v===null)return`<div style="font-size:11px;color:var(--text-4);">—</div>`;
+      const col=status==='low'?'var(--red)':status==='high'?'var(--amber)':'var(--green)';
+      return`<div style="display:flex;align-items:center;gap:8px;">
+        <div style="flex:1;height:5px;background:var(--bg-4);border-radius:3px;overflow:hidden;">
+          <div style="width:${v}%;height:100%;background:${col};border-radius:3px;"></div>
+        </div>
+        <div style="font-size:12px;font-weight:600;color:var(--text);width:28px;text-align:right;">${v}</div>
+      </div>`;
+    };
+    return`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);">
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px;">${name}</div>
+        ${bar(va,na?.status)}
+      </div>
+      <div>${bar(vb,nb?.status)}</div>
+      <div style="text-align:center;font-size:15px;font-weight:700;color:${diffCol};">${diffStr}</div>
+    </div>`;
+  }).join('');
+  const header=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding:0 0 10px;border-bottom:2px solid var(--border-2);margin-bottom:4px;">
+    <div style="font-size:11px;font-weight:600;color:var(--text-3);letter-spacing:.08em;text-transform:uppercase;">Scan A · ${fmtDate(sa.createdAt)}</div>
+    <div style="font-size:11px;font-weight:600;color:var(--text-3);letter-spacing:.08em;text-transform:uppercase;">Scan B · ${fmtDate(sb.createdAt)}</div>
+    <div style="font-size:11px;font-weight:600;color:var(--text-3);letter-spacing:.08em;text-transform:uppercase;text-align:center;">Change</div>
+  </div>`;
+  const el=document.getElementById('compare-result');
+  if(el)el.innerHTML=`<div style="background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:20px 24px;">${header}${rows}</div>`;
+};
+
+// ── PDF REPORT ─────────────────────────────────────────────────────────────────
+window.downloadPDF=function(){
+  if(!scans.length){toast('No scans to export','err');return;}
+  const s=scans[0];
+  const rows=(s.nutrients||[]).map(n=>`
+    <tr>
+      <td>${n.name}</td>
+      <td>${n.level}/100</td>
+      <td style="color:${n.status==='low'?'#cc3333':n.status==='high'?'#cc8800':'#008844'}">${n.status==='low'?'Below normal':n.status==='high'?'Above normal':'Normal'}</td>
+      <td>${n.confidence||'—'}</td>
+      <td style="font-size:11px;">${n.evidence||'—'}</td>
+    </tr>`).join('');
+  const recs=(s.recommendations||[]).map((r,i)=>`<li>${r}</li>`).join('');
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Fovea Health Report</title>
+  <style>
+    body{font-family:Georgia,serif;max-width:700px;margin:40px auto;color:#111;line-height:1.6;}
+    h1{font-size:28px;margin-bottom:4px;}
+    .sub{color:#666;font-size:13px;margin-bottom:32px;}
+    table{width:100%;border-collapse:collapse;margin:20px 0;font-size:13px;}
+    th{text-align:left;padding:8px 10px;border-bottom:2px solid #ddd;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#666;}
+    td{padding:8px 10px;border-bottom:1px solid #eee;}
+    .summary{background:#f8f8f8;border-left:3px solid #00a86b;padding:14px 18px;margin:20px 0;font-size:14px;}
+    .caveat{background:#fffbe6;border-left:3px solid #f5a623;padding:12px 16px;margin:20px 0;font-size:12px;color:#555;}
+    ol{font-size:13px;line-height:1.8;}
+    .footer{margin-top:48px;padding-top:16px;border-top:1px solid #ddd;font-size:11px;color:#999;}
+  </style></head><body>
+  <h1>Fovea Retinal Health Report</h1>
+  <div class="sub">Generated ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})} · Most recent scan: ${fmtDate(s.createdAt)}</div>
+  ${s.summary?`<div class="summary">${s.summary}</div>`:''}
+  <h2 style="font-size:16px;margin-bottom:4px;">Nutrient signals assessed</h2>
+  <table><thead><tr><th>Nutrient</th><th>Level</th><th>Status</th><th>Confidence</th><th>Evidence</th></tr></thead><tbody>${rows}</tbody></table>
+  ${recs?`<h2 style="font-size:16px;margin-top:32px;margin-bottom:8px;">Dietary recommendations</h2><ol>${recs}</ol>`:''}
+  ${s.caveats?`<div class="caveat">⚠ ${s.caveats}</div>`:''}
+  <div class="footer">Fovea is a wellness exploration tool, not a medical device. Results are AI-generated estimates and do not constitute clinical diagnosis. Always consult a qualified healthcare professional.</div>
+  </body></html>`;
+  const w=window.open('','_blank');
+  w.document.write(html);
+  w.document.close();
+  w.print();
+};
+
 window.openPremiumModal=()=>{
   document.getElementById('waitlist-form').style.display='block';
   document.getElementById('waitlist-success').style.display='none';
