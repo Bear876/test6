@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fovea — Retinal Eye Health Tracking</title>
+<title>Fovea</title>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -413,7 +413,7 @@ input[type="number"]:focus{border-color:var(--green);}
 </div>
 
 <!-- ═══════════════════════════════════ LANDING ═══════════════════════════════════ -->
-<div id="view-landing" class="view active">
+<div id="view-landing" class="view">
   <nav>
     <div class="logo"><div class="logo-pip"></div>Fovea</div>
     <div class="nav-links">
@@ -801,36 +801,57 @@ input[type="number"]:focus{border-color:var(--green);}
   <div class="premium-modal">
     <button class="premium-modal-close" onclick="closePremiumModal()">✕</button>
     <div class="premium-modal-header">
-      <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:8px">✦ Fovea Premium</div>
-      <div style="font-family:'Instrument Serif',serif;font-size:26px;color:var(--text);margin-bottom:6px">Upgrade your eye health tracking</div>
-      <div style="font-size:13px;color:var(--text-2)">Everything in Free, plus the tools that make trends actionable.</div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:8px">✦ Fovea Premium — Coming Soon</div>
+      <div style="font-family:'Instrument Serif',serif;font-size:26px;color:var(--text);margin-bottom:6px">The full picture, unlocked</div>
+      <div style="font-size:13px;color:var(--text-2)">Premium is in development. Join the waitlist to get early access and a founding member discount.</div>
     </div>
     <div class="premium-modal-body">
-      <div class="plan-grid">
-        <div class="plan-card selected" id="plan-monthly" onclick="selectPlan('monthly')">
-          <div class="plan-name">Monthly</div>
-          <div class="plan-price">$9<span>/mo</span></div>
-          <div class="plan-features">
-            <div class="plan-feat">Trend graphs</div>
-            <div class="plan-feat">Scan comparison</div>
-            <div class="plan-feat">PDF export</div>
-            <div class="plan-feat">Priority analysis</div>
-          </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+        <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
+          <div style="font-size:18px;margin-bottom:6px">📈</div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Trend graphs</div>
+          <div style="font-size:11px;color:var(--text-3);">See how every nutrient changes across all your scans over time.</div>
         </div>
-        <div class="plan-card" id="plan-yearly" onclick="selectPlan('yearly')">
-          <div class="plan-badge">BEST VALUE</div>
-          <div class="plan-name">Yearly</div>
-          <div class="plan-price">$6<span>/mo</span></div>
-          <div style="font-size:10px;color:var(--text-3);margin-top:2px">$72 billed annually</div>
-          <div class="plan-features">
-            <div class="plan-feat">Everything in Monthly</div>
-            <div class="plan-feat">2 months free</div>
-            <div class="plan-feat">Early access to new features</div>
-          </div>
+        <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
+          <div style="font-size:18px;margin-bottom:6px">🔍</div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Scan comparison</div>
+          <div style="font-size:11px;color:var(--text-3);">Place two scans side by side to spot what changed.</div>
+        </div>
+        <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
+          <div style="font-size:18px;margin-bottom:6px">📄</div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">PDF health report</div>
+          <div style="font-size:11px;color:var(--text-3);">Export a full report to share with your doctor or dietitian.</div>
+        </div>
+        <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
+          <div style="font-size:18px;margin-bottom:6px">⚡</div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Priority analysis</div>
+          <div style="font-size:11px;color:var(--text-3);">Skip the queue — faster scans with no rate limit waits.</div>
         </div>
       </div>
-      <button class="premium-cta" onclick="handleUpgrade()">Get Premium →</button>
-      <div class="premium-note">Cancel anytime · Secure checkout · 7-day free trial</div>
+      <div id="waitlist-form">
+        <div style="font-size:12px;color:var(--text-2);margin-bottom:10px;font-weight:600;">Join the waitlist — be first to know when Premium launches:</div>
+        <div style="display:flex;gap:8px;">
+          <input id="waitlist-email" type="email" placeholder="your@email.com" style="flex:1;padding:11px 14px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:'Syne',sans-serif;color:var(--text);outline:none;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
+          <button onclick="joinWaitlist()" style="padding:11px 20px;background:linear-gradient(135deg,var(--green),#00b8ff);color:#000;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;white-space:nowrap;">Join →</button>
+        </div>
+      </div>
+      <div id="waitlist-success" style="display:none;text-align:center;padding:16px;background:var(--green-dim);border:1px solid rgba(0,217,139,.2);border-radius:10px;color:var(--green);font-size:13px;font-weight:600;">
+        ✓ You're on the list! We'll email you when Premium launches.
+      </div>
+      <div style="text-align:center;font-size:11px;color:var(--text-3);margin-top:10px;">No spam · Unsubscribe anytime · Founding members get 40% off</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ DELETE CONFIRM MODAL ═══════════════════════════════════ -->
+<div class="modal-overlay" id="deleteModal" onclick="if(event.target===this)closeDeleteModal()">
+  <div class="modal" style="max-width:380px;text-align:center;padding:36px 32px;">
+    <div style="font-size:32px;margin-bottom:12px">🗑</div>
+    <div style="font-family:'Instrument Serif',serif;font-size:22px;margin-bottom:8px;color:var(--text)">Delete this scan?</div>
+    <div style="font-size:13px;color:var(--text-2);margin-bottom:24px;line-height:1.6;">This will permanently remove the scan and all its data. This cannot be undone.</div>
+    <div style="display:flex;gap:10px;justify-content:center;">
+      <button onclick="closeDeleteModal()" style="padding:10px 24px;background:var(--bg-3);border:1px solid var(--border);color:var(--text-2);border-radius:40px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;">Cancel</button>
+      <button id="confirmDeleteBtn" onclick="executeDeleteScan()" style="padding:10px 24px;background:var(--red);color:#fff;border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;">Delete</button>
     </div>
   </div>
 </div>
@@ -891,7 +912,7 @@ input[type="number"]:focus{border-color:var(--green);}
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import{getFirestore,collection,addDoc,getDocs,query,orderBy,doc,setDoc,getDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import{getFirestore,collection,addDoc,getDocs,query,orderBy,doc,setDoc,getDoc,deleteDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import{getStorage,ref,uploadString,getDownloadURL}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 // Gemini key handled server-side via /api/analyze
@@ -912,10 +933,11 @@ let currentUser=null,isGuest=false,scans=[],pendingResult=null,pendingImgData=nu
 onAuthStateChanged(auth,async user=>{
   window._hideLoader&&window._hideLoader();
   if(user){currentUser=user;isGuest=false;await enterApp();}
-  // No user → landing already active by default
+  else{showView('landing');}
 },err=>{
   console.warn('Auth error:',err);
   window._hideLoader&&window._hideLoader();
+  showView('landing');
 });
 
 // ── VALIDATION ─────────────────────────────────────────────────────────────────
@@ -1013,7 +1035,7 @@ function fmtDate(ts){if(!ts)return'—';const d=ts.toDate?ts.toDate():new Date(t
 function scanItem(s){
   const lows=(s.nutrients||[]).filter(n=>n.status==='low');
   const thumbHtml=s.imageUrl?`<img src="${s.imageUrl}" style="width:48px;height:48px;object-fit:cover;border-radius:7px;">`:`<svg width="24" height="24" viewBox="0 0 140 140" fill="none"><circle cx="70" cy="70" r="55" stroke="rgba(0,217,139,0.35)" stroke-width="1.5"/><circle cx="70" cy="70" r="8" fill="rgba(255,180,80,0.6)"/></svg>`;
-  return`<div class="scan-item" onclick="openScan('${s.id}')"><div class="scan-thumb">${thumbHtml}</div><div class="scan-info"><div class="scan-date">${fmtDate(s.createdAt)}</div><div class="scan-summary">${(s.nutrients||[]).length} nutrients assessed${s.imageType?` · ${s.imageType}`:''}</div></div><div class="scan-badges">${lows.map(n=>`<span class="badge badge-warn">${n.name} low</span>`).join('')||'<span class="badge badge-ok">All normal</span>'}</div></div>`;
+  return`<div class="scan-item" style="position:relative;" onclick="openScan('${s.id}')"><div class="scan-thumb">${thumbHtml}</div><div class="scan-info"><div class="scan-date">${fmtDate(s.createdAt)}</div><div class="scan-summary">${(s.nutrients||[]).length} nutrients assessed${s.imageType?` · ${s.imageType}`:''}</div></div><div class="scan-badges">${lows.map(n=>`<span class="badge badge-warn">${n.name} low</span>`).join('')||'<span class="badge badge-ok">All normal</span>'}</div><button onclick="event.stopPropagation();confirmDeleteScan('${s.id}')" style="margin-left:auto;flex-shrink:0;background:transparent;border:1px solid var(--border);color:var(--text-3);border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-3)'">Delete</button></div>`;
 }
 
 function renderScans(){
@@ -1328,7 +1350,7 @@ function renderAnalysis(r){
   const typeMap={fundus:'Fundus / retinal',anterior:'Anterior segment',general:'General eye photo'};
   const qualMap={poor:'⚠ Poor',fair:'◑ Fair',good:'● Good',excellent:'◉ Excellent'};
   const ensemblePill=r._ensemble?`<span class="meta-pill" style="background:var(--green-dim);color:var(--green);border-color:rgba(0,217,139,.2)">⊕ Dual-model consensus</span>`:'';
-  const meta=`<div class="meta-pills">${r.imageType?`<span class="meta-pill">${typeMap[r.imageType]||r.imageType}</span>`:''}${r.imageQuality?`<span class="meta-pill">${qualMap[r.imageQuality]||r.imageQuality}</span>`:''}${r.nutrients?`<span class="meta-pill">${r.nutrients.length} biomarkers</span>`:''}${ensemblePill}</div>`;
+  const meta=`<div class="meta-pills">${r.imageType?`<span class="meta-pill">${typeMap[r.imageType]||r.imageType}</span>`:''}${r.nutrients?`<span class="meta-pill">${r.nutrients.length} nutrients assessed</span>`:''}${ensemblePill}</div>`;
   const confNote=r.confidenceNote?`<div class="caveat-box" style="margin-bottom:14px;border-left-color:var(--blue)">ℹ ${r.confidenceNote}</div>`:'';
   const rows=buildRows(r.nutrients||[],true);
   const recs=(r.recommendations||[]).map((rec,i)=>`<div class="rec-item"><div class="rec-icon">${i+1}</div><span>${rec}</span></div>`).join('');
@@ -1338,6 +1360,10 @@ function renderAnalysis(r){
     ${r.summary?`<div class="ai-narrative">${r.summary}</div>`:''}
     ${recs?`<div class="recs-section"><h4>Dietary recommendations</h4>${recs}</div>`:''}
     ${r.caveats?`<div class="caveat-box">▸ ${r.caveats}</div>`:''}
+    <div style="margin-top:12px;font-size:11px;color:var(--text-3);font-family:'DM Mono',monospace;line-height:1.7;">
+      ℹ Some nutrients are not shown because they require eye anatomy that isn't visible in this photo type.
+      ${r.imageType==='fundus'?'Anterior segment markers (conjunctiva, cornea, eyelids) require a close-up eye photo.':r.imageType==='anterior'?'Retinal markers (macula, optic disc, vessels) require a fundus photograph from an eye clinic.':'For the most complete analysis, use a fundus photograph from an eye exam.'}
+    </div>
     ${saveBtn}`;
   setTimeout(()=>document.querySelectorAll('[data-t]').forEach(b=>{b.style.width=b.dataset.t+'%';}),60);
 }
@@ -1465,15 +1491,40 @@ window.resetWebcam=()=>{
 const zone=document.getElementById('uploadZone');
 zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag');});
 zone.addEventListener('dragleave',()=>zone.classList.remove('drag'));
-window.openPremiumModal=()=>document.getElementById('premiumModal').classList.add('open');
-window.closePremiumModal=()=>document.getElementById('premiumModal').classList.remove('open');
-window.selectPlan=(plan)=>{
-  document.getElementById('plan-monthly').classList.toggle('selected',plan==='monthly');
-  document.getElementById('plan-yearly').classList.toggle('selected',plan==='yearly');
+window.openPremiumModal=()=>{
+  document.getElementById('waitlist-form').style.display='block';
+  document.getElementById('waitlist-success').style.display='none';
+  if(currentUser&&currentUser.email){const el=document.getElementById('waitlist-email');if(el)el.value=currentUser.email;}
+  document.getElementById('premiumModal').classList.add('open');
 };
-window.handleUpgrade=()=>{
-  closePremiumModal();
-  toast('Premium coming soon — we\'ll notify you when it launches!');
+window.closePremiumModal=()=>document.getElementById('premiumModal').classList.remove('open');
+
+window.joinWaitlist=async()=>{
+  const email=document.getElementById('waitlist-email').value.trim();
+  if(!email||!email.includes('@')){toast('Please enter a valid email','err');return;}
+  try{
+    await setDoc(doc(db,'waitlist',email.replace(/[.#$[\]]/g,'_')),{
+      email,uid:currentUser&&currentUser.uid?currentUser.uid:null,joinedAt:serverTimestamp()
+    });
+    document.getElementById('waitlist-form').style.display='none';
+    document.getElementById('waitlist-success').style.display='block';
+  }catch(e){console.error(e);toast('Something went wrong - try again','err');}
+};
+
+let scanToDelete=null;
+window.confirmDeleteScan=(id)=>{scanToDelete=id;document.getElementById('deleteModal').classList.add('open');};
+window.closeDeleteModal=()=>{document.getElementById('deleteModal').classList.remove('open');scanToDelete=null;};
+window.executeDeleteScan=async()=>{
+  if(!scanToDelete||!currentUser)return;
+  const btn=document.getElementById('confirmDeleteBtn');
+  if(btn){btn.disabled=true;btn.textContent='Deleting...';}
+  try{
+    await deleteDoc(doc(db,'users',currentUser.uid,'scans',scanToDelete));
+    closeDeleteModal();await loadScans();toast('Scan deleted');
+  }catch(e){
+    console.error(e);toast('Failed to delete','err');
+    if(btn){btn.disabled=false;btn.textContent='Delete';}
+  }
 };
 
 zone.addEventListener('drop',e=>{
