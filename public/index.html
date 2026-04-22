@@ -3,6 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#06080a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fovea">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fovea</title>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -810,6 +816,29 @@ input[type="number"]:focus{border-color:var(--green);}
             </div>
           </div>
         </div>
+
+        <!-- DATA SHARING CARD -->
+        <div style="margin-top:24px;background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:28px 32px;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:260px;">
+              <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:8px;">🔬 Research contribution</div>
+              <div style="font-family:'Instrument Serif',serif;font-size:18px;color:var(--text);margin-bottom:8px;">Help train the next generation of Fovea</div>
+              <div style="font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:12px;">Opt in to anonymously contribute your retinal scans and nutrient signals to Fovea's research dataset. This data will be used to train a specialized AI model for ocular nutrition analysis — helping make Fovea more accurate for everyone over time.</div>
+              <div style="font-size:11px;color:var(--text-3);line-height:1.7;">
+                ✦ Your identity is never shared &nbsp;·&nbsp; ✦ Only scan data and health prefs are included &nbsp;·&nbsp; ✦ You can opt out at any time
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding-top:4px;">
+              <div id="share-toggle" onclick="toggleDataSharing()" style="width:52px;height:28px;border-radius:14px;background:var(--bg-4);border:1px solid var(--border-2);cursor:pointer;position:relative;transition:background .2s;">
+                <div id="share-knob" style="position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--text-3);transition:all .2s;"></div>
+              </div>
+              <div id="share-label" style="font-size:11px;color:var(--text-3);font-weight:600;letter-spacing:.04em;">OFF</div>
+            </div>
+          </div>
+          <div id="share-status" style="display:none;margin-top:16px;padding:10px 14px;background:var(--green-dim);border:1px solid rgba(0,217,139,.2);border-radius:8px;font-size:12px;color:var(--green);font-weight:600;">
+            ✓ Thank you! Your anonymized scan data will contribute to Fovea's research dataset.
+          </div>
+        </div>
       </div>
 
     </div><!-- /app-content -->
@@ -974,7 +1003,7 @@ const fbApp=initializeApp({
 });
 const auth=getAuth(fbApp),db=getFirestore(fbApp),store=getStorage(fbApp);
 
-let currentUser=null,isGuest=false,scans=[],pendingResult=null,pendingImgData=null,disclaimerSeen=false,webcamStream=null,lastScanTime=0;
+let currentUser=null,isGuest=false,scans=[],pendingResult=null,pendingImgData=null,disclaimerSeen=false,webcamStream=null,lastScanTime=0,dataSharingEnabled=false;
 
 // ── AUTH OBSERVER ──────────────────────────────────────────────────────────────
 onAuthStateChanged(auth,async user=>{
@@ -1052,6 +1081,7 @@ async function enterApp(){
       if(p.sex)document.getElementById('pref-sex').value=p.sex;
       if(p.diet)document.getElementById('pref-diet').value=p.diet;
       if(p.goals)document.getElementById('pref-goals').value=p.goals;
+      if(p.dataSharing){dataSharingEnabled=true;updateShareToggleUI();}
     }
   }catch(e){}
   await loadScans();switchTab('dashboard');showView('app');
@@ -1423,6 +1453,17 @@ window.saveScan=async()=>{
       imageQuality:pendingResult.imageQuality||null,
       createdAt:serverTimestamp()
     });
+    if(dataSharingEnabled){
+      const prefs={age:document.getElementById('pref-age')?.value||'',sex:document.getElementById('pref-sex')?.value||'',diet:document.getElementById('pref-diet')?.value||'',goals:document.getElementById('pref-goals')?.value||''};
+      addDoc(collection(db,'research_scans'),{
+        nutrients:pendingResult.nutrients||[],
+        summary:pendingResult.summary||'',
+        imageType:pendingResult.imageType||null,
+        imageQuality:pendingResult.imageQuality||null,
+        preferences:prefs,
+        contributedAt:serverTimestamp()
+      }).catch(()=>{});
+    }
     pendingResult=null;pendingImgData=null;await loadScans();toast('Scan saved!');
     setTimeout(()=>{resetUpload();switchTab('history');},900);
   }catch(e){
@@ -1711,6 +1752,34 @@ window.downloadPDF=function(){
   w.print();
 };
 
+function updateShareToggleUI(){
+  const tog=document.getElementById('share-toggle');
+  const knob=document.getElementById('share-knob');
+  const lbl=document.getElementById('share-label');
+  const status=document.getElementById('share-status');
+  if(!tog)return;
+  if(dataSharingEnabled){
+    tog.style.background='var(--green)';
+    knob.style.left='29px';knob.style.background='var(--bg)';
+    lbl.textContent='ON';lbl.style.color='var(--green)';
+    if(status)status.style.display='block';
+  }else{
+    tog.style.background='var(--bg-4)';
+    knob.style.left='3px';knob.style.background='var(--text-3)';
+    lbl.textContent='OFF';lbl.style.color='var(--text-3)';
+    if(status)status.style.display='none';
+  }
+}
+
+window.toggleDataSharing=async()=>{
+  dataSharingEnabled=!dataSharingEnabled;
+  updateShareToggleUI();
+  try{
+    await setDoc(doc(db,'users',currentUser.uid),{preferences:{dataSharing:dataSharingEnabled}},{merge:true});
+    toast(dataSharingEnabled?'Research contribution enabled — thank you!':'Research contribution disabled');
+  }catch(e){console.error(e);toast('Could not save preference','err');}
+};
+
 window.openPremiumModal=()=>{
   document.getElementById('waitlist-form').style.display='block';
   document.getElementById('waitlist-success').style.display='none';
@@ -1752,6 +1821,13 @@ zone.addEventListener('drop',e=>{
   const fi=document.getElementById('fileInput');fi.files=e.dataTransfer.files;window.handleFile(fi);
 });
 
+</script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('/sw.js').catch(()=>{});
+  });
+}
 </script>
 </body>
 </html>
