@@ -343,23 +343,88 @@ input[type="number"]:focus{border-color:var(--green);}
 
 /* ── RESPONSIVE ── */
 @media(max-width:900px){
-  nav{padding:16px 24px;}
-  .hero{grid-template-columns:1fr;padding:60px 24px 48px;gap:40px;}
-  h1{font-size:44px;}
-  .features{padding:64px 24px;}
+  nav{padding:16px 20px;}
+  .nav-links .btn-upgrade{display:none;}
+  .hero{grid-template-columns:1fr;padding:48px 20px 40px;gap:32px;}
+  .hero-visual{display:none;}
+  h1{font-size:38px;}
+  .hero-sub{font-size:15px;}
+  .hero-actions{flex-wrap:wrap;}
+  .features{padding:48px 20px;}
   .feature-grid{grid-template-columns:1fr;}
-  .trust-strip{padding:32px 24px;gap:28px;}
-  .landing-footer{padding:28px 24px;}
+  .trust-strip{padding:24px 20px;gap:20px;flex-wrap:wrap;}
+  .landing-footer{padding:24px 20px;flex-direction:column;gap:8px;text-align:center;}
 }
 @media(max-width:768px){
+  /* App layout */
   .app-wrap{grid-template-columns:1fr;}
   .sidebar{display:none;}
   .mobile-nav{display:flex!important;}
-  .tab-content{padding:22px 16px;}
+  .app-content{padding-bottom:80px;}
+  .tab-content{padding:16px 14px;}
+
+  /* Stats */
   .stats-row{grid-template-columns:1fr 1fr;}
-  .analyzer-grid{grid-template-columns:1fr;}
+  .stat-card{padding:14px;}
+  .stat-val{font-size:24px;}
+
+  /* Analyzer */
+  .analyzer-grid{grid-template-columns:1fr;gap:16px;}
+  .analysis-panel{min-height:auto;}
+  .scan-mode-tabs{display:grid;grid-template-columns:1fr 1fr;}
+  .scan-mode-tab{text-align:center;padding:10px 8px;font-size:12px;}
+
+  /* Upload zone */
+  .upload-zone{padding:24px 16px;}
+  .upload-zone h3{font-size:15px;}
+
+  /* Webcam */
+  .webcam-wrap{height:280px;}
+  .webcam-start-zone{padding:20px 16px;}
+
+  /* Analysis results */
+  .nutrient-row{padding:12px 0;}
+  .nr-name{font-size:13px;}
+  .rec-item{font-size:12px;padding:10px 12px;}
+
+  /* Profile */
   .profile-grid{grid-template-columns:1fr;}
-  .auth-box{padding:32px 24px;}
+  .profile-card{padding:20px;}
+
+  /* Auth */
+  .auth-box{padding:28px 20px;margin:0 12px;}
+  .auth-headline{font-size:22px;}
+
+  /* Compare grid */
+  #compare-content [style*="grid-template-columns:1fr 1fr"]{display:flex;flex-direction:column;}
+
+  /* Premium modal */
+  .premium-modal-header{padding:24px 20px 18px;}
+  .premium-modal-body{padding:20px;}
+  .plan-grid{grid-template-columns:1fr;}
+
+  /* Trends */
+  #trend-all-nutrients{grid-template-columns:1fr 1fr!important;}
+
+  /* History items */
+  .scan-item{flex-wrap:wrap;gap:8px;}
+  .scan-badges{flex-wrap:wrap;}
+
+  /* Page titles */
+  .page-title{font-size:22px;}
+  .page-sub{font-size:12px;}
+
+  /* Bottom padding for mobile nav */
+  .tab-content{padding-bottom:90px;}
+}
+.mobile-hero-steps{display:none!important;}
+@media(max-width:768px){.mobile-hero-steps{display:block!important;}}
+@media(max-width:400px){
+  .stats-row{grid-template-columns:1fr;}
+  h1{font-size:32px;}
+  .hero-actions .btn{width:100%;text-align:center;}
+  #trend-all-nutrients{grid-template-columns:1fr!important;}
+  .scan-mode-tabs{grid-template-columns:1fr;}
 }
 
 /* ── MOBILE BOTTOM NAV ── */
@@ -368,6 +433,47 @@ input[type="number"]:focus{border-color:var(--green);}
 .mobile-nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;cursor:pointer;color:var(--text-3);font-size:10px;font-weight:600;letter-spacing:.04em;border-radius:8px;transition:color .15s;}
 .mobile-nav-item.active{color:var(--green);}
 .mobile-nav-item svg{width:18px;height:18px;}
+
+/* ── MOBILE SCAN WIZARD ── */
+.wizard-step{display:none;flex-direction:column;gap:16px;}
+.wizard-step.active{display:flex;}
+.wizard-progress{display:flex;gap:6px;margin-bottom:4px;}
+.wizard-dot{flex:1;height:3px;border-radius:2px;background:var(--border-2);transition:background .3s;}
+.wizard-dot.done{background:var(--green);}
+.wizard-step-title{font-size:16px;font-weight:700;color:var(--text);}
+.wizard-step-sub{font-size:12px;color:var(--text-2);line-height:1.6;}
+.wizard-btn{width:100%;padding:14px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;}
+.wizard-btn-ghost{width:100%;padding:12px;background:transparent;color:var(--text-3);border:1px solid var(--border);border-radius:40px;font-size:13px;cursor:pointer;font-family:'Syne',sans-serif;}
+@media(min-width:769px){.mobile-wizard{display:none!important;}}
+@media(max-width:768px){.desktop-scan{display:none!important;}}
+
+/* ── PUSH NOTIF ── */
+.notif-banner{background:linear-gradient(135deg,rgba(0,217,139,0.08),rgba(77,143,255,0.06));border:1px solid rgba(0,217,139,0.15);border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+.notif-icon{font-size:22px;flex-shrink:0;}
+.notif-text{flex:1;font-size:12px;color:var(--text-2);line-height:1.6;}
+.notif-text strong{color:var(--text);display:block;margin-bottom:2px;}
+.notif-btn{padding:8px 16px;background:var(--green);color:var(--bg);border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;white-space:nowrap;}
+
+/* ── MULTI-AI ── */
+.ai-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.04em;}
+.ai-gemini{background:rgba(66,133,244,0.12);color:#4285f4;border:1px solid rgba(66,133,244,0.2);}
+.ai-claude{background:rgba(204,120,92,0.12);color:#cc785c;border:1px solid rgba(204,120,92,0.2);}
+.ai-merged{background:var(--green-dim);color:var(--green);border:1px solid rgba(0,217,139,0.2);}
+
+/* ── MOBILE LANDING ── */
+@media(max-width:768px){
+  .hero-visual{display:flex!important;}
+  .hero{padding:36px 20px 32px;gap:28px;}
+  h1{font-size:34px;}
+  .hero-sub{font-size:14px;margin-bottom:28px;}
+  .hero-actions .btn{padding:13px 24px;font-size:14px;}
+}
+
+/* ── MOBILE HERO PHONE ── */
+@media(max-width:768px){
+  .hero{grid-template-columns:1fr!important;}
+  .hero-visual>div{width:180px!important;}
+}
 
 /* ── PREMIUM ── */
 .premium-banner{background:linear-gradient(135deg,rgba(0,217,139,0.08),rgba(77,143,255,0.06));border:1px solid rgba(0,217,139,0.2);border-radius:14px;padding:24px 28px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
@@ -400,6 +506,22 @@ input[type="number"]:focus{border-color:var(--green);}
 .premium-cta{width:100%;padding:14px;background:linear-gradient(135deg,var(--green),#00b8ff);color:#000;font-weight:700;border:none;border-radius:40px;font-size:14px;font-family:'Syne',sans-serif;cursor:pointer;letter-spacing:.02em;transition:opacity .15s;}
 .premium-cta:hover{opacity:.88;}
 .premium-note{text-align:center;font-size:11px;color:var(--text-3);margin-top:10px;}
+
+/* ── MOBILE WIZARD ── */
+.wizard-overlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:500;flex-direction:column;}
+.wizard-overlay.open{display:flex;}
+.wizard-header{padding:20px 20px 0;display:flex;align-items:center;justify-content:space-between;}
+.wizard-progress{display:flex;gap:6px;flex:1;margin:0 16px;}
+.wizard-pip{flex:1;height:3px;border-radius:2px;background:var(--bg-3);transition:background .3s;}
+.wizard-pip.done{background:var(--green);}
+.wizard-body{flex:1;padding:24px 20px;overflow-y:auto;}
+.wizard-title{font-family:'Instrument Serif',serif;font-size:24px;color:var(--text);margin-bottom:8px;}
+.wizard-sub{font-size:13px;color:var(--text-2);line-height:1.6;margin-bottom:24px;}
+.wizard-footer{padding:16px 20px;border-top:1px solid var(--border);}
+.wizard-next{width:100%;padding:14px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;}
+.wizard-skip{width:100%;padding:10px;background:transparent;border:none;color:var(--text-3);font-size:13px;cursor:pointer;margin-top:8px;}
+@media(min-width:769px){.wizard-trigger{display:none!important;}}
+@media(max-width:768px){.mobile-hide-wizard .scan-mode-tabs,.mobile-hide-wizard .upload-zone,.mobile-hide-wizard .webcam-wrap,.mobile-hide-wizard .webcam-start-zone{display:none!important;}.wizard-trigger{display:block!important;}}
 </style>
 </head>
 <body>
@@ -439,35 +561,78 @@ input[type="number"]:focus{border-color:var(--green);}
         <div class="hero-actions">
           <button class="btn btn-green" onclick="showView('auth-signup')">Start tracking</button>
         </div>
-        <p class="hero-note">✦ Experimental · For wellness exploration only &nbsp;·&nbsp; Not a medical device &nbsp;·&nbsp; Free to start</p>
-      </div>
-      <div class="hero-visual" style="display:flex;justify-content:center;">
-        <div class="eye-card">
-          <div class="float-badge"><div class="float-badge-dot"></div>Week 6 · 4 markers tracked</div>
-          <div class="eye-card-img">
-            <div class="scan-line"></div>
-            <svg class="retina-svg" viewBox="0 0 150 150" fill="none">
-              <circle cx="75" cy="75" r="64" stroke="rgba(0,217,139,0.15)" stroke-width="1"/>
-              <circle cx="75" cy="75" r="48" stroke="rgba(0,217,139,0.1)" stroke-width="1"/>
-              <circle cx="75" cy="75" r="13" fill="rgba(255,180,80,0.12)" stroke="rgba(255,180,80,0.35)" stroke-width="1.5"/>
-              <circle cx="75" cy="75" r="5" fill="rgba(255,180,80,0.55)"/>
-              <circle cx="75" cy="70" r="2" fill="rgba(255,255,255,0.2)"/>
-              <path d="M75 62 Q87 52 102 46 Q113 42 124 38" stroke="rgba(180,60,40,0.45)" stroke-width="1.2" fill="none"/>
-              <path d="M75 62 Q63 52 48 46 Q37 42 26 38" stroke="rgba(180,60,40,0.45)" stroke-width="1.2" fill="none"/>
-              <path d="M75 88 Q87 98 102 104 Q113 108 124 112" stroke="rgba(180,60,40,0.35)" stroke-width="1" fill="none"/>
-              <path d="M75 88 Q63 98 48 104 Q37 108 26 112" stroke="rgba(180,60,40,0.35)" stroke-width="1" fill="none"/>
-              <path d="M75 62 Q80 58 90 54 Q98 51 106 48" stroke="rgba(180,60,40,0.25)" stroke-width=".8" fill="none"/>
-              <path d="M75 88 Q70 94 62 98 Q54 102 46 105" stroke="rgba(180,60,40,0.25)" stroke-width=".8" fill="none"/>
-              <circle cx="102" cy="50" r="3" fill="rgba(0,217,139,0.7)" filter="url(#glow)"/>
-              <circle cx="44" cy="54" r="2.5" fill="rgba(245,166,35,0.7)"/>
-              <circle cx="110" cy="90" r="2" fill="rgba(0,217,139,0.5)"/>
-            </svg>
+        <p class="hero-note">✦ Experimental · For wellness exploration only &nbsp;·&nbsp; Not a medical device &nbsp;·&nbsp; Start tracking today</p>
+          <div class="mobile-hero-steps" style="display:none;">
+            <div style="display:flex;flex-direction:column;gap:12px;margin-top:24px;text-align:left;">
+              <div style="display:flex;align-items:center;gap:12px;background:rgba(0,217,139,0.06);border:1px solid rgba(0,217,139,0.15);border-radius:10px;padding:12px 14px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:var(--green);color:var(--bg);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+                <div style="font-size:13px;color:var(--text-2);">Take a close-up photo of your eye in natural light</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;background:rgba(0,217,139,0.06);border:1px solid rgba(0,217,139,0.15);border-radius:10px;padding:12px 14px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:var(--green);color:var(--bg);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+                <div style="font-size:13px;color:var(--text-2);">AI analyzes ocular markers for nutrient signals</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;background:rgba(0,217,139,0.06);border:1px solid rgba(0,217,139,0.15);border-radius:10px;padding:12px 14px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:var(--green);color:var(--bg);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div>
+                <div style="font-size:13px;color:var(--text-2);">Track changes over time to spot trends early</div>
+              </div>
+            </div>
           </div>
-          <div class="card-nutrients">
-            <div class="nutrient-chip chip-ok"><div class="nutrient-dot"></div><div><div class="nutrient-label">Macular Pigment</div><div class="nutrient-val">↑ Improving</div></div></div>
-            <div class="nutrient-chip chip-ok"><div class="nutrient-dot"></div><div><div class="nutrient-label">Vessel Caliber</div><div class="nutrient-val">Stable</div></div></div>
-            <div class="nutrient-chip chip-low"><div class="nutrient-dot"></div><div><div class="nutrient-label">Disc Color</div><div class="nutrient-val">↓ Watch</div></div></div>
-            <div class="nutrient-chip chip-ok"><div class="nutrient-dot"></div><div><div class="nutrient-label">Foveal Reflex</div><div class="nutrient-val">Normal</div></div></div>
+      </div>
+      <div class="hero-visual" style="display:flex;justify-content:center;align-items:center;">
+        <!-- Phone mockup -->
+        <div style="position:relative;width:240px;">
+          <div style="background:var(--bg-3);border:2px solid var(--border-2);border-radius:36px;padding:12px;box-shadow:0 40px 80px rgba(0,0,0,.6),0 0 0 1px rgba(0,217,139,0.08);">
+            <!-- Phone notch -->
+            <div style="width:60px;height:6px;background:var(--bg-4);border-radius:3px;margin:0 auto 10px;"></div>
+            <!-- Screen -->
+            <div style="background:var(--bg);border-radius:24px;overflow:hidden;padding:16px;">
+              <div style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:8px;">✦ Latest scan · Week 6</div>
+              <!-- Eye viz -->
+              <div style="background:radial-gradient(ellipse at 50% 50%,#0a1f14,#050c0a);border-radius:12px;height:110px;display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:10px;border:1px solid var(--border);">
+                <div style="position:absolute;inset:0;border-radius:12px;overflow:hidden;"><div class="scan-line"></div></div>
+                <svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+                  <circle cx="45" cy="45" r="40" stroke="rgba(0,217,139,0.12)" stroke-width="1"/>
+                  <circle cx="45" cy="45" r="28" stroke="rgba(0,217,139,0.08)" stroke-width="1"/>
+                  <circle cx="45" cy="45" r="9" fill="rgba(255,180,80,0.1)" stroke="rgba(255,180,80,0.3)" stroke-width="1.2"/>
+                  <circle cx="45" cy="45" r="3.5" fill="rgba(255,180,80,0.5)"/>
+                  <path d="M45 38 Q52 32 62 28" stroke="rgba(180,60,40,0.4)" stroke-width="1" fill="none"/>
+                  <path d="M45 38 Q38 32 28 28" stroke="rgba(180,60,40,0.4)" stroke-width="1" fill="none"/>
+                  <path d="M45 52 Q52 58 62 62" stroke="rgba(180,60,40,0.3)" stroke-width=".8" fill="none"/>
+                  <circle cx="62" cy="30" r="2" fill="rgba(0,217,139,0.6)"/>
+                </svg>
+              </div>
+              <!-- Mini nutrient bars -->
+              <div style="display:flex;flex-direction:column;gap:5px;">
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="font-size:9px;color:var(--text-3);width:48px;flex-shrink:0;">Lutein</div>
+                  <div style="flex:1;height:4px;background:var(--bg-4);border-radius:2px;overflow:hidden;"><div style="width:72%;height:100%;background:var(--green);border-radius:2px;"></div></div>
+                  <div style="font-size:9px;color:var(--text-2);width:20px;text-align:right;">72</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="font-size:9px;color:var(--text-3);width:48px;flex-shrink:0;">Iron</div>
+                  <div style="flex:1;height:4px;background:var(--bg-4);border-radius:2px;overflow:hidden;"><div style="width:38%;height:100%;background:var(--red);border-radius:2px;"></div></div>
+                  <div style="font-size:9px;color:var(--red);width:20px;text-align:right;">38</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="font-size:9px;color:var(--text-3);width:48px;flex-shrink:0;">Omega-3</div>
+                  <div style="flex:1;height:4px;background:var(--bg-4);border-radius:2px;overflow:hidden;"><div style="width:85%;height:100%;background:var(--green);border-radius:2px;"></div></div>
+                  <div style="font-size:9px;color:var(--text-2);width:20px;text-align:right;">85</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="font-size:9px;color:var(--text-3);width:48px;flex-shrink:0;">Zinc</div>
+                  <div style="flex:1;height:4px;background:var(--bg-4);border-radius:2px;overflow:hidden;"><div style="width:61%;height:100%;background:var(--amber);border-radius:2px;"></div></div>
+                  <div style="font-size:9px;color:var(--amber);width:20px;text-align:right;">61</div>
+                </div>
+              </div>
+            </div>
+            <!-- Phone home bar -->
+            <div style="width:48px;height:4px;background:var(--border-2);border-radius:2px;margin:10px auto 0;"></div>
+          </div>
+          <!-- Floating badge -->
+          <div style="position:absolute;top:-14px;right:-14px;background:var(--bg-3);border:1px solid var(--border-2);border-radius:8px;padding:6px 10px;font-size:10px;color:var(--text-2);white-space:nowrap;display:flex;align-items:center;gap:5px;box-shadow:0 8px 24px rgba(0,0,0,.4);">
+            <div style="width:5px;height:5px;background:var(--green);border-radius:50%;box-shadow:0 0 6px var(--green);"></div>
+            AI analysis complete
           </div>
         </div>
       </div>
@@ -508,7 +673,7 @@ input[type="number"]:focus{border-color:var(--green);}
     </div>
     <div class="trust-item">
       <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="2,7 5.5,10.5 12,3.5"/></svg>
-      Powered by Gemini Vision AI
+      Gemini + Claude dual-AI analysis
     </div>
     <div class="trust-item">
       <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="2,7 5.5,10.5 12,3.5"/></svg>
@@ -538,7 +703,7 @@ input[type="number"]:focus{border-color:var(--green);}
     <div class="auth-box">
       <div class="auth-logo"><div class="logo-pip"></div>Fovea</div>
       <div class="auth-headline">Create your account</div>
-      <p class="auth-sub">Start building your retinal health record. Free forever.</p>
+      <p class="auth-sub">Start building your retinal health record. Start in minutes.</p>
       <div class="auth-err" id="su-err"></div>
       <div class="field"><label>Full name</label><input type="text" id="su-name" placeholder="Jane Smith"><div class="ferr" id="e-su-name"></div></div>
       <div class="field"><label>Email address</label><input type="email" id="su-email" placeholder="jane@example.com"><div class="ferr" id="e-su-email"></div></div>
@@ -626,7 +791,7 @@ input[type="number"]:focus{border-color:var(--green);}
     </div>
 
     <!-- MAIN CONTENT -->
-    <div class="app-content">
+    <div class="app-content" id="appContent">
 
       <!-- DASHBOARD -->
       <div id="tab-dashboard" class="tab-content active">
@@ -666,6 +831,78 @@ input[type="number"]:focus{border-color:var(--green);}
       <div id="tab-analyzer" class="tab-content">
         <div class="page-title">New scan</div>
         <p class="page-sub">Upload a retinal photograph or use your camera. Best results with fundus photos from an eye clinic — but any clear eye photo works.</p>
+        <button class="wizard-trigger" onclick="openWizard()" style="display:none;width:100%;padding:14px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;margin-bottom:20px;">📷 Start scan wizard</button>
+
+        <!-- PUSH NOTIFICATION BANNER -->
+        <div class="notif-banner" id="notifBanner" style="display:none;">
+          <div class="notif-icon">🔔</div>
+          <div class="notif-text"><strong>Get weekly scan reminders</strong>Scanning regularly makes your trends more meaningful. Enable notifications to stay on track.</div>
+          <button class="notif-btn" onclick="requestNotifPermission()">Enable</button>
+          <button onclick="document.getElementById('notifBanner').style.display='none'" style="background:none;border:none;color:var(--text-3);cursor:pointer;font-size:16px;padding:0 4px;">✕</button>
+        </div>
+
+        <!-- MOBILE WIZARD (shown only on mobile) -->
+        <div class="mobile-wizard" id="mobileWizard">
+          <div class="wizard-progress">
+            <div class="wizard-dot done" id="wdot-1"></div>
+            <div class="wizard-dot" id="wdot-2"></div>
+            <div class="wizard-dot" id="wdot-3"></div>
+          </div>
+
+          <!-- Step 1: Lighting tips -->
+          <div class="wizard-step active" id="wstep-1">
+            <div class="wizard-step-title">📸 Before you scan</div>
+            <div class="wizard-step-sub">Follow these steps for the best result:</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;">
+                <span style="font-size:20px;flex-shrink:0;">☀️</span>
+                <div><div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;">Natural light only</div><div style="font-size:11px;color:var(--text-2);">Sit facing a window. Turn off flash and overhead lights.</div></div>
+              </div>
+              <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;">
+                <span style="font-size:20px;flex-shrink:0;">📐</span>
+                <div><div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;">Angle slightly</div><div style="font-size:11px;color:var(--text-2);">Tilt your phone 10–15° to avoid corneal reflection.</div></div>
+              </div>
+              <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;">
+                <span style="font-size:20px;flex-shrink:0;">👁</span>
+                <div><div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;">Pull lower eyelid down</div><div style="font-size:11px;color:var(--text-2);">The pink inner eyelid gives the clearest nutrient signals.</div></div>
+              </div>
+              <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;">
+                <span style="font-size:20px;flex-shrink:0;">📏</span>
+                <div><div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;">30cm away</div><div style="font-size:11px;color:var(--text-2);">Arm's length. Too close causes blur and glare.</div></div>
+              </div>
+            </div>
+            <button class="wizard-btn" onclick="wizardNext(2)">Ready — take photo →</button>
+            <button class="wizard-btn-ghost" onclick="wizardNext(2)">Skip tips</button>
+          </div>
+
+          <!-- Step 2: Capture -->
+          <div class="wizard-step" id="wstep-2">
+            <div class="wizard-step-title">📷 Capture your eye</div>
+            <div class="wizard-step-sub">Choose how you want to add your photo:</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <button onclick="wizardCamera()" style="background:var(--bg-2);border:1px solid var(--border);border-radius:12px;padding:18px;display:flex;align-items:center;gap:14px;cursor:pointer;text-align:left;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'">
+                <span style="font-size:28px;">📷</span>
+                <div><div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px;">Take a photo now</div><div style="font-size:11px;color:var(--text-2);">Use your phone camera with auto best-frame selection</div></div>
+              </button>
+              <button onclick="wizardUpload()" style="background:var(--bg-2);border:1px solid var(--border);border-radius:12px;padding:18px;display:flex;align-items:center;gap:14px;cursor:pointer;text-align:left;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'">
+                <span style="font-size:28px;">🖼</span>
+                <div><div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px;">Upload from gallery</div><div style="font-size:11px;color:var(--text-2);">Use a fundus photo or existing eye photo</div></div>
+              </button>
+            </div>
+            <input type="file" id="wizardFileInput" accept="image/*" style="display:none" onchange="handleWizardFile(this)">
+            <button class="wizard-btn-ghost" onclick="wizardNext(1)">← Back</button>
+          </div>
+
+          <!-- Step 3: Results (shown after analysis) -->
+          <div class="wizard-step" id="wstep-3">
+            <div class="wizard-step-title">🔬 Analysis results</div>
+            <div id="wizardAnalysisState">
+              <div style="text-align:center;padding:40px 0;color:var(--text-3);">Waiting for photo...</div>
+            </div>
+          </div>
+        </div>
+        <!-- DESKTOP SCAN (hidden on mobile) -->
+        <div class="desktop-scan">
         <div class="disclaimer-banner">
           <span style="font-size:15px;flex-shrink:0">ℹ️</span>
           <div><strong>For wellness use only.</strong> Results are AI-generated estimates and do not constitute medical diagnosis. Always consult a qualified healthcare professional. <a onclick="openDisclaimer()" style="color:var(--green);cursor:pointer;font-weight:600">Full disclaimer →</a></div>
@@ -705,10 +942,33 @@ input[type="number"]:focus{border-color:var(--green);}
                 <button class="wcam-btn" onclick="captureWebcam()">📸 Capture</button>
                 <button class="wcam-stop" onclick="stopWebcam()">Stop</button>
               </div>
-              <div id="webcamStart" class="webcam-start-zone" onclick="startWebcam()">
+              <div id="webcamStart" class="webcam-start-zone">
                 <div class="upload-icon">📷</div>
-                <h3>Open camera</h3>
-                <p>Position eye close to camera<br>Good lighting improves accuracy</p>
+                <h3>Before you scan</h3>
+                <p style="margin-bottom:16px;">Follow these tips for the best result:</p>
+                <div style="text-align:left;display:inline-block;margin-bottom:20px;">
+                  <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:12px;color:var(--text-2);">
+                    <span style="font-size:16px;flex-shrink:0">☀️</span>
+                    <span><strong style="color:var(--text)">Use natural light</strong> — sit facing a window. Turn off your flash and overhead lights.</span>
+                  </div>
+                  <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:12px;color:var(--text-2);">
+                    <span style="font-size:16px;flex-shrink:0">📐</span>
+                    <span><strong style="color:var(--text)">Angle slightly</strong> — tilt your phone 10–15° off-center to avoid corneal reflection.</span>
+                  </div>
+                  <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:12px;color:var(--text-2);">
+                    <span style="font-size:16px;flex-shrink:0">📏</span>
+                    <span><strong style="color:var(--text)">Hold at arm's length</strong> — about 30cm away. Too close causes blur and glare.</span>
+                  </div>
+                  <div style="display:flex;align-items:flex-start;gap:10px;font-size:12px;color:var(--text-2);">
+                    <span style="font-size:16px;flex-shrink:0">👁</span>
+                    <span><strong style="color:var(--text)">Keep your eye open</strong> — look slightly up and to the side of the camera.</span>
+                  </div>
+                  <div style="display:flex;align-items:flex-start;gap:10px;margin-top:10px;font-size:12px;color:var(--text-2);">
+                    <span style="font-size:16px;flex-shrink:0">📱</span>
+                    <span><strong style="color:var(--text)">On mobile</strong> — gently pull down your lower eyelid to expose the inner pink tissue. This gives the clearest nutrient signals.</span>
+                  </div>
+                </div>
+                <button onclick="startWebcam()" style="padding:12px 28px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;width:100%;">📷 Open camera</button>
               </div>
               <button class="re-upload" id="webcamReUp" style="display:none;margin-top:12px" onclick="resetWebcam()">↺ Retake photo</button>
             </div>
@@ -726,9 +986,20 @@ input[type="number"]:focus{border-color:var(--green);}
             </div>
           </div>
         </div>
+        </div><!-- /desktop-scan -->
         <div style="margin-top:16px;padding:12px 16px;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text-3);">
           <span style="font-size:16px;flex-shrink:0">⏱</span>
-          <span>Fovea is currently in beta and runs on a shared AI quota. To keep things fair, scans are limited to <strong style="color:var(--text-2)">1 every 15 seconds</strong>. If you get a rate limit error, wait a moment and try again — the quota resets every minute.</span>
+          <span>Fovea is in beta and runs on a shared AI quota. If you get a rate limit error, wait a moment and try again.</span>
+        </div>
+        <div style="margin-top:12px;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:16px 20px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px;">🏥 Want a more accurate scan? Get a fundus photo near you</div>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;">
+            <a href="https://www.costcovision.com" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--text-2);font-size:12px;font-weight:600;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'">Costco Optical →</a>
+            <a href="https://vision.walmart.com" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--text-2);font-size:12px;font-weight:600;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'">Walmart Vision Center →</a>
+            <a href="https://www.target.com/c/optical/-/N-4y9ep" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--text-2);font-size:12px;font-weight:600;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'">Target Optical →</a>
+            <a href="https://www.americas-best.com" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--text-2);font-size:12px;font-weight:600;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--green)'" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'">America's Best →</a>
+          </div>
+          <div style="font-size:11px;color:var(--text-4);margin-top:8px;">Fundus photos typically cost $20–40 as an add-on at most optical centers. Upload the image directly to Fovea for the most accurate analysis.</div>
         </div>
       </div>
 
@@ -1072,6 +1343,12 @@ window.doLogin=async()=>{
 
 // ── ENTER APP ──────────────────────────────────────────────────────────────────
 async function enterApp(){
+  // Request push notifications after login
+  if('Notification' in window && Notification.permission === 'default'){
+    setTimeout(()=>{
+      if(scans.length>=1){requestPushPermission();}
+    }, 3000);
+  }
   const name=currentUser.displayName||currentUser.email.split('@')[0];
   populateUI(name,currentUser.email,name[0].toUpperCase());
   try{
@@ -1197,6 +1474,15 @@ window.handleFile=input=>{
   const reader=new FileReader();
   reader.onload=async e=>{
     const compressed=await compressImage(e.target.result);
+    const {glareRatio,avgBrightness}=await scoreFrame(compressed);
+    if(glareRatio>0.45){
+      toast('Too much glare in this photo — try in natural light without flash','err');
+      return;
+    }
+    if(avgBrightness<15){
+      toast('Photo is too dark — try in better lighting','err');
+      return;
+    }
     pendingImgData=compressed;
     document.getElementById('imgPrev').src=compressed;document.getElementById('imgPrev').classList.add('show');
     document.getElementById('uploadZone').style.display='none';document.getElementById('reUpBtn').style.display='block';
@@ -1234,7 +1520,17 @@ Before anything else, answer these questions internally:
 - Is this a fundus/retinal photograph, an anterior segment photo, or a casual face/eye photo?
 - What is the image quality: poor / fair / good / excellent?
 - Is the eye clearly in focus? Is lighting even or blown-out? Is the relevant anatomy actually visible?
+- Is there corneal glare/reflection covering key anatomy? If >30% of the eye area is washed out by reflection, set imageQuality to "poor" and note it.
+- For phone photos: the conjunctiva (inner lower eyelid, pulled down) is the MOST reliable marker. Look for it carefully.
 Only proceed to biomarker assessment for anatomy that is genuinely visible.
+
+PHONE PHOTO SPECIFIC RULES:
+- Reflections covering iris/pupil → omit iris texture and pupil assessments
+- Flash glare on sclera → downgrade sclera confidence to "low"  
+- Blurry/unfocused → maximum "medium" confidence for all findings
+- Dark/underexposed → downgrade all confidence one tier
+- Well-lit, angled phone photo → normal confidence rules apply
+- The lower palpebral conjunctiva (inner eyelid) is often the CLEAREST and most diagnostic area in phone photos
 
 ━━━ STEP 2 — CHAIN-OF-THOUGHT BIOMARKER SWEEP ━━━
 For EACH item below, explicitly reason: "I can/cannot see [region] clearly. What I observe is: [description]. Therefore: [conclusion]." Only output findings where the anatomical evidence is present.
@@ -1291,6 +1587,10 @@ Return ONLY valid JSON — no markdown, no backticks, no explanation before or a
 {"imageType":"fundus|anterior|general","imageQuality":"poor|fair|good|excellent","confidenceNote":"one sentence on image suitability","summary":"3-4 sentence summary of observed signals and which nutrients they suggest monitoring.","nutrients":[{"name":"Nutrient Name","level":0-100,"status":"low|ok|high","confidence":"low|medium|high","evidence":"the specific ocular feature you observed that indicates this nutrient signal"}],"recommendations":["specific food + amount + frequency for low nutrients only"],"caveats":"limitations of this specific image for nutrient assessment"}`;
 }
 
+
+
+
+
 async function callGemini(model, base64, mediaType, prompt, retries=2){
   for(let attempt=1;attempt<=retries+1;attempt++){
     try{
@@ -1319,8 +1619,8 @@ async function callGemini(model, base64, mediaType, prompt, retries=2){
 // Merge two model results: consensus findings get confidence boost, scores averaged
 function mergeResults(a, b){
   if(!a&&!b) throw new Error('Both models failed to return valid results.');
-  if(!a) return {...b, confidenceNote:(b.confidenceNote||'')+(b?' [Single model — Gemini 1.5 Flash]':'')};
-  if(!b) return {...a, confidenceNote:(a.confidenceNote||'')+(a?' [Single model — Gemini 2.0 Flash]':'')};
+  if(!a) return {...b, confidenceNote:(b.confidenceNote||'')+(b?' [Single model — Gemini 2.5 Flash-Lite]':'')};
+  if(!b) return {...a, confidenceNote:(a.confidenceNote||'')+(a?' [Single model — Gemini 2.5 Flash]':'')};
 
   const confRank={low:1,medium:2,high:3};
   const confName=['','low','medium','high'];
@@ -1360,7 +1660,7 @@ function mergeResults(a, b){
   return {
     imageType:a.imageType||b.imageType,
     imageQuality:a.imageQuality||b.imageQuality,
-    confidenceNote:`Dual-model ensemble (Gemini 2.0 Flash + Gemini 1.5 Flash). ${a.confidenceNote||b.confidenceNote||''}`,
+    confidenceNote:`Dual-model ensemble (Gemini 2.5 Flash + Gemini 2.5 Pro). ${a.confidenceNote||b.confidenceNote||''}`,
     summary:a.summary||b.summary,
     nutrients:merged,
     recommendations:uniqueRecs,
@@ -1399,17 +1699,27 @@ window.runAnalysis=async function runAnalysis(imgDataUrl){
   const prompt=buildPrompt(ctx,diet,goals);
 
   try{
-    // Primary model with fallback
-    let result=await callGemini('gemini-2.5-flash', base64, mediaType, prompt);
+    // Run Gemini Flash + Gemini Pro in parallel for dual-model consensus
+    const [flashResult, proResult]=await Promise.allSettled([
+      callGemini('gemini-2.5-flash', base64, mediaType, prompt),
+      callGemini('gemini-2.5-pro', base64, mediaType, prompt)
+    ]);
+    const resA=flashResult.status==='fulfilled'?flashResult.value:null;
+    const resB=proResult.status==='fulfilled'?proResult.value:null;
+    clearInterval(timer);
+    let result=mergeResults(resA,resB);
     if(!result){
-      console.warn('Primary model failed, trying fallback...');
       result=await callGemini('gemini-2.5-flash-lite', base64, mediaType, prompt);
     }
-    clearInterval(timer);
     if(!result) throw new Error('Analysis failed — please try again in a moment.');
+    // Enrich recommendations with NIH/USDA data
+    result=await enrichWithNIH(result);
+    // Check for dangerous findings
+    checkDangerousFindings(result);
     pendingResult=result;
     renderAnalysis(result);
-    toast('Analysis complete');
+    const src=resA&&resB?'Gemini Flash + Pro consensus':resA?'Gemini Flash analysis':'Gemini Pro analysis';
+    toast('Analysis complete · '+src);
   }catch(err){
     clearInterval(timer);console.error(err);
     el.innerHTML=`<div class="analysis-idle" style="color:var(--red)">⚠ Analysis failed<br><span style="font-size:11px;color:var(--text-3);display:block;margin-top:6px;font-family:'DM Mono',monospace">${err.message}</span><br><button onclick="window.retryAnalysis()" style="margin-top:14px;padding:9px 22px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;">Retry</button></div>`;
@@ -1420,17 +1730,41 @@ window.runAnalysis=async function runAnalysis(imgDataUrl){
 function renderAnalysis(r){
   const typeMap={fundus:'Fundus / retinal',anterior:'Anterior segment',general:'General eye photo'};
   const qualMap={poor:'⚠ Poor',fair:'◑ Fair',good:'● Good',excellent:'◉ Excellent'};
-  const ensemblePill=r._ensemble?`<span class="meta-pill" style="background:var(--green-dim);color:var(--green);border-color:rgba(0,217,139,.2)">⊕ Dual-model consensus</span>`:'';
-  const meta=`<div class="meta-pills">${r.imageType?`<span class="meta-pill">${typeMap[r.imageType]||r.imageType}</span>`:''}${r.nutrients?`<span class="meta-pill">${r.nutrients.length} nutrients assessed</span>`:''}${ensemblePill}</div>`;
+  const ensemblePill=r._ensemble?`<span class="meta-pill ai-merged">⊕ Gemini Flash + Pro consensus</span>`:'';
+  const qualityColors={poor:'var(--red)',fair:'var(--amber)',good:'var(--text-2)',excellent:'var(--green)'};
+  const qualityBadge=r.imageQuality?`<span class="meta-pill" style="border-color:${qualityColors[r.imageQuality]||'var(--border)'};color:${qualityColors[r.imageQuality]||'var(--text-3)'}">Photo quality: ${r.imageQuality}</span>`:'';
+  const meta=`<div class="meta-pills">${r.imageType?`<span class="meta-pill">${typeMap[r.imageType]||r.imageType}</span>`:''}${qualityBadge}${r.nutrients?`<span class="meta-pill">${r.nutrients.length} nutrients assessed</span>`:''}${ensemblePill}</div>`;
   const confNote=r.confidenceNote?`<div class="caveat-box" style="margin-bottom:14px;border-left-color:var(--blue)">ℹ ${r.confidenceNote}</div>`:'';
   const rows=buildRows(r.nutrients||[],true);
   const recs=(r.recommendations||[]).map((rec,i)=>`<div class="rec-item"><div class="rec-icon">${i+1}</div><span>${rec}</span></div>`).join('');
+  // NIH/USDA enrichment panel
+  const nihPanel=r.nihData&&Object.keys(r.nihData).length?`
+    <div style="margin-top:20px;background:var(--bg-3);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--border);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);">📋 NIH Dietary Reference Intakes</div>
+      ${Object.entries(r.nihData).map(([name,info])=>`
+        <div style="padding:12px 16px;border-bottom:1px solid var(--border);">
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">${name}</div>
+          <div style="font-size:11px;color:var(--text-2);">${info.all||[info.male,info.female].filter(Boolean).join(' · ')}</div>
+          ${info.note?`<div style="font-size:11px;color:var(--text-3);margin-top:2px;font-style:italic;">${info.note}</div>`:''}
+        </div>`).join('')}
+    </div>`:'' ;
+  const usdaPanel=r.usdaFoods&&Object.keys(r.usdaFoods).length?`
+    <div style="margin-top:12px;background:var(--bg-3);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--border);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);">🥗 USDA Top Food Sources</div>
+      ${Object.entries(r.usdaFoods).map(([name,foods])=>`
+        <div style="padding:12px 16px;border-bottom:1px solid var(--border);">
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:6px;">${name}</div>
+          ${foods.map(f=>`<div style="font-size:11px;color:var(--text-2);padding:2px 0;">▸ ${f}</div>`).join('')}
+        </div>`).join('')}
+    </div>`:'' ;
   const saveBtn=`<button class="save-btn" id="saveBtn" onclick="saveScan()">Save scan to history</button>`;
   document.getElementById('analysisState').innerHTML=`
     ${meta}${confNote}${rows}
     ${r.summary?`<div class="ai-narrative">${r.summary}</div>`:''}
     ${recs?`<div class="recs-section"><h4>Dietary recommendations</h4>${recs}</div>`:''}
     ${r.caveats?`<div class="caveat-box">▸ ${r.caveats}</div>`:''}
+    ${nihPanel}
+    ${usdaPanel}
     <div style="margin-top:12px;font-size:11px;color:var(--text-3);font-family:'DM Mono',monospace;line-height:1.7;">
       ℹ Some nutrients are not shown because they require eye anatomy that isn't visible in this photo type.
       ${r.imageType==='fundus'?'Anterior segment markers (conjunctiva, cornea, eyelids) require a close-up eye photo.':r.imageType==='anterior'?'Retinal markers (macula, optic disc, vessels) require a fundus photograph from an eye clinic.':'For the most complete analysis, use a fundus photograph from an eye exam.'}
@@ -1533,7 +1867,7 @@ window.setScanMode=mode=>{
 // ── WEBCAM ──────────────────────────────────────────────────────────────────────
 window.startWebcam=async()=>{
   try{
-    webcamStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:1280},height:{ideal:1280}}});
+    webcamStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:1920},height:{ideal:1920}}});
     document.getElementById('webcamVideo').srcObject=webcamStream;
     document.getElementById('webcamStart').style.display='none';
     document.getElementById('webcamWrap').classList.add('show');
@@ -1541,13 +1875,63 @@ window.startWebcam=async()=>{
   }catch(e){toast('Camera access denied or unavailable','err');}
 };
 
-window.captureWebcam=()=>{
+function captureFrame(){
   const v=document.getElementById('webcamVideo'),c=document.getElementById('webcamCanvas');
   const sz=Math.min(v.videoWidth,v.videoHeight);c.width=sz;c.height=sz;
   const ctx=c.getContext('2d');ctx.save();ctx.scale(-1,1);
   ctx.drawImage(v,(v.videoWidth-sz)/2,(v.videoHeight-sz)/2,sz,sz,-sz,0,sz,sz);ctx.restore();
-  const rawUrl=c.toDataURL('image/jpeg',.92);
-  compressImage(rawUrl).then(url=>{
+  return c.toDataURL('image/jpeg',.92);
+}
+
+function scoreFrame(dataUrl){
+  return new Promise(resolve=>{
+    const img=new Image();
+    img.onload=()=>{
+      const c=document.createElement('canvas');
+      const size=80;c.width=size;c.height=size;
+      const ctx=c.getContext('2d');
+      ctx.drawImage(img,0,0,size,size);
+      const d=ctx.getImageData(0,0,size,size).data;
+      let brightness=0,overexposed=0,totalPx=d.length/4;
+      for(let i=0;i<d.length;i+=4){
+        const lum=(d[i]*0.299+d[i+1]*0.587+d[i+2]*0.114);
+        brightness+=lum;
+        if(lum>230)overexposed++;
+      }
+      const avgBrightness=brightness/totalPx;
+      const glareRatio=overexposed/totalPx;
+      // Penalise glare heavily, reward moderate brightness
+      const score=avgBrightness*(1-glareRatio*3);
+      resolve({score,glareRatio,avgBrightness});
+    };
+    img.src=dataUrl;
+  });
+}
+
+window.captureWebcam=async()=>{
+  const btn=document.querySelector('.wcam-btn');
+  if(btn){btn.disabled=true;btn.textContent='Selecting best frame...';}
+  // Sample 5 frames over 1 second and pick the best one
+  const frames=[];
+  for(let i=0;i<5;i++){
+    frames.push(captureFrame());
+    await new Promise(r=>setTimeout(r,200));
+  }
+  const scored=await Promise.all(frames.map(async f=>({url:f,...await scoreFrame(f)})));
+  const best=scored.reduce((a,b)=>a.score>b.score?a:b);
+  if(btn){btn.disabled=false;btn.textContent='📸 Capture';}
+
+  // Glare check
+  if(best.glareRatio>0.35){
+    toast('Too much glare — try in natural light without flash','err');
+    return;
+  }
+  if(best.avgBrightness<30){
+    toast('Too dark — move to a brighter area','err');
+    return;
+  }
+
+  compressImage(best.url).then(url=>{
     pendingImgData=url;
     document.getElementById('webcamPrev').src=url;document.getElementById('webcamPrev').classList.add('show');
     document.getElementById('webcamWrap').classList.remove('show');document.getElementById('webcamLiveCtrl').style.display='none';
@@ -1745,7 +2129,26 @@ window.downloadPDF=function(){
   ${recs?`<h2 style="font-size:16px;margin-top:32px;margin-bottom:8px;">Dietary recommendations</h2><ol>${recs}</ol>`:''}
   ${s.caveats?`<div class="caveat">⚠ ${s.caveats}</div>`:''}
   <div class="footer">Fovea is a wellness exploration tool, not a medical device. Results are AI-generated estimates and do not constitute clinical diagnosis. Always consult a qualified healthcare professional.</div>
-  </body></html>`;
+  
+<!-- ── MOBILE SCAN WIZARD ── -->
+<div class="wizard-overlay" id="scanWizard">
+  <div class="wizard-header">
+    <button onclick="closeWizard()" style="background:none;border:none;color:var(--text-2);font-size:20px;cursor:pointer;padding:4px;">✕</button>
+    <div class="wizard-progress">
+      <div class="wizard-pip done" id="wp1"></div>
+      <div class="wizard-pip" id="wp2"></div>
+      <div class="wizard-pip" id="wp3"></div>
+      <div class="wizard-pip" id="wp4"></div>
+    </div>
+    <div style="font-size:12px;color:var(--text-3);font-family:'DM Mono',monospace;" id="wiz-step-label">1 of 4</div>
+  </div>
+  <div class="wizard-body" id="wizBody"></div>
+  <div class="wizard-footer">
+    <button class="wizard-next" id="wizNext" onclick="wizardNext()">Continue →</button>
+    <button class="wizard-skip" onclick="wizardSkip()">Skip this step</button>
+  </div>
+</div>
+</body></html>`;
   const w=window.open('','_blank');
   w.document.write(html);
   w.document.close();
@@ -1779,6 +2182,397 @@ window.toggleDataSharing=async()=>{
     toast(dataSharingEnabled?'Research contribution enabled — thank you!':'Research contribution disabled');
   }catch(e){console.error(e);toast('Could not save preference','err');}
 };
+
+// ── PUSH NOTIFICATIONS ────────────────────────────────────────────────────────
+function checkNotifBanner(){
+  if('Notification' in window && Notification.permission==='default'){
+    setTimeout(()=>{
+      const b=document.getElementById('notifBanner');
+      if(b)b.style.display='flex';
+    },3000);
+  }
+}
+
+window.requestNotifPermission=async()=>{
+  if(!('Notification' in window)){toast('Notifications not supported on this device','err');return;}
+  const perm=await Notification.requestPermission();
+  document.getElementById('notifBanner').style.display='none';
+  if(perm==='granted'){
+    toast('Weekly scan reminders enabled!');
+    scheduleWeeklyReminder();
+  }else{
+    toast('Notifications blocked — you can enable them in browser settings','err');
+  }
+};
+
+function scheduleWeeklyReminder(){
+  // Store last scan time, show notification if 7 days passed
+  if('serviceWorker' in navigator&&navigator.serviceWorker.controller){
+    navigator.serviceWorker.controller.postMessage({type:'SCHEDULE_REMINDER'});
+  }
+}
+
+// ── MOBILE WIZARD ─────────────────────────────────────────────────────────────
+let wizardActive=false;
+
+function initWizard(){
+  const isMobile=window.innerWidth<=768;
+  const wizard=document.getElementById('mobileWizard');
+  if(!wizard)return;
+  wizard.style.display=isMobile?'block':'none';
+  if(isMobile){
+    wizardActive=true;
+    checkNotifBanner();
+  }
+}
+
+window.wizardNext=function(step){
+  document.querySelectorAll('.wizard-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('wstep-'+step)?.classList.add('active');
+  // Update dots
+  for(let i=1;i<=3;i++){
+    const d=document.getElementById('wdot-'+i);
+    if(d)d.classList.toggle('done',i<=step);
+  }
+};
+
+window.wizardCamera=function(){
+  wizardNext(3);
+  // Trigger camera in wizard results
+  const state=document.getElementById('wizardAnalysisState');
+  if(state)state.innerHTML='<div style="text-align:center;padding:20px 0;color:var(--text-3);font-size:13px;">Opening camera...</div>';
+  setTimeout(()=>{
+    // Use the main webcam flow but output to wizard
+    setScanMode('camera');
+    wizardActive=true;
+    startWebcam();
+    // Show a simplified camera UI in wizard
+    state.innerHTML=`<div style="font-size:12px;color:var(--text-2);margin-bottom:12px;">Camera is open in the panel below. Press Capture when ready.</div>`;
+  },300);
+};
+
+window.wizardUpload=function(){
+  document.getElementById('wizardFileInput').click();
+};
+
+window.handleWizardFile=async function(input){
+  const file=input.files[0];if(!file)return;
+  if(file.size>20*1024*1024){toast('Image too large — max 20MB','err');return;}
+  wizardNext(3);
+  const state=document.getElementById('wizardAnalysisState');
+  if(state)state.innerHTML='<div style="text-align:center;padding:20px 0;"><div class="spinner" style="margin:0 auto 12px"></div><div style="font-size:13px;color:var(--text-2);">Analyzing your eye photo...</div></div>';
+  const reader=new FileReader();
+  reader.onload=async e=>{
+    const compressed=await compressImage(e.target.result);
+    const {glareRatio,avgBrightness}=await scoreFrame(compressed);
+    if(glareRatio>0.45){toast('Too much glare — try in natural light','err');wizardNext(2);return;}
+    if(avgBrightness<15){toast('Photo too dark — try better lighting','err');wizardNext(2);return;}
+    pendingImgData=compressed;
+    // Run analysis and render in wizard
+    await runAnalysisWizard(compressed,state);
+  };
+  reader.readAsDataURL(file);
+};
+
+async function runAnalysisWizard(imgDataUrl,stateEl){
+  window._pendingImgData=imgDataUrl;
+  const base64=imgDataUrl.split(',')[1];
+  const mediaType=imgDataUrl.split(';')[0].split(':')[1];
+  const ctx=[
+    document.getElementById('pref-age')?.value&&`Age: ${document.getElementById('pref-age').value}`,
+    document.getElementById('pref-sex')?.value&&`Sex: ${document.getElementById('pref-sex').value}`,
+  ].filter(Boolean).join(', ')||'Not provided';
+  const prompt=buildPrompt(ctx,'','');
+  if(stateEl)stateEl.innerHTML='<div style="text-align:center;padding:20px 0;"><div class="spinner" style="margin:0 auto 12px"></div><div style="font-size:13px;color:var(--text-2);">Running AI analysis...</div></div>';
+  try{
+    let result=await callGemini('gemini-2.5-flash',base64,mediaType,prompt);
+    if(!result)result=await callGemini('gemini-2.5-flash-lite',base64,mediaType,prompt);
+    if(!result)throw new Error('Analysis failed — try again');
+    pendingResult=result;
+    // Render compact results in wizard
+    const lows=(result.nutrients||[]).filter(n=>n.status==='low');
+    const oks=(result.nutrients||[]).filter(n=>n.status==='ok');
+    const html=`
+      <div style="margin-bottom:12px;padding:10px 14px;background:var(--green-dim);border:1px solid rgba(0,217,139,.15);border-radius:8px;font-size:12px;color:var(--green);">
+        ✓ Analysis complete · ${(result.nutrients||[]).length} nutrients assessed
+      </div>
+      ${lows.length?`<div style="margin-bottom:8px;font-size:11px;font-weight:700;color:var(--text-3);letter-spacing:.08em;text-transform:uppercase;">Worth monitoring</div>
+      ${lows.map(n=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+        <div style="font-size:13px;color:var(--text);">${n.name}</div>
+        <div style="font-size:11px;color:var(--red);">↓ Below normal</div>
+      </div>`).join('')}`:''}
+      ${oks.length?`<div style="margin:10px 0 8px;font-size:11px;font-weight:700;color:var(--text-3);letter-spacing:.08em;text-transform:uppercase;">Looking good</div>
+      <div style="font-size:12px;color:var(--text-2);">${oks.map(n=>n.name).join(' · ')}</div>`:''}
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:16px;">
+        <button onclick="saveScan()" style="padding:12px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;">Save to history</button>
+        <button onclick="switchTab('analyzer');wizardNext(1)" style="padding:10px;background:transparent;border:1px solid var(--border);color:var(--text-2);border-radius:40px;font-size:12px;cursor:pointer;font-family:'Syne',sans-serif;">View full results</button>
+      </div>`;
+    if(stateEl)stateEl.innerHTML=html;
+    // Also run in main panel
+    runAnalysis(imgDataUrl);
+  }catch(e){
+    if(stateEl)stateEl.innerHTML=`<div style="color:var(--red);font-size:13px;padding:12px 0;">⚠ ${e.message}<br><button onclick="wizardNext(2)" style="margin-top:10px;padding:8px 20px;background:var(--bg-3);border:1px solid var(--border);color:var(--text-2);border-radius:20px;font-size:12px;cursor:pointer;">Try again</button></div>`;
+  }
+}
+
+// ── NIH DIETARY SUPPLEMENTS + USDA ENRICHMENT ─────────────────────────────
+const NIH_RDA={
+  'Iron':{male:'8mg/day',female:'18mg/day (8mg after 50)',note:'Heme iron from meat absorbs ~25%; non-heme from plants ~5-12%'},
+  'Vitamin B12':{all:'2.4mcg/day',note:'Animal products only — vegans need supplements or fortified foods'},
+  'Folate':{all:'400mcg DFE/day',note:'600mcg if pregnant. Found in leafy greens, legumes, fortified foods'},
+  'Vitamin C':{male:'90mg/day',female:'75mg/day',note:'Smokers need +35mg/day. Upper limit: 2000mg'},
+  'Vitamin A':{male:'900mcg RAE/day',female:'700mcg RAE/day',note:'Preformed (retinol) in animal foods; provitamin A (beta-carotene) in plants'},
+  'Omega-3':{all:'1.1-1.6g ALA/day',note:'EPA+DHA: 250-500mg/day for heart health. Fatty fish 2x/week recommended'},
+  'Zinc':{male:'11mg/day',female:'8mg/day',note:'Oysters are highest source. Absorption inhibited by phytates in grains/legumes'},
+  'Magnesium':{male:'400-420mg/day',female:'310-320mg/day',note:'Most Americans are deficient. Found in nuts, seeds, leafy greens'},
+  'Vitamin D':{all:'600-800 IU/day',note:'Many experts recommend 1000-2000 IU. Sun exposure generates D3 in skin'},
+  'Lutein':{all:'6-10mg/day (no official RDA)',note:'Found in dark leafy greens. Zeaxanthin often found together with lutein'},
+  'Zeaxanthin':{all:'2mg/day (no official RDA)',note:'Corn, eggs, and orange peppers are richest sources'},
+  'Vitamin K':{male:'120mcg/day',female:'90mcg/day',note:'K1 in leafy greens; K2 in fermented foods, meat. Blood thinner interaction — consult doctor'},
+  'B6':{all:'1.3-1.7mg/day',note:'Poultry, fish, potatoes, bananas. B6 toxicity possible at high supplement doses'},
+  'Biotin':{all:'30mcg/day',note:'Eggs, nuts, seeds. Raw egg whites block biotin absorption'},
+  'Vitamin E':{all:'15mg/day',note:'Nuts, seeds, plant oils. Fat-soluble — needs dietary fat for absorption'},
+  'Riboflavin':{male:'1.3mg/day',female:'1.1mg/day',note:'Dairy, eggs, meat, fortified cereals. Sensitive to light — store milk in opaque containers'},
+  'Niacin':{male:'16mg NE/day',female:'14mg NE/day',note:'Meat, fish, peanuts. High-dose supplements can cause flushing — consult doctor'},
+  'Choline':{male:'550mg/day',female:'425mg/day',note:'Eggs are richest source. Important for liver health and brain function'},
+  'Bioflavonoids':{all:'No official RDA — 200-500mg/day typical',note:'Citrus fruits, berries, onions, tea. Work synergistically with Vitamin C'},
+  'Antioxidants':{all:'No single RDA — eat variety of colorful fruits/vegetables',note:'Includes vitamins C, E, selenium, and phytonutrients'}
+};
+
+const USDA_FOODS={
+  'Iron':['Chicken liver (85g cooked): 11mg','Beef (85g): 2.5mg','Lentils (1 cup cooked): 6.6mg','Spinach (1 cup cooked): 6.4mg','Fortified cereal (1 serving): 18mg'],
+  'Vitamin B12':['Beef liver (85g): 70mcg','Clams (85g): 84mcg','Salmon (85g): 4.9mcg','Milk (1 cup): 1.2mcg','Eggs (1 large): 0.6mcg'],
+  'Folate':['Beef liver (85g): 215mcg','Spinach (1 cup cooked): 263mcg','Black beans (1 cup): 256mcg','Asparagus (4 spears): 89mcg','Avocado (half): 59mcg'],
+  'Vitamin C':['Red bell pepper (half): 95mg','Kiwi (1 medium): 64mg','Orange (1 medium): 70mg','Broccoli (1 cup raw): 81mg','Strawberries (1 cup): 85mg'],
+  'Vitamin A':['Beef liver (85g): 6582mcg','Sweet potato (1 medium): 961mcg','Carrots (half cup): 459mcg','Spinach (1 cup cooked): 573mcg','Eggs (1 large): 75mcg'],
+  'Omega-3':['Salmon (85g): 1.8g EPA+DHA','Mackerel (85g): 1.0g','Sardines (85g): 1.2g','Walnuts (1oz): 2.5g ALA','Flaxseed (1 tbsp): 2.4g ALA'],
+  'Zinc':['Oysters (85g): 74mg','Beef (85g): 7mg','Pumpkin seeds (1oz): 2.2mg','Cashews (1oz): 1.6mg','Chickpeas (1 cup): 2.5mg'],
+  'Magnesium':['Pumpkin seeds (1oz): 156mg','Almonds (1oz): 80mg','Spinach (1 cup cooked): 157mg','Black beans (1 cup): 120mg','Dark chocolate (1oz): 64mg'],
+  'Vitamin D':['Salmon (85g): 447 IU','Tuna canned (85g): 154 IU','Egg yolk (1 large): 41 IU','Fortified milk (1 cup): 115-124 IU','Mushrooms UV-exposed (half cup): 366 IU'],
+  'Lutein':['Kale (1 cup cooked): 23.7mg','Spinach (1 cup cooked): 20.4mg','Collard greens (1 cup): 14.6mg','Eggs (1 large): 0.2mg','Corn (1 cup): 2.2mg'],
+  'Zeaxanthin':['Corn (1 cup): 0.9mg','Eggs (2 large): 0.4mg','Orange peppers (1 medium): 2.1mg','Orange juice (1 cup): 0.13mg','Nectarines (1 medium): 0.15mg'],
+  'Riboflavin':['Beef liver (85g): 2.9mg','Milk (1 cup): 0.3mg','Almonds (1oz): 0.3mg','Eggs (1 large): 0.2mg','Spinach (1 cup cooked): 0.4mg'],
+  'Niacin':['Chicken breast (85g): 11mg','Tuna (85g): 11.3mg','Salmon (85g): 8.6mg','Peanuts (1oz): 3.8mg','Beef (85g): 5.6mg'],
+  'Choline':['Eggs (1 large): 147mg','Beef liver (85g): 356mg','Soybeans (1 cup cooked): 107mg','Chicken breast (85g): 72mg','Fish (85g): 79mg'],
+  'Zinc':['Oysters (85g): 74mg','Beef (85g): 7mg','Pumpkin seeds (1oz): 2.2mg','Cashews (1oz): 1.6mg','Chickpeas (1 cup): 2.5mg']
+};
+
+async function enrichWithNIH(result){
+  if(!result||!result.nutrients)return result;
+  const enriched={...result};
+  enriched.nihData={};
+  enriched.usdaFoods={};
+  for(const n of result.nutrients){
+    if(NIH_RDA[n.name]){
+      enriched.nihData[n.name]=NIH_RDA[n.name];
+    }
+    if(USDA_FOODS[n.name]){
+      enriched.usdaFoods[n.name]=USDA_FOODS[n.name];
+    }
+  }
+  return enriched;
+}
+
+// ── DANGEROUS FINDINGS → GOOGLE PLACES ─────────────────────────────────────
+const DANGEROUS_FINDINGS=[
+  {nutrient:'Vitamin A',level:30,message:'Severe Vitamin A deficiency can cause irreversible vision loss.'},
+  {nutrient:'Iron',level:25,message:'Severe iron deficiency anemia detected.'},
+  {nutrient:'Vitamin B12',level:25,message:'Severe B12 deficiency can cause permanent nerve damage.'},
+  {nutrient:'Zinc',level:20,message:'Severe zinc deficiency affecting eye health.'},
+];
+
+function checkDangerousFindings(result){
+  if(!result||!result.nutrients)return;
+  for(const danger of DANGEROUS_FINDINGS){
+    const n=result.nutrients.find(x=>x.name===danger.nutrient&&x.level<=danger.level&&x.confidence!=='low');
+    if(n){
+      showDangerAlert(danger.message);
+      break;
+    }
+  }
+}
+
+function showDangerAlert(message){
+  const existing=document.getElementById('dangerAlert');
+  if(existing)existing.remove();
+  const el=document.createElement('div');
+  el.id='dangerAlert';
+  el.style.cssText='position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:9999;background:#1a0a0a;border:1px solid var(--red);border-radius:12px;padding:16px 20px;max-width:420px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.6);';
+  el.innerHTML=`
+    <div style="display:flex;align-items:flex-start;gap:12px;">
+      <div style="font-size:22px;flex-shrink:0">⚠️</div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:4px;">Potential concern detected</div>
+        <div style="font-size:12px;color:var(--text-2);line-height:1.6;margin-bottom:12px;">${message} This is not a diagnosis — please consult an eye care professional.</div>
+        <button onclick="findNearbyEyeCare()" style="padding:8px 16px;background:var(--red);color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;margin-right:8px;">Find eye care near me</button>
+        <button onclick="document.getElementById('dangerAlert').remove()" style="padding:8px 16px;background:var(--bg-3);border:1px solid var(--border);color:var(--text-2);border-radius:20px;font-size:12px;cursor:pointer;">Dismiss</button>
+      </div>
+    </div>`;
+  document.body.appendChild(el);
+}
+
+window.findNearbyEyeCare=()=>{
+  if(!navigator.geolocation){
+    window.open('https://www.google.com/maps/search/ophthalmologist+near+me','_blank');
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const {latitude,longitude}=pos.coords;
+    window.open(`https://www.google.com/maps/search/ophthalmologist/@${latitude},${longitude},14z`,'_blank');
+  },()=>{
+    window.open('https://www.google.com/maps/search/ophthalmologist+near+me','_blank');
+  });
+};
+
+// ── PUSH NOTIFICATIONS ────────────────────────────────────────────────────────
+function requestPushPermission(){
+  const banner=document.createElement('div');
+  banner.id='pushBanner';
+  banner.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:999;background:var(--bg-2);border:1px solid var(--border);border-radius:12px;padding:14px 18px;max-width:380px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.5);display:flex;align-items:center;gap:12px;';
+  banner.innerHTML=`
+    <div style="font-size:22px;flex-shrink:0">🔔</div>
+    <div style="flex:1;">
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;">Weekly scan reminders</div>
+      <div style="font-size:11px;color:var(--text-2);">Get reminded to scan every week for the best trend data.</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+      <button onclick="enablePush()" style="padding:6px 12px;background:var(--green);color:var(--bg);border:none;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;">Enable</button>
+      <button onclick="document.getElementById('pushBanner')?.remove()" style="padding:6px 12px;background:transparent;border:none;color:var(--text-3);font-size:11px;cursor:pointer;">Not now</button>
+    </div>`;
+  document.body.appendChild(banner);
+  setTimeout(()=>banner.remove(), 12000);
+}
+
+window.enablePush=async()=>{
+  document.getElementById('pushBanner')?.remove();
+  try{
+    const perm=await Notification.requestPermission();
+    if(perm==='granted'){
+      toast('Weekly reminders enabled!');
+      // Store preference
+      if(currentUser)setDoc(doc(db,'users',currentUser.uid),{pushEnabled:true},{merge:true}).catch(()=>{});
+    }else{
+      toast('Notifications blocked — enable in browser settings','err');
+    }
+  }catch(e){console.warn('Push error:',e);}
+};
+
+// ── MOBILE SCAN WIZARD ───────────────────────────────────────────────────────
+const wizardSteps=[
+  {
+    title:'Before you scan',
+    sub:'Follow these tips for the best result from a phone photo.',
+    body:`<div style="display:flex;flex-direction:column;gap:14px;">
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;">
+        <span style="font-size:24px;flex-shrink:0">☀️</span>
+        <div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">Use natural light</div><div style="font-size:12px;color:var(--text-2);">Sit facing a window. Turn off flash and overhead lights to avoid glare.</div></div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;">
+        <span style="font-size:24px;flex-shrink:0">📐</span>
+        <div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">Angle slightly</div><div style="font-size:12px;color:var(--text-2);">Tilt your phone 10–15° off-center to avoid corneal reflection.</div></div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;">
+        <span style="font-size:24px;flex-shrink:0">📏</span>
+        <div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">Arm's length</div><div style="font-size:12px;color:var(--text-2);">About 30cm away. Too close causes blur and glare.</div></div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;">
+        <span style="font-size:24px;flex-shrink:0">👁</span>
+        <div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">Pull your lower eyelid</div><div style="font-size:12px;color:var(--text-2);">Gently pull down your lower eyelid to expose the inner pink tissue — this gives the clearest signals.</div></div>
+      </div>
+    </div>`,
+    next:'Got it — lets scan'
+  },
+  {
+    title:'Your health profile',
+    sub:'This helps personalize your analysis. You can update this in Profile anytime.',
+    body:`<div style="display:flex;flex-direction:column;gap:14px;">
+      <div>
+        <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">Age</label>
+        <input id="wiz-age" type="number" placeholder="e.g. 28" style="width:100%;padding:12px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:'Syne',sans-serif;outline:none;box-sizing:border-box;">
+      </div>
+      <div>
+        <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">Sex</label>
+        <select id="wiz-sex" style="width:100%;padding:12px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:'Syne',sans-serif;outline:none;">
+          <option value="">Prefer not to say</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">Diet type</label>
+        <select id="wiz-diet" style="width:100%;padding:12px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:'Syne',sans-serif;outline:none;">
+          <option value="">Omnivore</option>
+          <option value="vegetarian">Vegetarian</option>
+          <option value="vegan">Vegan</option>
+          <option value="pescatarian">Pescatarian</option>
+          <option value="keto">Keto</option>
+        </select>
+      </div>
+    </div>`,
+    next:'Save & continue'
+  },
+  {
+    title:'Choose your method',
+    sub:'How would you like to capture your eye photo?',
+    body:`<div style="display:flex;flex-direction:column;gap:12px;">
+      <button onclick="wizardChooseCamera()" style="padding:20px;background:var(--bg-2);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:14px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;display:flex;align-items:center;gap:14px;text-align:left;">
+        <span style="font-size:28px;flex-shrink:0">📷</span>
+        <div><div>Use camera</div><div style="font-size:12px;color:var(--text-3);font-weight:400;margin-top:3px;">Take a photo now using your phone camera</div></div>
+      </button>
+      <button onclick="wizardChooseUpload()" style="padding:20px;background:var(--bg-2);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:14px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;display:flex;align-items:center;gap:14px;text-align:left;">
+        <span style="font-size:28px;flex-shrink:0">🖼</span>
+        <div><div>Upload a photo</div><div style="font-size:12px;color:var(--text-3);font-weight:400;margin-top:3px;">Choose an existing photo from your library</div></div>
+      </button>
+      <button onclick="wizardChooseFundus()" style="padding:20px;background:var(--bg-2);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:14px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;display:flex;align-items:center;gap:14px;text-align:left;">
+        <span style="font-size:28px;flex-shrink:0">🏥</span>
+        <div><div>I have a fundus photo</div><div style="font-size:12px;color:var(--text-3);font-weight:400;margin-top:3px;">Upload a clinical retinal photograph</div></div>
+      </button>
+    </div>`,
+    next:null
+  }
+];
+
+let wizStep=0;
+
+function openWizard(){
+  wizStep=0;
+  renderWizStep();
+  document.getElementById('scanWizard').classList.add('open');
+}
+window.closeWizard=()=>{
+  document.getElementById('scanWizard').classList.remove('open');
+};
+function renderWizStep(){
+  const s=wizardSteps[wizStep];
+  document.getElementById('wizBody').innerHTML=`<div class="wizard-title">${s.title}</div><div class="wizard-sub">${s.sub}</div>${s.body}`;
+  document.getElementById('wiz-step-label').textContent=`${wizStep+1} of ${wizardSteps.length}`;
+  document.getElementById('wizNext').style.display=s.next?'block':'none';
+  document.getElementById('wizNext').textContent=s.next||'';
+  document.querySelector('.wizard-skip').style.display=wizStep===1?'block':'none';
+  // Update progress pips
+  for(let i=1;i<=wizardSteps.length;i++){
+    const pip=document.getElementById('wp'+i);
+    if(pip)pip.className='wizard-pip'+(i<=wizStep+1?' done':'');
+  }
+}
+window.wizardNext=()=>{
+  if(wizStep===1){
+    // Save profile from wizard
+    const age=document.getElementById('wiz-age')?.value;
+    const sex=document.getElementById('wiz-sex')?.value;
+    const diet=document.getElementById('wiz-diet')?.value;
+    if(age)document.getElementById('pref-age').value=age;
+    if(sex)document.getElementById('pref-sex').value=sex;
+    if(diet)document.getElementById('pref-diet').value=diet;
+  }
+  wizStep++;
+  if(wizStep>=wizardSteps.length){closeWizard();return;}
+  renderWizStep();
+};
+window.wizardSkip=()=>{wizStep++;if(wizStep>=wizardSteps.length){closeWizard();return;}renderWizStep();};
+window.wizardChooseCamera=()=>{closeWizard();switchTab('analyzer');setTimeout(()=>startWebcam(),400);};
+window.wizardChooseUpload=()=>{closeWizard();switchTab('analyzer');setTimeout(()=>document.getElementById('fileInput')?.click(),400);};
+window.wizardChooseFundus=()=>{closeWizard();switchTab('analyzer');setTimeout(()=>document.getElementById('fileInput')?.click(),400);};
 
 window.openPremiumModal=()=>{
   document.getElementById('waitlist-form').style.display='block';
@@ -1825,9 +2619,30 @@ zone.addEventListener('drop',e=>{
 <script>
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('/sw.js').catch(()=>{});
+    navigator.serviceWorker.register('/sw.js').then(reg=>{
+      window._swReg=reg;
+    }).catch(()=>{});
   });
 }
 </script>
+
+<!-- ── MOBILE SCAN WIZARD ── -->
+<div class="wizard-overlay" id="scanWizard">
+  <div class="wizard-header">
+    <button onclick="closeWizard()" style="background:none;border:none;color:var(--text-2);font-size:20px;cursor:pointer;padding:4px;">✕</button>
+    <div class="wizard-progress">
+      <div class="wizard-pip done" id="wp1"></div>
+      <div class="wizard-pip" id="wp2"></div>
+      <div class="wizard-pip" id="wp3"></div>
+      <div class="wizard-pip" id="wp4"></div>
+    </div>
+    <div style="font-size:12px;color:var(--text-3);font-family:'DM Mono',monospace;" id="wiz-step-label">1 of 4</div>
+  </div>
+  <div class="wizard-body" id="wizBody"></div>
+  <div class="wizard-footer">
+    <button class="wizard-next" id="wizNext" onclick="wizardNext()">Continue →</button>
+    <button class="wizard-skip" onclick="wizardSkip()">Skip this step</button>
+  </div>
+</div>
 </body>
 </html>
