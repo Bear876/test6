@@ -1,11 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
-  <ellipse cx="200" cy="200" rx="132" ry="72" fill="none" stroke="#00d98b" stroke-width="1.8"/>
-  <ellipse cx="200" cy="200" rx="132" ry="72" fill="none" stroke="#00d98b" stroke-width="8" opacity="0.06"/>
-  <circle cx="200" cy="200" r="50" fill="none" stroke="#00d98b" stroke-width="1.5"/>
-  <circle cx="200" cy="200" r="42" fill="none" stroke="#00d98b" stroke-width="0.7" opacity="0.25" stroke-dasharray="3 5"/>
-  <circle cx="200" cy="200" r="24" fill="#00d98b"/>
-  <circle cx="200" cy="200" r="14" fill="transparent"/>
-  <circle cx="209" cy="191" r="5" fill="#00d98b" opacity="0.45"/>
-  <line x1="200" y1="128" x2="200" y2="150" stroke="#00d98b" stroke-width="1.2" opacity="0.5"/>
-  <line x1="200" y1="250" x2="200" y2="272" stroke="#00d98b" stroke-width="1.2" opacity="0.5"/>
+  <rect width="400" height="400" rx="200" fill="#06080a"/>
+  <ellipse cx="200" cy="200" rx="128" ry="76" fill="none" stroke="#00d98b" stroke-width="2"/>
+  <circle cx="200" cy="200" r="48" fill="#0a1f14" stroke="#00d98b" stroke-width="1.5"/>
+  <circle cx="200" cy="200" r="38" fill="none" stroke="#00d98b" stroke-width="0.6" opacity="0.3" stroke-dasharray="3 5"/>
+  <circle cx="200" cy="200" r="22" fill="#00d98b"/>
+  <circle cx="200" cy="200" r="13" fill="#06080a"/>
+  <circle cx="207" cy="193" r="4" fill="#00d98b" opacity="0.4"/>
+  <line x1="200" y1="124" x2="200" y2="142" stroke="#00d98b" stroke-width="1.2" opacity="0.5"/>
+  <line x1="200" y1="258" x2="200" y2="276" stroke="#00d98b" stroke-width="1.2" opacity="0.5"/>
+  <path d="M76 172 L76 162 L86 162" fill="none" stroke="#00d98b" stroke-width="1.6" stroke-linecap="square"/>
+  <path d="M324 172 L324 162 L314 162" fill="none" stroke="#00d98b" stroke-width="1.6" stroke-linecap="square"/>
+  <path d="M76 228 L76 238 L86 238" fill="none" stroke="#00d98b" stroke-width="1.6" stroke-linecap="square"/>
+  <path d="M324 228 L324 238 L314 238" fill="none" stroke="#00d98b" stroke-width="1.6" stroke-linecap="square"/>
 </svg>
