@@ -1,6 +1,6 @@
 {
-  "name": "Fovea",
-  "short_name": "Fovea",
+  "name": "Vytreos",
+  "short_name": "Vytreos",
   "description": "Retinal eye health tracking powered by AI",
   "start_url": "/",
   "display": "standalone",
