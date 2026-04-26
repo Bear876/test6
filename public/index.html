@@ -475,6 +475,21 @@ input[type="number"]:focus{border-color:var(--green);}
   .hero-visual>div{width:180px!important;}
 }
 
+/* ── CAMERA ENHANCEMENTS ── */
+.webcam-wrap{position:relative;overflow:hidden;}
+.glare-indicator{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:20;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;font-family:'DM Mono',monospace;transition:all .3s;pointer-events:none;white-space:nowrap;}
+.glare-good{background:rgba(0,217,139,0.15);border:1px solid rgba(0,217,139,0.4);color:#00d98b;}
+.glare-warn{background:rgba(245,166,35,0.15);border:1px solid rgba(245,166,35,0.4);color:#f5a623;}
+.glare-bad{background:rgba(220,50,50,0.15);border:1px solid rgba(220,50,50,0.4);color:#e04444;}
+.eye-overlay{position:absolute;inset:0;pointer-events:none;z-index:10;}
+.capture-counter{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);z-index:20;display:flex;gap:6px;}
+.capture-pip{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.3);transition:background .2s;}
+.capture-pip.captured{background:#00d98b;}
+.capture-pip.best{background:#00d98b;box-shadow:0 0 6px #00d98b;}
+.photo-strip{display:flex;gap:8px;margin-top:12px;overflow-x:auto;padding-bottom:4px;}
+.photo-thumb{width:64px;height:64px;border-radius:8px;object-fit:cover;border:2px solid var(--border);flex-shrink:0;cursor:pointer;transition:border-color .2s;}
+.photo-thumb.best-thumb{border-color:#00d98b;box-shadow:0 0 8px rgba(0,217,139,0.4);}
+
 /* ── PREMIUM ── */
 .premium-banner{background:linear-gradient(135deg,rgba(0,217,139,0.08),rgba(77,143,255,0.06));border:1px solid rgba(0,217,139,0.2);border-radius:14px;padding:24px 28px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
 .premium-banner-left{flex:1;}
@@ -673,7 +688,7 @@ input[type="number"]:focus{border-color:var(--green);}
     </div>
     <div class="trust-item">
       <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="2,7 5.5,10.5 12,3.5"/></svg>
-      Gemini + Claude dual-AI analysis
+      Gemini Flash + Pro dual-AI analysis
     </div>
     <div class="trust-item">
       <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="2,7 5.5,10.5 12,3.5"/></svg>
@@ -928,20 +943,42 @@ input[type="number"]:focus{border-color:var(--green);}
             <div id="cameraMode" style="display:none">
               <div class="webcam-wrap" id="webcamWrap">
                 <video id="webcamVideo" autoplay playsinline muted></video>
-                <div class="webcam-overlay">
-                  <div class="webcam-ring"></div>
-                  <div class="webcam-ch-h"></div>
-                  <div class="webcam-ch-v"></div>
-                  <div class="webcam-scanline"></div>
-                  <div class="webcam-label">Align eye within circle</div>
-                </div>
+                <!-- Real-time glare indicator -->
+                <div class="glare-indicator glare-good" id="glareIndicator" style="display:none;">✓ Good lighting</div>
+                <!-- Eye-shaped alignment overlay -->
+                <svg class="eye-overlay" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Dim outer mask -->
+                  <defs>
+                    <mask id="eyeMask">
+                      <rect width="400" height="300" fill="white"/>
+                      <ellipse cx="200" cy="150" rx="130" ry="80" fill="black"/>
+                    </mask>
+                  </defs>
+                  <rect width="400" height="300" fill="rgba(0,0,0,0.45)" mask="url(#eyeMask)"/>
+                  <!-- Eye outline -->
+                  <ellipse cx="200" cy="150" rx="130" ry="80" fill="none" stroke="#00d98b" stroke-width="1.5" opacity="0.7"/>
+                  <!-- Corner brackets -->
+                  <path d="M80 100 L80 90 L90 90" fill="none" stroke="#00d98b" stroke-width="1.5"/>
+                  <path d="M320 100 L320 90 L310 90" fill="none" stroke="#00d98b" stroke-width="1.5"/>
+                  <path d="M80 200 L80 210 L90 210" fill="none" stroke="#00d98b" stroke-width="1.5"/>
+                  <path d="M320 200 L320 210 L310 210" fill="none" stroke="#00d98b" stroke-width="1.5"/>
+                  <!-- Center crosshair -->
+                  <line x1="195" y1="150" x2="205" y2="150" stroke="#00d98b" stroke-width="1" opacity="0.5"/>
+                  <line x1="200" y1="145" x2="200" y2="155" stroke="#00d98b" stroke-width="1" opacity="0.5"/>
+                  <!-- Label -->
+                  <text x="200" y="256" text-anchor="middle" font-family="monospace" font-size="11" fill="#00d98b" opacity="0.6">align eye within shape</text>
+                </svg>
+                <!-- Capture progress pips -->
+                <div class="capture-counter" id="capturePips" style="display:none;"></div>
               </div>
               <canvas id="webcamCanvas" style="display:none"></canvas>
               <img id="webcamPrev" class="img-preview" src="" alt="">
               <div id="webcamLiveCtrl" class="webcam-controls" style="display:none">
-                <button class="wcam-btn" onclick="captureWebcam()">📸 Capture</button>
+                <button class="wcam-btn" id="captureBtn" onclick="captureWebcam()">📸 Take 3 photos</button>
                 <button class="wcam-stop" onclick="stopWebcam()">Stop</button>
               </div>
+              <div class="photo-strip" id="photoStrip" style="display:none;"></div>
+              <div id="photoStripLabel" style="display:none;font-size:11px;color:var(--text-3);text-align:center;margin-top:4px;font-family:'DM Mono',monospace;">Best frame selected automatically ✓</div>
               <div id="webcamStart" class="webcam-start-zone">
                 <div class="upload-icon">📷</div>
                 <h3>Before you scan</h3>
@@ -1483,10 +1520,11 @@ window.handleFile=input=>{
       toast('Photo is too dark — try in better lighting','err');
       return;
     }
-    pendingImgData=compressed;
-    document.getElementById('imgPrev').src=compressed;document.getElementById('imgPrev').classList.add('show');
+    const processed=await preprocessImage(compressed);
+    pendingImgData=processed;
+    document.getElementById('imgPrev').src=processed;document.getElementById('imgPrev').classList.add('show');
     document.getElementById('uploadZone').style.display='none';document.getElementById('reUpBtn').style.display='block';
-    runAnalysis(compressed);
+    runAnalysis(processed);
   };reader.readAsDataURL(file);
 };
 
@@ -1865,15 +1903,57 @@ window.setScanMode=mode=>{
 };
 
 // ── WEBCAM ──────────────────────────────────────────────────────────────────────
+let glareCheckInterval=null;
+
 window.startWebcam=async()=>{
   try{
     webcamStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:1920},height:{ideal:1920}}});
-    document.getElementById('webcamVideo').srcObject=webcamStream;
+    const vid=document.getElementById('webcamVideo');
+    vid.srcObject=webcamStream;
     document.getElementById('webcamStart').style.display='none';
     document.getElementById('webcamWrap').classList.add('show');
     document.getElementById('webcamLiveCtrl').style.display='flex';
+    document.getElementById('glareIndicator').style.display='block';
+    // Start real-time glare detection loop
+    vid.addEventListener('loadeddata',()=>{
+      glareCheckInterval=setInterval(()=>liveGlareCheck(),800);
+    },{once:true});
   }catch(e){toast('Camera access denied or unavailable','err');}
 };
+
+function liveGlareCheck(){
+  const v=document.getElementById('webcamVideo');
+  const c=document.getElementById('webcamCanvas');
+  if(!v||!v.videoWidth)return;
+  // Sample at low res for speed
+  c.width=80;c.height=60;
+  const ctx=c.getContext('2d');
+  ctx.drawImage(v,0,0,80,60);
+  const d=ctx.getImageData(0,0,80,60).data;
+  let brightness=0,overexposed=0,total=d.length/4;
+  for(let i=0;i<d.length;i+=4){
+    const lum=d[i]*0.299+d[i+1]*0.587+d[i+2]*0.114;
+    brightness+=lum;
+    if(lum>230)overexposed++;
+  }
+  const avg=brightness/total;
+  const glare=overexposed/total;
+  const ind=document.getElementById('glareIndicator');
+  if(!ind)return;
+  if(glare>0.3){
+    ind.className='glare-indicator glare-bad';
+    ind.textContent='⚠ Too much glare — adjust angle';
+  }else if(glare>0.15||avg>200){
+    ind.className='glare-indicator glare-warn';
+    ind.textContent='◐ Slightly bright — tilt phone';
+  }else if(avg<40){
+    ind.className='glare-indicator glare-warn';
+    ind.textContent='◑ Too dark — find more light';
+  }else{
+    ind.className='glare-indicator glare-good';
+    ind.textContent='✓ Good lighting';
+  }
+}
 
 function captureFrame(){
   const v=document.getElementById('webcamVideo'),c=document.getElementById('webcamCanvas');
@@ -1908,38 +1988,146 @@ function scoreFrame(dataUrl){
   });
 }
 
-window.captureWebcam=async()=>{
-  const btn=document.querySelector('.wcam-btn');
-  if(btn){btn.disabled=true;btn.textContent='Selecting best frame...';}
-  // Sample 5 frames over 1 second and pick the best one
-  const frames=[];
-  for(let i=0;i<5;i++){
-    frames.push(captureFrame());
-    await new Promise(r=>setTimeout(r,200));
-  }
-  const scored=await Promise.all(frames.map(async f=>({url:f,...await scoreFrame(f)})));
-  const best=scored.reduce((a,b)=>a.score>b.score?a:b);
-  if(btn){btn.disabled=false;btn.textContent='📸 Capture';}
+function preprocessImage(dataUrl){
+  return new Promise(resolve=>{
+    const img=new Image();
+    img.onload=()=>{
+      const c=document.createElement('canvas');
+      c.width=img.width;c.height=img.height;
+      const ctx=c.getContext('2d');
+      ctx.drawImage(img,0,0);
+      const imageData=ctx.getImageData(0,0,c.width,c.height);
+      const d=imageData.data;
+      // Pass 1: Calculate average brightness
+      let avg=0;
+      for(let i=0;i<d.length;i+=4)avg+=(d[i]*0.299+d[i+1]*0.587+d[i+2]*0.114);
+      avg/=(d.length/4);
+      // Pass 2: Contrast enhancement + glare reduction + conjunctiva boost
+      const contrastFactor=avg<100?1.3:avg>160?0.85:1.1;
+      const brightAdj=avg<80?30:avg>180?-20:0;
+      for(let i=0;i<d.length;i+=4){
+        // Reduce extreme highlights (glare)
+        const lum=d[i]*0.299+d[i+1]*0.587+d[i+2]*0.114;
+        if(lum>220){
+          // Tone down glare pixels
+          d[i]=Math.min(255,d[i]*0.75);
+          d[i+1]=Math.min(255,d[i+1]*0.75);
+          d[i+2]=Math.min(255,d[i+2]*0.75);
+        }else{
+          // Boost contrast in mid-range
+          d[i]=Math.min(255,Math.max(0,((d[i]-128)*contrastFactor+128)+brightAdj));
+          d[i+1]=Math.min(255,Math.max(0,((d[i+1]-128)*contrastFactor+128)+brightAdj));
+          d[i+2]=Math.min(255,Math.max(0,((d[i+2]-128)*contrastFactor+128)+brightAdj));
+        }
+      }
+      // Pass 3: Boost red channel in lower-center region (conjunctiva area)
+      const conjY1=Math.floor(c.height*0.5);
+      const conjY2=Math.floor(c.height*0.8);
+      const conjX1=Math.floor(c.width*0.2);
+      const conjX2=Math.floor(c.width*0.8);
+      for(let y=conjY1;y<conjY2;y++){
+        for(let x=conjX1;x<conjX2;x++){
+          const idx=(y*c.width+x)*4;
+          // Slightly boost red/pink tones in conjunctiva region
+          if(d[idx]>d[idx+2]){// Red dominant = likely conjunctiva
+            d[idx]=Math.min(255,d[idx]*1.15);
+          }
+        }
+      }
+      ctx.putImageData(imageData,0,0);
+      resolve(c.toDataURL('image/jpeg',0.92));
+    };
+    img.src=dataUrl;
+  });
+}
 
-  // Glare check
-  if(best.glareRatio>0.35){
-    toast('Too much glare — try in natural light without flash','err');
+window.captureWebcam=async()=>{
+  const btn=document.getElementById('captureBtn');
+  if(btn){btn.disabled=true;btn.textContent='Taking photos...';}
+  const pips=document.getElementById('capturePips');
+  const strip=document.getElementById('photoStrip');
+  const stripLabel=document.getElementById('photoStripLabel');
+  if(pips){pips.style.display='flex';pips.innerHTML='<div class="capture-pip"></div><div class="capture-pip"></div><div class="capture-pip"></div>';}
+  if(strip){strip.style.display='none';strip.innerHTML='';}
+
+  // Take 3 photos with 600ms gap
+  const frames=[];
+  const pipEls=pips?.querySelectorAll('.capture-pip');
+  for(let i=0;i<3;i++){
+    await new Promise(r=>setTimeout(r,i===0?300:600));
+    const frame=captureFrame();
+    frames.push(frame);
+    if(pipEls&&pipEls[i])pipEls[i].classList.add('captured');
+  }
+
+  if(btn){btn.textContent='Choosing best...';}
+
+  // Score all 3
+  const scored=await Promise.all(frames.map(async(f,i)=>({url:f,idx:i,...await scoreFrame(f)})));
+  const best=scored.reduce((a,b)=>a.score>b.score?a:b);
+
+  // Mark best pip
+  if(pipEls&&pipEls[best.idx]){
+    pipEls.forEach(p=>p.classList.remove('best'));
+    pipEls[best.idx].classList.add('best');
+  }
+
+  // Show photo strip thumbnails
+  if(strip){
+    strip.style.display='flex';
+    scored.forEach((s,i)=>{
+      const img=document.createElement('img');
+      img.src=s.url;
+      img.className='photo-thumb'+(i===best.idx?' best-thumb':'');
+      img.title=i===best.idx?'Best frame selected':'Frame '+(i+1);
+      img.onclick=()=>{
+        // Allow manual selection
+        scored.forEach((_,j)=>strip.querySelectorAll('.photo-thumb')[j].className='photo-thumb');
+        img.className='photo-thumb best-thumb';
+        compressImage(s.url).then(async url=>{
+          const processed=await preprocessImage(url);
+          pendingImgData=processed;
+          document.getElementById('webcamPrev').src=processed;
+          document.getElementById('webcamPrev').classList.add('show');
+          document.getElementById('webcamWrap').classList.remove('show');
+          document.getElementById('webcamLiveCtrl').style.display='none';
+          document.getElementById('webcamReUp').style.display='block';
+          stopWebcam();runAnalysis(processed);
+        });
+      };
+      strip.appendChild(img);
+    });
+    if(stripLabel)stripLabel.style.display='block';
+  }
+
+  if(btn){btn.disabled=false;btn.textContent='📸 Take 3 photos';}
+
+  // Hard glare check on best
+  if(best.glareRatio>0.45){
+    toast('All 3 photos had too much glare — try in natural light','err');
     return;
   }
-  if(best.avgBrightness<30){
+  if(best.avgBrightness<25){
     toast('Too dark — move to a brighter area','err');
     return;
   }
 
-  compressImage(best.url).then(url=>{
-    pendingImgData=url;
-    document.getElementById('webcamPrev').src=url;document.getElementById('webcamPrev').classList.add('show');
-    document.getElementById('webcamWrap').classList.remove('show');document.getElementById('webcamLiveCtrl').style.display='none';
-    document.getElementById('webcamReUp').style.display='block';stopWebcam();runAnalysis(url);
+  // Preprocess + analyze best frame
+  compressImage(best.url).then(async url=>{
+    const processed=await preprocessImage(url);
+    pendingImgData=processed;
+    document.getElementById('webcamPrev').src=processed;
+    document.getElementById('webcamPrev').classList.add('show');
+    document.getElementById('webcamWrap').classList.remove('show');
+    document.getElementById('webcamLiveCtrl').style.display='none';
+    document.getElementById('webcamReUp').style.display='block';
+    stopWebcam();runAnalysis(processed);
   });
 };
 
 function stopWebcam(){
+  if(glareCheckInterval){clearInterval(glareCheckInterval);glareCheckInterval=null;}
+  document.getElementById('glareIndicator').style.display='none';
   if(webcamStream){webcamStream.getTracks().forEach(t=>t.stop());webcamStream=null;}
   document.getElementById('webcamWrap').classList.remove('show');
   document.getElementById('webcamLiveCtrl').style.display='none';
