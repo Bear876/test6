@@ -1,15 +1,11 @@
-const CACHE = 'fovea-v1';
-const ASSETS = [
-  '/',
-  '/index.html',
-  '/favicon.svg',
-  'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap',
+const CACHE = 'vytreos-v2';
+const STATIC = [
   'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js'
 ];
 
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(ASSETS)).catch(() => {})
+    caches.open(CACHE).then(c => c.addAll(STATIC)).catch(() => {})
   );
   self.skipWaiting();
 });
@@ -24,21 +20,32 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  // Never cache API calls or Firebase
-  if (e.request.url.includes('/api/') || 
-      e.request.url.includes('firebase') ||
-      e.request.url.includes('googleapis.com/v1beta')) {
+  const url = new URL(e.request.url);
+
+  // NEVER cache HTML, API calls, Firebase, Gemini, Groq
+  if (
+    e.request.mode === 'navigate' ||
+    url.pathname === '/' ||
+    url.pathname.endsWith('.html') ||
+    url.pathname.startsWith('/api/') ||
+    url.hostname.includes('firebase') ||
+    url.hostname.includes('googleapis.com') ||
+    url.hostname.includes('groq.com')
+  ) {
+    e.respondWith(fetch(e.request));
     return;
   }
+
+  // Cache only known static assets
   e.respondWith(
     caches.match(e.request).then(cached => {
-      if (cached) return cached;
-      return fetch(e.request).then(res => {
-        if (!res || res.status !== 200 || res.type !== 'basic') return res;
-        const clone = res.clone();
-        caches.open(CACHE).then(c => c.put(e.request, clone));
+      return cached || fetch(e.request).then(res => {
+        if (res && res.status === 200) {
+          const clone = res.clone();
+          caches.open(CACHE).then(c => c.put(e.request, clone));
+        }
         return res;
-      }).catch(() => caches.match('/index.html'));
-    })
+      });
+    }).catch(() => fetch(e.request))
   );
 });
