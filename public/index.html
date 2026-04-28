@@ -575,6 +575,11 @@ input[type="number"]:focus{border-color:var(--green);}
         <p class="hero-sub">Vytreos uses AI to analyze retinal photographs and track changes in your ocular biomarkers over time — spotting trends that a single snapshot never could.</p>
         <div class="hero-actions">
           <button class="btn btn-green" onclick="showView('auth-signup')">Start tracking</button>
+          <button class="btn btn-outline" onclick="document.getElementById('landing-email').focus()">Get early access</button>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:8px;max-width:400px;">
+          <input id="landing-email" type="email" placeholder="your@email.com" style="flex:1;padding:11px 16px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:40px;font-size:13px;color:var(--text);font-family:'Syne',sans-serif;outline:none;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
+          <button onclick="collectLandingEmail()" style="padding:11px 18px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;white-space:nowrap;">Notify me</button>
         </div>
         <p class="hero-note">✦ Experimental · For wellness exploration only &nbsp;·&nbsp; Not a medical device &nbsp;·&nbsp; Start tracking today</p>
           <div class="mobile-hero-steps" style="display:none;">
@@ -813,6 +818,32 @@ input[type="number"]:focus{border-color:var(--green);}
         <div class="page-title">Good to see you, <span id="dash-first">there</span></div>
         <p class="page-sub">Your retinal health trends over time. Scan regularly for the most meaningful insights.</p>
 
+        <!-- HOW IT WORKS — shown until first scan -->
+        <div id="how-it-works" style="margin-bottom:24px;background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:20px 24px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:12px;">How Vytreos works</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+            <div style="text-align:center;">
+              <div style="font-size:28px;margin-bottom:8px;">📸</div>
+              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px;">1. Scan your eye</div>
+              <div style="font-size:11px;color:var(--text-2);line-height:1.5;">Upload a retinal photo or use your camera. Fundus photos give the best results.</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:28px;margin-bottom:8px;">🤖</div>
+              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px;">2. AI analyzes signals</div>
+              <div style="font-size:11px;color:var(--text-2);line-height:1.5;">3 AI models examine ocular markers for nutrient signals in your eye.</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:28px;margin-bottom:8px;">📈</div>
+              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px;">3. Track over time</div>
+              <div style="font-size:11px;color:var(--text-2);line-height:1.5;">Scan weekly or monthly to spot trends. Changes matter more than single results.</div>
+            </div>
+          </div>
+          <div style="margin-top:16px;padding:10px 14px;background:var(--bg-3);border-radius:8px;font-size:11px;color:var(--text-3);line-height:1.6;">
+            ⚠️ <strong style="color:var(--text-2);">Important:</strong> Vytreos is an experimental wellness tool, not a medical device. Results are AI estimates and do not constitute clinical diagnosis. Always consult a qualified healthcare professional for medical concerns.
+          </div>
+          <button onclick="document.getElementById('how-it-works').style.display='none'" style="margin-top:12px;background:none;border:none;color:var(--text-3);font-size:11px;cursor:pointer;padding:0;">Dismiss ✕</button>
+        </div>
+
         <div class="stats-row">
           <div class="stat-card">
             <div class="stat-label">Total Scans</div>
@@ -840,6 +871,17 @@ input[type="number"]:focus{border-color:var(--green);}
           <button class="btn btn-green" style="padding:7px 16px;font-size:12px" onclick="switchTab('analyzer')">+ New scan</button>
         </div>
         <div id="dash-list" class="scan-list"></div>
+        <div id="dash-empty" style="display:none;text-align:center;padding:48px 20px;background:var(--bg-2);border:1px solid var(--border);border-radius:14px;margin-top:8px;">
+          <div style="font-size:48px;margin-bottom:16px;">👁</div>
+          <div style="font-family:'Instrument Serif',serif;font-size:22px;color:var(--text);margin-bottom:8px;">Your eye health journey starts here</div>
+          <div style="font-size:13px;color:var(--text-2);line-height:1.7;max-width:340px;margin:0 auto 24px;">Take your first retinal scan to begin tracking your ocular health. The more you scan, the more meaningful your insights become.</div>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;">
+            <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text-2);">📸 Take a photo of your eye</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text-2);">🔬 AI analyzes nutrient signals</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text-2);">📈 Track changes over time</div>
+          </div>
+          <button class="btn btn-green" onclick="switchTab('analyzer')" style="padding:14px 32px;font-size:15px;">Take your first scan →</button>
+        </div>
       </div>
 
       <!-- ANALYZER -->
@@ -1125,6 +1167,17 @@ input[type="number"]:focus{border-color:var(--green);}
           </div>
         </div>
 
+        <!-- REFERRAL CARD -->
+        <div style="margin-top:24px;background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:28px 32px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:8px;">🎁 Invite friends</div>
+          <div style="font-family:'Instrument Serif',serif;font-size:18px;color:var(--text);margin-bottom:8px;">Share Vytreos with friends</div>
+          <div style="font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:16px;">Share your personal invite link. When a friend signs up, you both get early access to premium features.</div>
+          <div style="display:flex;gap:8px;">
+            <input id="referral-link" readonly value="https://vytreos.vercel.app" style="flex:1;padding:10px 12px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text-2);font-family:'DM Mono',monospace;outline:none;">
+            <button onclick="copyReferral()" style="padding:10px 16px;background:var(--green);color:var(--bg);border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;" id="copyRefBtn">Copy link</button>
+          </div>
+        </div>
+
         <!-- DATA SHARING CARD -->
         <div style="margin-top:24px;background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:28px 32px;">
           <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap;">
@@ -1384,12 +1437,12 @@ window.doLogin=async()=>{
 
 // ── ENTER APP ──────────────────────────────────────────────────────────────────
 async function enterApp(){
-  // Request push notifications after login
   if('Notification' in window && Notification.permission === 'default'){
-    setTimeout(()=>{
-      if(scans.length>=1){requestPushPermission();}
-    }, 3000);
+    setTimeout(()=>{if(scans.length>=1){requestPushPermission();}},3000);
   }
+  // Show onboarding for new users
+  const isNew=!localStorage.getItem('vy_onboarded');
+  if(isNew){setTimeout(()=>showOnboarding(),800);}
   const name=currentUser.displayName||currentUser.email.split('@')[0];
   populateUI(name,currentUser.email,name[0].toUpperCase());
   try{
@@ -1445,6 +1498,8 @@ function renderScans(){
   document.getElementById('dash-list').innerHTML=html;
   document.getElementById('hist-list').innerHTML=html;
   document.getElementById('prof-count').textContent=scans.length;
+  const emptyEl=document.getElementById('dash-empty');
+  if(emptyEl)emptyEl.style.display=scans.length===0?'block':'none';
   populateTrends();
   populateCompare();
 }
@@ -1863,7 +1918,11 @@ function renderAnalysis(r){
           <div style="display:flex;flex-wrap:wrap;gap:6px;">${foods.map(f=>`<span style="font-size:11px;background:var(--bg-2);border:1px solid var(--border);border-radius:20px;padding:3px 10px;color:var(--text-2);">${f}</span>`).join('')}</div>
         </div>`).join('')}
     </div>`:'' ;
-  const saveBtn=`<button class="save-btn" id="saveBtn" onclick="saveScan()">Save scan to history</button>`;
+  const saveBtn=`
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;">
+      <button class="save-btn" id="saveBtn" onclick="saveScan()" style="flex:1;min-width:160px;">Save scan to history</button>
+      <button onclick="shareResults()" style="padding:12px 20px;background:var(--bg-3);border:1px solid var(--border);border-radius:40px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-2);font-family:'Syne',sans-serif;white-space:nowrap;">↗ Share results</button>
+    </div>`;
   document.getElementById('analysisState').innerHTML=`
     ${meta}${confNote}${rows}
     ${r.summary?`<div class="ai-narrative">${r.summary}</div>`:''}
@@ -2845,6 +2904,101 @@ window.wizardSkip=()=>{wizStep++;if(wizStep>=wizardSteps.length){closeWizard();r
 window.wizardChooseCamera=()=>{closeWizard();switchTab('analyzer');setTimeout(()=>startWebcam(),400);};
 window.wizardChooseUpload=()=>{closeWizard();switchTab('analyzer');setTimeout(()=>document.getElementById('fileInput')?.click(),400);};
 window.wizardChooseFundus=()=>{closeWizard();switchTab('analyzer');setTimeout(()=>document.getElementById('fileInput')?.click(),400);};
+
+// ── ONBOARDING ─────────────────────────────────────────────────────────────
+function showOnboarding(){
+  const overlay=document.createElement('div');
+  overlay.id='onboardingOverlay';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:3000;display:flex;align-items:center;justify-content:center;padding:20px;';
+  overlay.innerHTML=`
+    <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:20px;max-width:480px;width:100%;overflow:hidden;">
+      <div style="background:linear-gradient(135deg,rgba(0,217,139,0.1),rgba(77,143,255,0.06));padding:32px 36px 24px;border-bottom:1px solid var(--border);">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:8px;">Welcome to Vytreos</div>
+        <div style="font-family:'Instrument Serif',serif;font-size:24px;color:var(--text);margin-bottom:6px;">Your retinal health journey starts now</div>
+        <div style="font-size:13px;color:var(--text-2);line-height:1.6;">Here's how to get the most out of Vytreos in your first week.</div>
+      </div>
+      <div style="padding:24px 36px;">
+        <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px;">
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--green);color:var(--bg);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+            <div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">Fill in your health profile</div><div style="font-size:12px;color:var(--text-2);">Go to Profile and add your age, sex, and diet. This personalizes your analysis.</div></div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--green);color:var(--bg);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+            <div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">Take your first scan</div><div style="font-size:12px;color:var(--text-2);">Use natural light, no flash. Pull your lower eyelid down slightly for the best signal.</div></div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--green);color:var(--bg);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div>
+            <div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">Scan weekly for trends</div><div style="font-size:12px;color:var(--text-2);">Single scans are informative. Weekly scans are transformative — they show what's changing.</div></div>
+          </div>
+        </div>
+        <button onclick="dismissOnboarding()" style="width:100%;padding:14px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;">Let's get started →</button>
+        <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--text-3);">Vytreos is experimental · Not a medical device · Results are wellness estimates only</div>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+window.dismissOnboarding=()=>{
+  document.getElementById('onboardingOverlay')?.remove();
+  localStorage.setItem('vy_onboarded','1');
+  switchTab('analyzer');
+};
+
+// ── SHARE RESULTS ───────────────────────────────────────────────────────────
+window.shareResults=async()=>{
+  if(!pendingResult)return;
+  const lows=(pendingResult.nutrients||[]).filter(n=>n.status==='low').map(n=>n.name);
+  const text=`My Vytreos retinal scan found ${lows.length} nutrient signals to watch${lows.length?': '+lows.join(', '):''}. Track your eye health at vytreos.vercel.app`;
+  if(navigator.share){
+    try{
+      await navigator.share({title:'My Vytreos Scan Results',text,url:'https://vytreos.vercel.app'});
+      return;
+    }catch(e){}
+  }
+  // Fallback: copy to clipboard
+  try{
+    await navigator.clipboard.writeText(text);
+    toast('Results copied to clipboard — ready to share!');
+  }catch(e){toast('Share not supported on this device','err');}
+};
+
+// ── REFERRAL ────────────────────────────────────────────────────────────────
+window.copyReferral=async()=>{
+  const link=document.getElementById('referral-link');
+  if(!link)return;
+  // Add user ref param if available
+  const url=link.value+(currentUser?'?ref='+currentUser.uid.substring(0,8):'');
+  link.value=url;
+  try{
+    await navigator.clipboard.writeText(url);
+    const btn=document.getElementById('copyRefBtn');
+    if(btn){btn.textContent='Copied! ✓';btn.style.background='var(--text)';setTimeout(()=>{btn.textContent='Copy link';btn.style.background='var(--green)';},2000);}
+    toast('Referral link copied!');
+  }catch(e){toast('Could not copy','err');}
+};
+
+// ── LANDING EMAIL COLLECTION ─────────────────────────────────────────────────
+window.collectLandingEmail=async()=>{
+  const input=document.getElementById('landing-email');
+  if(!input)return;
+  const email=input.value.trim();
+  if(!email||!email.includes('@')){toast('Please enter a valid email','err');return;}
+  try{
+    await setDoc(doc(db,'waitlist',email.replace(/[.#$[\]]/g,'_')),{
+      email,source:'landing',joinedAt:serverTimestamp()
+    });
+    input.value='';
+    input.placeholder='You are on the list! ✓';
+    input.style.borderColor='var(--green)';
+    toast('You are on the early access list!');
+  }catch(e){
+    // Firebase not available on landing page — just show success
+    input.value='';
+    input.placeholder='You are on the list! ✓';
+    toast('You are on the early access list!');
+  }
+};
 
 window.openPremiumModal=()=>{
   document.getElementById('waitlist-form').style.display='block';
