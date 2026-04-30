@@ -1,37 +1,94 @@
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   const { model, base64, mediaType, prompt } = req.body;
+  if (!base64 || !mediaType) return res.status(400).json({ error: 'Missing fields' });
 
-  if (!base64 || !mediaType || !prompt) {
-    return res.status(400).json({ error: 'Missing required fields' });
+  // ── HUGGING FACE BiomedCLIP ──────────────────────────────────────────────
+  if (model === 'hf-biomed') {
+    const HF_KEY = process.env.HF_API_KEY;
+    if (!HF_KEY) return res.status(503).json({ error: 'HF not configured' });
+    try {
+      const imgBuffer = Buffer.from(base64, 'base64');
+      const hfRes = await fetch(
+        'https://api-inference.huggingface.co/models/microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224',
+        {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${HF_KEY}`, 'Content-Type': 'application/octet-stream' },
+          body: imgBuffer
+        }
+      );
+      if (!hfRes.ok) return res.status(hfRes.status).json({ error: 'HF error' });
+      const data = await hfRes.json();
+      return res.status(200).json({ result: JSON.stringify(data) });
+    } catch (e) { return res.status(500).json({ error: e.message }); }
   }
 
+  // ── ROBOFLOW EYE DETECTION ───────────────────────────────────────────────
+  if (model === 'roboflow') {
+    const RF_KEY = process.env.ROBOFLOW_API_KEY;
+    if (!RF_KEY) return res.status(503).json({ error: 'Roboflow not configured' });
+    try {
+      const rfRes = await fetch(
+        `https://detect.roboflow.com/eye-detection-4jkmm/1?api_key=${RF_KEY}&confidence=30`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: base64
+        }
+      );
+      if (!rfRes.ok) return res.status(rfRes.status).json({ error: 'Roboflow error' });
+      const data = await rfRes.json();
+      return res.status(200).json({ result: JSON.stringify(data) });
+    } catch (e) { return res.status(500).json({ error: e.message }); }
+  }
+
+  // ── GOOGLE CLOUD VISION ──────────────────────────────────────────────────
+  if (model === 'google-vision') {
+    const GV_KEY = process.env.GOOGLE_VISION_KEY;
+    if (!GV_KEY) return res.status(503).json({ error: 'Google Vision not configured' });
+    try {
+      const gvRes = await fetch(
+        `https://vision.googleapis.com/v1/images:annotate?key=${GV_KEY}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            requests: [{
+              image: { content: base64 },
+              features: [
+                { type: 'LABEL_DETECTION', maxResults: 15 },
+                { type: 'IMAGE_PROPERTIES' },
+                { type: 'SAFE_SEARCH_DETECTION' },
+                { type: 'OBJECT_LOCALIZATION', maxResults: 10 }
+              ]
+            }]
+          })
+        }
+      );
+      if (!gvRes.ok) {
+        const err = await gvRes.json().catch(() => ({}));
+        return res.status(gvRes.status).json({ error: err?.error?.message || 'Vision error' });
+      }
+      const data = await gvRes.json();
+      return res.status(200).json({ result: JSON.stringify(data) });
+    } catch (e) { return res.status(500).json({ error: e.message }); }
+  }
+
+  // ── GROQ + LLaVA ────────────────────────────────────────────────────────
   if (model === 'groq-llava') {
     const GROQ_KEY = process.env.GROQ_API_KEY;
-    if (!GROQ_KEY) {
-      return res.status(503).json({ error: 'Groq not configured' });
-    }
+    if (!GROQ_KEY) return res.status(503).json({ error: 'Groq not configured' });
     try {
       const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${GROQ_KEY}`
-        },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_KEY}` },
         body: JSON.stringify({
           model: 'meta-llama/llama-4-scout-17b-16e-instruct',
-          messages: [{
-            role: 'user',
-            content: [
-              { type: 'image_url', image_url: { url: `data:${mediaType};base64,${base64}` } },
-              { type: 'text', text: prompt }
-            ]
-          }],
-          max_tokens: 4096,
-          temperature: 0.05
+          messages: [{ role: 'user', content: [
+            { type: 'image_url', image_url: { url: `data:${mediaType};base64,${base64}` } },
+            { type: 'text', text: prompt }
+          ]}],
+          max_tokens: 4096, temperature: 0.05
         })
       });
       if (!groqRes.ok) {
@@ -39,20 +96,15 @@ export default async function handler(req, res) {
         return res.status(groqRes.status).json({ error: err?.error?.message || 'Groq error' });
       }
       const data = await groqRes.json();
-      const raw = data.choices?.[0]?.message?.content || '';
-      return res.status(200).json({ result: raw });
-    } catch (e) {
-      return res.status(500).json({ error: e.message });
-    }
+      return res.status(200).json({ result: data.choices?.[0]?.message?.content || '' });
+    } catch (e) { return res.status(500).json({ error: e.message }); }
   }
 
+  // ── GEMINI ───────────────────────────────────────────────────────────────
   const GEMINI_KEY = process.env.GEMINI_KEY;
-  if (!GEMINI_KEY) {
-    return res.status(500).json({ error: 'Gemini API key not configured' });
-  }
-
+  if (!GEMINI_KEY) return res.status(500).json({ error: 'Gemini key not configured' });
   try {
-    const geminiRes = await fetch(
+    const gemRes = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_KEY}`,
       {
         method: 'POST',
@@ -63,15 +115,11 @@ export default async function handler(req, res) {
         })
       }
     );
-    if (!geminiRes.ok) {
-      const errBody = await geminiRes.json().catch(() => ({}));
-      const msg = errBody?.error?.message || `HTTP ${geminiRes.status}`;
-      return res.status(geminiRes.status).json({ error: msg });
+    if (!gemRes.ok) {
+      const err = await gemRes.json().catch(() => ({}));
+      return res.status(gemRes.status).json({ error: err?.error?.message || `HTTP ${gemRes.status}` });
     }
-    const data = await geminiRes.json();
-    const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    return res.status(200).json({ result: raw });
-  } catch (e) {
-    return res.status(500).json({ error: e.message });
-  }
+    const data = await gemRes.json();
+    return res.status(200).json({ result: data.candidates?.[0]?.content?.parts?.[0]?.text || '' });
+  } catch (e) { return res.status(500).json({ error: e.message }); }
 }
