@@ -693,7 +693,7 @@ input[type="number"]:focus{border-color:var(--green);}
     </div>
     <div class="trust-item">
       <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="2,7 5.5,10.5 12,3.5"/></svg>
-      Gemini Flash + Pro dual-AI analysis
+      Multi-model AI analysis
     </div>
     <div class="trust-item">
       <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="2,7 5.5,10.5 12,3.5"/></svg>
@@ -1073,10 +1073,10 @@ input[type="number"]:focus{border-color:var(--green);}
         <div style="margin-top:12px;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:16px 20px;">
           <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px;">🏥 Want a more accurate scan? Get a fundus photo near you</div>
           <div style="display:flex;flex-wrap:wrap;gap:10px;">
-            <a href="https://www.costcovision.com" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--text-2);font-size:12px;font-weight:600;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'">Costco Optical →</a>
-            <a href="https://vision.walmart.com" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--text-2);font-size:12px;font-weight:600;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'">Walmart Vision Center →</a>
-            <a href="https://www.target.com/c/optical/-/N-4y9ep" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--text-2);font-size:12px;font-weight:600;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'">Target Optical →</a>
-            <a href="https://www.americas-best.com" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--text-2);font-size:12px;font-weight:600;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--green)'" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'">America's Best →</a>
+            <a href="https://www.costco.com/f/-/optical" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--text-2);font-size:12px;font-weight:600;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'">Costco Optical →</a>
+            <a href="https://www.walmart.com/vision-center" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--text-2);font-size:12px;font-weight:600;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'">Walmart Vision Center →</a>
+            <a href="https://www.target.com/optical" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--text-2);font-size:12px;font-weight:600;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'">Target Optical →</a>
+            <a href="https://www.lenscrafters.com/lc-us/vision-guide/eye-exams" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--text-2);font-size:12px;font-weight:600;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--green)'" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'">LensCrafters →</a>
           </div>
           <div style="font-size:11px;color:var(--text-4);margin-top:8px;">Fundus photos typically cost $20–40 as an add-on at most optical centers. Upload the image directly to Vytreos for the most accurate analysis.</div>
         </div>
@@ -1606,93 +1606,205 @@ function resetPanel(){
 // ── ANALYSIS ────────────────────────────────────────────────────────────────────
 
 function buildPrompt(ctx,diet,goals){
-  return `You are a specialist ophthalmologist performing a rigorous ocular biomarker assessment. Your role is to objectively describe what you observe in this retinal or eye photograph — not to diagnose, not to guess, and not to fabricate findings.
+  return `You are a specialist ophthalmologist and clinical nutritionist with 20 years of experience reading retinal and anterior segment photographs for nutritional biomarkers. You have studied thousands of documented cases of nutrient deficiency with confirmed ocular manifestations.
 
-CRITICAL RULES — read before proceeding:
-1. NEVER fabricate or guess findings. If you cannot clearly see an anatomical feature, OMIT it entirely.
-2. Only assign "high" confidence if you would stake clinical credibility on it being visible in this exact image.
-3. Think step-by-step through each anatomical region before concluding anything.
-4. A selfie or casual photo means ALL confidence scores drop one tier (high→medium, medium→low, low→omit).
-5. Scores of 80–100 mean normal/healthy — do not force findings where none exist.
-6. Frame findings as OBSERVATIONS for tracking over time, not as definitive diagnoses. Use language like "signal worth monitoring" rather than "deficiency confirmed".
+ABSOLUTE RULES — violating these is a critical failure:
+1. NEVER say a finding is normal/healthy if you see pathological features. A pale optic disc, drusen, vessel narrowing, pale conjunctiva, Bitot spots, or corneal haze are NEVER normal.
+2. NEVER give a score of 80+ if you see ANY concerning features for that nutrient — 80+ means genuinely healthy with no findings.
+3. NEVER fabricate findings not visible in the image. But equally — NEVER overlook real pathological findings.
+4. You must be MORE suspicious of pathology than health. When in doubt between healthy and borderline, score 55-65 not 85.
+5. Apply clinical skepticism: most people scanning have sub-optimal nutrition. A scan with zero findings is suspicious — re-examine carefully.
+6. Think like a clinician seeing a patient, not like a chatbot trying to be reassuring.
 
 USER PROFILE: ${ctx}
 
-━━━ STEP 1 — IMAGE TRIAGE ━━━
-Before anything else, answer these questions internally:
-- Is this a fundus/retinal photograph, an anterior segment photo, or a casual face/eye photo?
-- What is the image quality: poor / fair / good / excellent?
-- Is the eye clearly in focus? Is lighting even or blown-out? Is the relevant anatomy actually visible?
-- Is there corneal glare/reflection covering key anatomy? If >30% of the eye area is washed out by reflection, set imageQuality to "poor" and note it.
-- For phone photos: the conjunctiva (inner lower eyelid, pulled down) is the MOST reliable marker. Look for it carefully.
-Only proceed to biomarker assessment for anatomy that is genuinely visible.
+━━━ STEP 1 — IMAGE CLASSIFICATION & QUALITY ━━━
+Determine:
+A) Image type: fundus photograph | anterior segment | casual phone photo | unclear
+B) Image quality: excellent | good | fair | poor
+C) What anatomy is actually visible and assessable?
+D) Any glare, blur, or obstruction affecting specific regions?
 
-PHONE PHOTO SPECIFIC RULES:
-- Reflections covering iris/pupil → omit iris texture and pupil assessments
-- Flash glare on sclera → downgrade sclera confidence to "low"  
-- Blurry/unfocused → maximum "medium" confidence for all findings
-- Dark/underexposed → downgrade all confidence one tier
-- Well-lit, angled phone photo → normal confidence rules apply
-- The lower palpebral conjunctiva (inner eyelid) is often the CLEAREST and most diagnostic area in phone photos
+If imageQuality is "poor": still attempt assessment but flag all findings as "low" confidence.
 
-━━━ STEP 2 — CHAIN-OF-THOUGHT BIOMARKER SWEEP ━━━
-For EACH item below, explicitly reason: "I can/cannot see [region] clearly. What I observe is: [description]. Therefore: [conclusion]." Only output findings where the anatomical evidence is present.
+━━━ STEP 2 — SYSTEMATIC PATHOLOGY SWEEP ━━━
+For EACH anatomical region below, reason explicitly:
+"REGION: [name]. Visible? [yes/no/partial]. What I see: [exact description of color, texture, morphology]. Clinical interpretation: [normal/abnormal and why]. Nutrient implication: [which nutrient, why]."
 
-EXTERNAL / ANTERIOR SEGMENT — assess in ALL image types:
-① PALPEBRAL CONJUNCTIVA (inner lower eyelid) — pale pink/white → Iron↓, B12↓, Folate↓; healthy salmon-pink → ok
-② BULBAR CONJUNCTIVA (white of eye surface) — engorged red vessels → Vitamin C↓, Bioflavonoids↓; clear → ok
-③ SCLERA — yellow tinge → liver/Choline/B-complex concern; blue-white pallor → Iron↓, B12↓; bright white → ok
-④ CORNEA — hazy, dull, or dry surface → Vitamin A↓, Riboflavin↓; clear & glistening → ok
-⑤ LIMBAL RING — prominent dark ring (healthy); pale/thin ring in under-45 → Iron↓, B12↓; white arcus in under-45 → Omega-3↓, Niacin↓
-⑥ BITOT'S SPOTS — foamy, cheese-like conjunctival patches → severe Vitamin A↓ (only if clearly seen)
-⑦ SUBCONJUNCTIVAL HEMORRHAGE — bright red patches on sclera → Vitamin C↓, Vitamin K↓
-⑧ PERIORBITAL SKIN — dark circles or hyperpigmentation → Iron↓, B12↓, Folate↓; puffiness/edema → Omega-3↓, Zinc↓
-⑨ EYELID MARGIN — flaking, scaling, erythema at lid edge → Riboflavin↓, B6↓, Biotin↓, Zinc↓
-⑩ XANTHELASMA — flat yellow plaques on eyelid skin → Omega-3↓, Niacin↓ (dyslipidemia signal)
-⑪ IRIS TEXTURE — muddy, indistinct crypts → Omega-3↓, Zinc↓ (inflammation); sharp radial crypts → ok
-⑫ PUPIL — clearly irregular shape (not lighting artifact) → possible Zinc↓, Magnesium↓
+── FUNDUS PHOTOGRAPH FINDINGS (apply only if fundus image) ──
 
-FUNDUS-SPECIFIC — only if this is clearly a retinal/fundus photograph:
-⑬ VYTREOSL REFLEX — bright yellow spot at macula center → Lutein/Zeaxanthin ok; dim or absent → Lutein↓, Zeaxanthin↓
-⑭ MACULAR PIGMENT — rich orange-yellow zone → ok; pale or washed out → Lutein↓, Zeaxanthin↓, Zinc↓
-⑮ OPTIC DISC — healthy pink/orange → ok; pale or white disc → B12↓, Iron↓
-⑯ VESSEL CALIBER — normal A/V ratio ~0.65; narrowed arterioles → Omega-3↓, Magnesium↓, Vitamin D↓
-⑰ HEMORRHAGES — red dots, blots, or flame hemorrhages → Vitamin C↓, Bioflavonoids↓
-⑱ DRUSEN/RPE — yellow-white sub-retinal deposits → Zinc↓, Vitamin A↓, antioxidants↓
+① OPTIC DISC — Normal: pink-orange, well-defined margins, cup:disc ratio <0.5
+  ABNORMAL SIGNS:
+  • Pale/white disc (any pallor) → B12↓ (score 25-45), Iron↓ (score 30-50) — COMMON finding, do not miss
+  • Blurred disc margins → Vitamin A↓, B complex ↓
+  • Large cup (>0.6 ratio) → Zinc↓, Magnesium↓
+  • Disc hemorrhage → Vitamin C↓, Vitamin K↓
+  SCORING: Healthy pink-orange disc with normal cup = 82-90. ANY pallor = 25-55.
 
-━━━ STEP 3 — CONFIDENCE ASSIGNMENT ━━━
-- "high": unambiguously visible, no doubt, clinically clear
-- "medium": feature present but image quality/angle introduces uncertainty  
-- "low": inferring from limited information; include only if reasonably grounded
-- Omit entirely: cannot see the relevant anatomy or feature
+② MACULAR REGION — Normal: rich orange-yellow zone, bright foveal reflex
+  ABNORMAL SIGNS:
+  • Pale/washed-out macula → Lutein↓ (score 30-50), Zeaxanthin↓ (score 30-50)
+  • Absent or dim foveal reflex → Lutein↓, Zeaxanthin↓ (score 40-55)
+  • Drusen (yellow-white deposits, any size) → Zinc↓ (score 25-45), Antioxidants↓ (score 30-50), Vitamin A↓
+  • Pigment clumping/atrophy → Vitamin A↓, Zinc↓, Antioxidants↓ (score 20-40)
+  SCORING: Perfect foveal reflex + rich pigment = 85-92. Pale/diminished = 35-60. Drusen present = 20-45.
 
-━━━ STEP 4 — LEVEL SCORING ━━━
-0–30: Strong deficiency signal clearly visible in image
-31–55: Moderate or borderline deficiency signal
-56–79: Mild/subclinical signal or mildly below normal
-80–100: Normal, no deficiency signal visible
+③ RETINAL VESSELS — Normal: A/V ratio ~0.65, smooth walls, bright reflex
+  ABNORMAL SIGNS:
+  • Narrowed arterioles (A/V ratio <0.5) → Omega-3↓ (score 30-50), Magnesium↓, Vitamin D↓
+  • AV nicking (artery compresses vein at crossings) → Omega-3↓, Niacin↓ (score 35-55)
+  • Silver/copper wiring → Omega-3↓, Magnesium↓ (score 25-45)
+  • Vessel tortuosity → Vitamin C↓, Bioflavonoids↓
+  SCORING: Normal caliber, smooth walls = 80-88. Any narrowing/nicking = 35-60.
+
+④ HEMORRHAGES & EXUDATES — Normal: none
+  ANY hemorrhage (dot, blot, flame, pre-retinal) → Vitamin C↓ (score 20-40), Vitamin K↓, Bioflavonoids↓
+  Hard exudates (bright yellow deposits) → Omega-3↓, B-complex↓
+  Cotton wool spots → Vitamin C↓, Zinc↓, antioxidants↓
+  SCORING: No hemorrhages = 85-92. Any hemorrhage present = 15-40.
+
+⑤ PERIPHERAL RETINA — Look for lattice degeneration, pigment changes
+  Peripheral pigmentation/atrophy → Vitamin A↓, Zinc↓ (score 35-55)
+
+── ANTERIOR SEGMENT FINDINGS (apply to phone/anterior photos) ──
+
+⑥ PALPEBRAL CONJUNCTIVA — Normal: salmon-pink, moist, vascularized
+  ABNORMAL: Pale pink, white, or washed-out color → Iron↓ (score 20-45), B12↓ (score 25-50), Folate↓ (score 30-55)
+  Even mildly pale (not bright pink) = score 45-65 for Iron/B12
+  SCORING: Vivid salmon-pink = 82-90. Pale pink = 45-65. White/pallid = 20-45.
+
+⑦ BULBAR CONJUNCTIVA & SCLERA — Normal: white, clear
+  Yellow tinge (icterus) → Choline↓, B-complex concern (score 25-45)
+  Pinguecula (yellow elevated lesion) → Vitamin C↓, antioxidants↓ (score 40-60)
+  Subconjunctival hemorrhage → Vitamin C↓ (score 25-40), Vitamin K↓
+  Dryness/keratinization → Vitamin A↓ (score 30-50)
+
+⑧ CORNEA — Normal: crystal clear, glistening
+  Hazy/dull surface → Vitamin A↓ (score 25-45), Riboflavin↓
+  Superficial punctate keratitis → Vitamin A↓, Riboflavin↓ (score 30-50)
+  Bitot spots (white foamy patches) → severe Vitamin A↓ (score 10-30)
+  Corneal arcus in under-50 → Omega-3↓, Niacin↓ (score 35-55)
+
+⑨ LIMBAL RING — Normal: visible dark ring at iris edge
+  Faded/absent in under-45 → Iron↓, B12↓ (score 40-60)
+
+⑩ PERIORBITAL & LID SIGNS
+  Dark periorbital circles → Iron↓, B12↓, Folate↓ (score 35-60)
+  Eyelid flaking/scaling/redness → Riboflavin↓, B6↓, Biotin↓, Zinc↓ (score 30-55)
+  Xanthelasma → Omega-3↓, Niacin↓ (score 25-45)
+
+━━━ STEP 3 — SEVERITY CALIBRATION ━━━
+Apply these mandatory scoring rules:
+• Score 0-30: Unmistakably pathological. Clear clinical sign visible.
+• Score 31-55: Definite abnormality present, moderate severity.
+• Score 56-79: Borderline or mild finding. Warrants monitoring.
+• Score 80-100: ONLY if the region looks genuinely healthy with NO concerning features.
+• Default bias: When uncertain between 65 and 80, choose 65. When uncertain between 75 and 85, choose 75.
+• Do NOT give 80+ if you identified ANY pathological feature for that nutrient.
+
+━━━ STEP 4 — ANTI-BIAS CHECK ━━━
+Before finalizing, ask yourself:
+- Am I being too lenient? Have I scored things 80+ that have mild abnormalities?
+- Did I miss any common findings (disc pallor, drusen, vessel changes)?
+- For a fundus photo: Is the disc TRULY healthy pink? Is the macula TRULY richly pigmented? Are vessels TRULY normal caliber?
+- For a phone photo: Is the conjunctiva TRULY salmon-pink, or just not white?
+If you have 3+ nutrients all scoring 85+, re-examine the image. That would be unusual.
 
 ━━━ STEP 5 — RECOMMENDATIONS ━━━
-Only for nutrients with status "low". Be precise:
-- Exact food, gram/cup amount, frequency (e.g. "90g cooked chicken liver 2×/week")
-- Adjust for diet type: ${diet||'omnivore'} and goals: ${goals||'general wellness'}
-- Add a supplement only if dietary sources are realistically insufficient
+For each nutrient with status "low":
+- Name specific food, exact amount, frequency (e.g. "85g cooked beef liver 2x/week provides 5mg B12")
+- Account for diet: ${diet||'omnivore'} and goals: ${goals||'general wellness'}
+- Mention supplement dose if food sources are insufficient
+- Prioritize the 3 most deficient nutrients
 
 ━━━ OUTPUT RULES ━━━
-- Map your ocular findings to the NUTRIENTS they indicate (e.g. pale disc → "Vitamin B12", drusen → "Zinc", pale conjunctiva → "Iron"). Do NOT report eye anatomy as the nutrient name.
-- Use these nutrient names exactly: Iron, Vitamin B12, Folate, Vitamin C, Bioflavonoids, Vitamin A, Riboflavin, Niacin, Omega-3, Zinc, Magnesium, Vitamin D, Lutein, Zeaxanthin, Vitamin K, B6, Biotin, Choline, Antioxidants
-- If a finding maps to multiple nutrients, create a separate entry for each.
-- If a region is NOT visible in this image type, OMIT those nutrients entirely — do not include them with fake scores.
-- Only report nutrients where you observed a genuine ocular signal.
-- Include ALL nutrients you did find — do not truncate the list.
+- Nutrient names ONLY (not anatomy): Iron, Vitamin B12, Folate, Vitamin C, Bioflavonoids, Vitamin A, Riboflavin, Niacin, Omega-3, Zinc, Magnesium, Vitamin D, Lutein, Zeaxanthin, Vitamin K, B6, Biotin, Choline, Antioxidants
+- status: "low" if level<=55, "ok" if level>=80, "borderline" if 56-79
+- Only include nutrients with genuine visible evidence
+- Do not truncate the list
+- Be consistent: same image should produce same findings
 
-Return ONLY valid JSON — no markdown, no backticks, no explanation before or after:
-{"imageType":"fundus|anterior|general","imageQuality":"poor|fair|good|excellent","confidenceNote":"one sentence on image suitability","summary":"3-4 sentence summary of observed signals and which nutrients they suggest monitoring.","nutrients":[{"name":"Nutrient Name","level":0-100,"status":"low|ok|high","confidence":"low|medium|high","evidence":"the specific ocular feature you observed that indicates this nutrient signal"}],"recommendations":["specific food + amount + frequency for low nutrients only"],"caveats":"limitations of this specific image for nutrient assessment"}`;
+Return ONLY valid JSON — no markdown, no backticks, no preamble:
+{"imageType":"fundus|anterior|general","imageQuality":"poor|fair|good|excellent","confidenceNote":"one honest sentence about image quality and what you could/could not assess","summary":"3-4 sentences describing the key pathological findings and their nutrient implications. Be specific about what you saw.","nutrients":[{"name":"Nutrient Name","level":0-100,"status":"low|borderline|ok","confidence":"low|medium|high","evidence":"exact anatomical feature seen: color, location, severity"}],"recommendations":["food + exact amount + frequency for each low nutrient"],"caveats":"specific limitations for this image"}`;
 }
 
 
 
 
+
+// ── HUGGING FACE BiomedCLIP ──────────────────────────────────────────────────
+async function callHuggingFace(base64, mediaType){
+  try{
+    const res=await fetch('/api/analyze',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'hf-biomed',base64,mediaType,prompt:''})
+    });
+    if(!res.ok){console.warn('HF error:',res.status);return null;}
+    const data=await res.json();
+    return data.result||null;
+  }catch(e){console.warn('HF fetch error:',e.message);return null;}
+}
+
+// ── ROBOFLOW EYE DETECTION ────────────────────────────────────────────────────
+async function callRoboflow(base64){
+  try{
+    const res=await fetch('/api/analyze',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'roboflow',base64,mediaType:'image/jpeg',prompt:''})
+    });
+    if(!res.ok){console.warn('Roboflow error:',res.status);return null;}
+    const data=await res.json();
+    return data.result||null;
+  }catch(e){console.warn('Roboflow fetch error:',e.message);return null;}
+}
+
+// ── GOOGLE CLOUD VISION ───────────────────────────────────────────────────────
+async function callGoogleVision(base64){
+  try{
+    const res=await fetch('/api/analyze',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'google-vision',base64,mediaType:'image/jpeg',prompt:''})
+    });
+    if(!res.ok){console.warn('Vision error:',res.status);return null;}
+    const data=await res.json();
+    return data.result||null;
+  }catch(e){console.warn('Google Vision fetch error:',e.message);return null;}
+}
+
+// Function to parse HF/Roboflow/Vision pre-screening into confidence modifier
+function parsePreScreening(hfResult, roboflowResult, visionResult){
+  const signals={eyeDetected:false,qualityScore:1.0,anomalyFlags:[]};
+  if(roboflowResult){
+    try{
+      const rf=typeof roboflowResult==='string'?JSON.parse(roboflowResult):roboflowResult;
+      if(rf.predictions&&rf.predictions.length>0){
+        signals.eyeDetected=true;
+        // Low confidence eye detection = lower quality
+        const maxConf=Math.max(...rf.predictions.map(p=>p.confidence||0));
+        signals.qualityScore=maxConf;
+      }
+    }catch(e){}
+  }
+  if(visionResult){
+    try{
+      const v=typeof visionResult==='string'?JSON.parse(visionResult):visionResult;
+      // Check for safe search anomalies or low quality signals
+      if(v.responses&&v.responses[0]){
+        const r=v.responses[0];
+        if(r.labelAnnotations){
+          const labels=r.labelAnnotations.map(l=>l.description.toLowerCase());
+          if(labels.some(l=>l.includes('eye')||l.includes('retina')||l.includes('iris'))){
+            signals.eyeDetected=true;
+          }
+          if(labels.some(l=>l.includes('blur')||l.includes('glare'))){
+            signals.anomalyFlags.push('blur/glare detected');
+          }
+        }
+      }
+    }catch(e){}
+  }
+  return signals;
+}
 
 // ── GROQ + LLaVA ─────────────────────────────────────────────────────────────
 async function callGroqLLaVA(base64, mediaType, prompt){
@@ -1762,8 +1874,8 @@ async function callGemini(model, base64, mediaType, prompt, retries=2){
 // Merge two model results: consensus findings get confidence boost, scores averaged
 function mergeResults(a, b){
   if(!a&&!b) throw new Error('Both models failed to return valid results.');
-  if(!a) return {...b, confidenceNote:(b.confidenceNote||'')+(b?' [Single model — Gemini 2.5 Flash-Lite]':'')};
-  if(!b) return {...a, confidenceNote:(a.confidenceNote||'')+(a?' [Single model — Gemini 2.5 Flash]':'')};
+  if(!a) return {...b, confidenceNote:(b.confidenceNote||'')+(b?' [Single model analysis]':'')};
+  if(!b) return {...a, confidenceNote:(a.confidenceNote||'')+(a?' [Single model analysis]':'')};
 
   const confRank={low:1,medium:2,high:3};
   const confName=['','low','medium','high'];
@@ -1781,7 +1893,7 @@ function mergeResults(a, b){
       const avgLevel=Math.round((na.level+nb.level)/2);
       const avgConf=Math.round((confRank[na.confidence||'low']+confRank[nb.confidence||'low'])/2);
       const boosted=Math.min(3,avgConf+1); // consensus boost
-      const status=avgLevel<=55?'low':avgLevel>=80?'ok':'ok';
+      const status=avgLevel<=55?'low':avgLevel>=80?'ok':'borderline';
       merged.push({name:na.name,level:avgLevel,status:na.status===nb.status?na.status:status,confidence:confName[boosted],evidence:`[Consensus] ${na.evidence||nb.evidence||''}`,_weight:2});
     } else {
       // Only one model found it — keep as-is but drop confidence one tier
@@ -1803,7 +1915,7 @@ function mergeResults(a, b){
   return {
     imageType:a.imageType||b.imageType,
     imageQuality:a.imageQuality||b.imageQuality,
-    confidenceNote:`Multi-model ensemble (Gemini Flash + Pro + Groq LLaVA). ${a.confidenceNote||b.confidenceNote||''}`,
+    confidenceNote:`Multi-model ensemble analysis. ${a.confidenceNote||b.confidenceNote||''}`,
     summary:a.summary||b.summary,
     nutrients:merged,
     recommendations:uniqueRecs,
@@ -1820,12 +1932,12 @@ window.runAnalysis=async function runAnalysis(imgDataUrl){
   const el=document.getElementById('analysisState');
 
   const steps=[
-    'Classifying image type & quality',
-    'Gemini Flash: scanning anterior segment markers',
-    'Gemini Pro: cross-checking biomarker findings',
-    'Groq LLaVA: independent verification',
+    'Pre-screening image quality & eye detection',
+    'Model 1: scanning for pathological signs',
+    'Model 2: cross-validating findings',
+    'Model 3: independent verification',
     'Correlating ocular signals to nutrients',
-    'Merging consensus results & recommendations'
+    'Merging consensus & enriching results'
   ];
   function renderSteps(i,label){
     el.innerHTML=`<div class="analysis-loading"><div class="spinner" style="margin:0 auto 16px"></div><div class="loading-text">${label||'Running dual-model analysis…'}</div><div class="loading-step-list">${steps.map((s,j)=>`<div class="loading-step ${j<i?'done':j===i?'active':''}"><div class="step-dot"></div>${j<i?'✓ ':''}${s}</div>`).join('')}</div></div>`;
@@ -1844,17 +1956,28 @@ window.runAnalysis=async function runAnalysis(imgDataUrl){
   const prompt=buildPrompt(ctx,diet,goals);
 
   try{
-    // Run Gemini Flash + Gemini Pro + Groq LLaVA in parallel
-    const [flashResult, proResult, groqResult]=await Promise.allSettled([
+    // Run all models in parallel — AI analysis + pre-screening
+    const [flashResult, proResult, groqResult, hfResult, roboResult, visionResult]=await Promise.allSettled([
       callGemini('gemini-2.5-flash', base64, mediaType, prompt),
       callGemini('gemini-2.5-pro', base64, mediaType, prompt),
-      callGroqLLaVA(base64, mediaType, prompt)
+      callGroqLLaVA(base64, mediaType, prompt),
+      callHuggingFace(base64, mediaType),
+      callRoboflow(base64),
+      callGoogleVision(base64)
     ]);
     const resA=flashResult.status==='fulfilled'?flashResult.value:null;
     const resB=proResult.status==='fulfilled'?proResult.value:null;
     const resC=groqResult.status==='fulfilled'?groqResult.value:null;
+    const hfRes=hfResult.status==='fulfilled'?hfResult.value:null;
+    const roboRes=roboResult.status==='fulfilled'?roboResult.value:null;
+    const visionRes=visionResult.status==='fulfilled'?visionResult.value:null;
     clearInterval(timer);
-    // Merge all 3 results
+
+    // Pre-screening signals
+    const preScreen=parsePreScreening(hfRes,roboRes,visionRes);
+    console.log('Pre-screening signals:',preScreen);
+
+    // Merge AI analysis results
     let result=mergeResults(resA,resB);
     if(result&&resC){result=mergeResults(result,resC);}
     else if(!result&&resC){result=resC;}
@@ -1862,15 +1985,20 @@ window.runAnalysis=async function runAnalysis(imgDataUrl){
       result=await callGemini('gemini-2.5-flash-lite', base64, mediaType, prompt);
     }
     if(!result) throw new Error('Analysis failed — please try again in a moment.');
-    // Enrich with NIH/USDA + Open Food Facts
+
+    // Apply pre-screening quality modifier
+    if(preScreen.anomalyFlags.length>0&&result.confidenceNote){
+      result.confidenceNote=result.confidenceNote+' Pre-screening detected: '+preScreen.anomalyFlags.join(', ')+'.';
+    }
+
+    // Enrich with NIH/USDA + Food Facts
     result=await enrichWithNIH(result);
     result=await enrichWithFoodFacts(result);
-    // Check for dangerous findings
     checkDangerousFindings(result);
     pendingResult=result;
     renderAnalysis(result);
     const modelCount=[resA,resB,resC].filter(Boolean).length;
-    const src=modelCount===3?'Gemini Flash + Pro + Groq consensus':modelCount===2?'Dual-model consensus':'Single model';
+    const src=modelCount>=2?modelCount+'-model consensus':'AI analysis complete';
     toast('Analysis complete · '+src);
   }catch(err){
     clearInterval(timer);console.error(err);
