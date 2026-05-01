@@ -5,6 +5,7 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#06080a">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Vytreos">
@@ -1758,19 +1759,6 @@ async function callRoboflow(base64){
   }catch(e){console.warn('Roboflow fetch error:',e.message);return null;}
 }
 
-// ── GOOGLE CLOUD VISION ───────────────────────────────────────────────────────
-async function callGoogleVision(base64){
-  try{
-    const res=await fetch('/api/analyze',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'google-vision',base64,mediaType:'image/jpeg',prompt:''})
-    });
-    if(!res.ok){console.warn('Vision error:',res.status);return null;}
-    const data=await res.json();
-    return data.result||null;
-  }catch(e){console.warn('Google Vision fetch error:',e.message);return null;}
-}
-
 // Function to parse HF/Roboflow/Vision pre-screening into confidence modifier
 function parsePreScreening(hfResult, roboflowResult, visionResult){
   const signals={eyeDetected:false,qualityScore:1.0,anomalyFlags:[]};
@@ -1816,8 +1804,11 @@ async function callGroqLLaVA(base64, mediaType, prompt){
     if(!res.ok){console.warn('Groq error:',res.status);return null;}
     const data=await res.json();
     if(!data.result)return null;
-    try{return JSON.parse(data.result.replace(/```json|```/g,'').trim());}
-    catch(e){console.warn('Groq JSON parse failed');return null;}
+    const raw=data.result.replace(/```json|```/g,'').trim();
+    try{return JSON.parse(raw);}catch(e){}
+    const m=raw.match(/\{[\s\S]*\}/);
+    if(m){try{return JSON.parse(m[0]);}catch(e){}}
+    console.warn('Groq JSON parse failed:',raw.slice(0,120));return null;
   }catch(e){console.warn('Groq fetch error:',e.message);return null;}
 }
 
@@ -1873,7 +1864,7 @@ async function callGemini(model, base64, mediaType, prompt, retries=2){
 
 // Merge two model results: consensus findings get confidence boost, scores averaged
 function mergeResults(a, b){
-  if(!a&&!b) throw new Error('Both models failed to return valid results.');
+  if(!a&&!b) throw new Error('All AI models failed — Gemini may be rate limited. Please wait 30 seconds and retry.');
   if(!a) return {...b, confidenceNote:(b.confidenceNote||'')+(b?' [Single model analysis]':'')};
   if(!b) return {...a, confidenceNote:(a.confidenceNote||'')+(a?' [Single model analysis]':'')};
 
@@ -1957,20 +1948,19 @@ window.runAnalysis=async function runAnalysis(imgDataUrl){
 
   try{
     // Run all models in parallel — AI analysis + pre-screening
-    const [flashResult, proResult, groqResult, hfResult, roboResult, visionResult]=await Promise.allSettled([
+    const [flashResult, proResult, groqResult, hfResult, roboResult]=await Promise.allSettled([
       callGemini('gemini-2.5-flash', base64, mediaType, prompt),
       callGemini('gemini-2.5-pro', base64, mediaType, prompt),
       callGroqLLaVA(base64, mediaType, prompt),
       callHuggingFace(base64, mediaType),
-      callRoboflow(base64),
-      callGoogleVision(base64)
+      callRoboflow(base64)
     ]);
     const resA=flashResult.status==='fulfilled'?flashResult.value:null;
     const resB=proResult.status==='fulfilled'?proResult.value:null;
     const resC=groqResult.status==='fulfilled'?groqResult.value:null;
     const hfRes=hfResult.status==='fulfilled'?hfResult.value:null;
     const roboRes=roboResult.status==='fulfilled'?roboResult.value:null;
-    const visionRes=visionResult.status==='fulfilled'?visionResult.value:null;
+    const visionRes=null;
     clearInterval(timer);
 
     // Pre-screening signals
@@ -1984,7 +1974,7 @@ window.runAnalysis=async function runAnalysis(imgDataUrl){
     else if(!result){
       result=await callGemini('gemini-2.5-flash-lite', base64, mediaType, prompt);
     }
-    if(!result) throw new Error('Analysis failed — please try again in a moment.');
+    if(!result) throw new Error('Analysis failed — please wait a moment and retry.');
 
     // Apply pre-screening quality modifier
     if(preScreen.anomalyFlags.length>0&&result.confidenceNote){
