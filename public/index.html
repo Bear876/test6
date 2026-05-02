@@ -1794,6 +1794,24 @@ function parsePreScreening(hfResult, roboflowResult, visionResult){
   return signals;
 }
 
+// ── MISTRAL VISION (Pixtral) ─────────────────────────────────────────────────
+async function callMistral(base64, mediaType, prompt){
+  try{
+    const res=await fetch('/api/analyze',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'mistral-vision',base64,mediaType,prompt:prompt.substring(0,4000)})
+    });
+    if(!res.ok){console.warn('Mistral error:',res.status);return null;}
+    const data=await res.json();
+    if(!data.result)return null;
+    const raw=data.result.replace(/```json|```/g,'').trim();
+    try{return JSON.parse(raw);}catch(e){}
+    const m=raw.match(/\{[\s\S]*\}/);
+    if(m){try{return JSON.parse(m[0]);}catch(e){}}
+    console.warn('Mistral JSON parse failed');return null;
+  }catch(e){console.warn('Mistral fetch error:',e.message);return null;}
+}
+
 // ── GROQ + LLaVA ─────────────────────────────────────────────────────────────
 async function callGroqLLaVA(base64, mediaType, prompt){
   try{
@@ -1865,8 +1883,8 @@ async function callGemini(model, base64, mediaType, prompt, retries=2){
 // Merge two model results: consensus findings get confidence boost, scores averaged
 function mergeResults(a, b){
   if(!a&&!b) throw new Error('All AI models failed — Gemini may be rate limited. Please wait 30 seconds and retry.');
-  if(!a) return {...b, confidenceNote:(b.confidenceNote||'')+(b?' [Single model analysis]':'')};
-  if(!b) return {...a, confidenceNote:(a.confidenceNote||'')+(a?' [Single model analysis]':'')};
+  if(!a) return {...b, confidenceNote:(b.confidenceNote||'')+(b?'':'')};
+  if(!b) return {...a, confidenceNote:(a.confidenceNote||'')+(a?'':'')};
 
   const confRank={low:1,medium:2,high:3};
   const confName=['','low','medium','high'];
@@ -1948,16 +1966,18 @@ window.runAnalysis=async function runAnalysis(imgDataUrl){
 
   try{
     // Run all models in parallel — AI analysis + pre-screening
-    const [flashResult, proResult, groqResult, hfResult, roboResult]=await Promise.allSettled([
+    const [flashResult, proResult, groqResult, mistralResult, hfResult, roboResult]=await Promise.allSettled([
       callGemini('gemini-2.5-flash', base64, mediaType, prompt),
       callGemini('gemini-2.5-pro', base64, mediaType, prompt),
       callGroqLLaVA(base64, mediaType, prompt),
+      callMistral(base64, mediaType, prompt),
       callHuggingFace(base64, mediaType),
       callRoboflow(base64)
     ]);
     const resA=flashResult.status==='fulfilled'?flashResult.value:null;
     const resB=proResult.status==='fulfilled'?proResult.value:null;
     const resC=groqResult.status==='fulfilled'?groqResult.value:null;
+    const resD=mistralResult.status==='fulfilled'?mistralResult.value:null;
     const hfRes=hfResult.status==='fulfilled'?hfResult.value:null;
     const roboRes=roboResult.status==='fulfilled'?roboResult.value:null;
     const visionRes=null;
@@ -1971,7 +1991,9 @@ window.runAnalysis=async function runAnalysis(imgDataUrl){
     let result=mergeResults(resA,resB);
     if(result&&resC){result=mergeResults(result,resC);}
     else if(!result&&resC){result=resC;}
-    else if(!result){
+    if(result&&resD){result=mergeResults(result,resD);}
+    else if(!result&&resD){result=resD;}
+    if(!result){
       result=await callGemini('gemini-2.5-flash-lite', base64, mediaType, prompt);
     }
     if(!result) throw new Error('Analysis failed — please wait a moment and retry.');
@@ -1987,7 +2009,7 @@ window.runAnalysis=async function runAnalysis(imgDataUrl){
     checkDangerousFindings(result);
     pendingResult=result;
     renderAnalysis(result);
-    const modelCount=[resA,resB,resC].filter(Boolean).length;
+    const modelCount=[resA,resB,resC,resD].filter(Boolean).length;
     const src=modelCount>=2?modelCount+'-model consensus':'AI analysis complete';
     toast('Analysis complete · '+src);
   }catch(err){
@@ -2006,7 +2028,45 @@ function renderAnalysis(r){
   const meta=`<div class="meta-pills">${r.imageType?`<span class="meta-pill">${typeMap[r.imageType]||r.imageType}</span>`:''}${qualityBadge}${r.nutrients?`<span class="meta-pill">${r.nutrients.length} nutrients assessed</span>`:''}${ensemblePill}</div>`;
   const confNote=r.confidenceNote?`<div class="caveat-box" style="margin-bottom:14px;border-left-color:var(--blue)">ℹ ${r.confidenceNote}</div>`:'';
   const rows=buildRows(r.nutrients||[],true);
-  const recs=(r.recommendations||[]).map((rec,i)=>`<div class="rec-item"><div class="rec-icon">${i+1}</div><span>${rec}</span></div>`).join('');
+  // Nutrient-specific dietary recommendations
+  const foodMap={
+    'Iron':'85g chicken liver 2x/week (11mg), 1 cup lentils daily (6.6mg), cooked spinach with vitamin C. Avoid coffee/tea within 1hr of iron-rich meals.',
+    'Vitamin B12':'85g salmon 3x/week (4.9mcg), 1 egg daily (0.6mcg). Vegans: 500-1000mcg B12 supplement daily or fortified foods.',
+    'Folate':'1 cup cooked spinach daily (263mcg), half avocado daily (59mcg), black beans 3x/week (256mcg/cup).',
+    'Vitamin C':'Half red bell pepper daily (95mg), 1 kiwi daily (64mg), or 1 cup strawberries (85mg). Eat raw — heat destroys vitamin C.',
+    'Vitamin A':'1 medium sweet potato daily (961mcg RAE), carrots half cup (459mcg). Eat with fat for absorption.',
+    'Lutein':'1 cup cooked kale daily (23.7mg) or spinach (20.4mg). Cook lightly. 2 eggs daily add 0.4mg.',
+    'Zeaxanthin':'1 cup corn weekly (0.9mg), 2 eggs daily, orange peppers 3x/week (2.1mg each).',
+    'Omega-3':'85g salmon 2-3x/week (1.8g EPA+DHA), 1oz walnuts daily (2.5g ALA), or 1g fish oil supplement.',
+    'Zinc':'85g beef 3x/week (7mg), 1oz pumpkin seeds daily (2.2mg), 1 cup chickpeas weekly (2.5mg).',
+    'Magnesium':'1oz almonds daily (80mg), 1 cup cooked spinach (157mg), 1oz dark chocolate (64mg), black beans 3x/week.',
+    'Vitamin D':'85g salmon 3x/week (447 IU), 1 cup fortified milk daily (115 IU). Consider 1000-2000 IU supplement in winter.',
+    'Riboflavin':'1 cup milk daily (0.3mg), 1oz almonds (0.3mg), 1 egg daily (0.2mg), spinach 3x/week.',
+    'Niacin':'85g chicken breast daily (11mg) or 85g tuna (11.3mg), 1oz peanuts as snack (3.8mg).',
+    'Choline':'2 eggs daily (294mg total), 85g chicken breast 3x/week (72mg). Eggs are the richest source.',
+    'Bioflavonoids':'Citrus fruits daily (eat the pith), 1 cup berries, 1 cup green tea. Highest in citrus peel and white pith.',
+    'Vitamin K':'1 cup cooked kale daily (1062mcg), spinach, broccoli. Caution with blood thinners — consult doctor.',
+    'B6':'1 cup chickpeas daily (1.1mg), 85g salmon (0.9mg), 1 medium banana (0.4mg).',
+    'Biotin':'2 eggs daily (294mcg), 85g salmon weekly, 1oz almonds daily. Avoid raw egg whites which block absorption.',
+    'Antioxidants':'1 cup blueberries daily, 1oz dark chocolate (70%+), 1 cup green tea, varied colorful vegetables at every meal.',
+    'Vitamin E':'1oz almonds daily (7.3mg), 1 tbsp olive oil (1.9mg), half avocado daily (2.1mg).',
+  };
+  const lowNuts=(r.nutrients||[]).filter(n=>n.status==='low'||n.status==='borderline');
+  const recsHtml=lowNuts.length
+    ?lowNuts.map(n=>{
+        const food=foodMap[n.name]||(r.recommendations||[]).find(rec=>rec.toLowerCase().includes(n.name.toLowerCase()))||'Eat a varied whole-food diet rich in this nutrient.';
+        return `<div style="background:var(--bg-3);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="font-size:13px;font-weight:700;color:var(--text);">${n.name}</span>
+            <span style="font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;background:${n.status==='low'?'rgba(220,50,50,0.15)':'rgba(245,166,35,0.15)'};color:${n.status==='low'?'var(--red)':'var(--amber)'};">${n.status==='low'?'LOW':'BORDERLINE'}</span>
+          </div>
+          <div style="font-size:12px;color:var(--text-2);line-height:1.7;">▸ ${food}</div>
+        </div>`;
+      }).join('')
+    :(r.recommendations&&r.recommendations.length
+      ?r.recommendations.map((rec,i)=>`<div class="rec-item"><div class="rec-icon">${i+1}</div><span>${rec}</span></div>`).join('')
+      :'<div style="font-size:13px;color:var(--text-3);padding:8px 0;">No deficiencies detected — maintain your current diet and scan regularly.</div>');
+  const recs=recsHtml;
   // NIH/USDA enrichment panel
   const nihPanel=r.nihData&&Object.keys(r.nihData).length?`
     <div style="margin-top:20px;background:var(--bg-3);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
