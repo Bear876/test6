@@ -2771,6 +2771,16 @@ window.downloadPDF=function(){
   setTimeout(()=>w.print(),500);
 };
 
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('/sw.js').then(reg=>{
+      window._swReg=reg;
+    }).catch(()=>{});
+  });
+}
+</script>
+
 <!-- ── MOBILE SCAN WIZARD ── -->
 <div class="wizard-overlay" id="scanWizard">
   <div class="wizard-header">
