@@ -2595,37 +2595,182 @@ window.renderComparison=function(){
 window.downloadPDF=function(){
   if(!scans.length){toast('No scans to export','err');return;}
   const s=scans[0];
-  const rows=(s.nutrients||[]).map(n=>`
-    <tr>
-      <td>${n.name}</td>
-      <td>${n.level}/100</td>
-      <td style="color:${n.status==='low'?'#cc3333':n.status==='high'?'#cc8800':'#008844'}">${n.status==='low'?'Below normal':n.status==='high'?'Above normal':'Normal'}</td>
-      <td>${n.confidence||'—'}</td>
-      <td style="font-size:11px;">${n.evidence||'—'}</td>
-    </tr>`).join('');
-  const recs=(s.recommendations||[]).map((r,i)=>`<li>${r}</li>`).join('');
-  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Vytreos Health Report</title>
-  <style>
-    body{font-family:Georgia,serif;max-width:700px;margin:40px auto;color:#111;line-height:1.6;}
-    h1{font-size:28px;margin-bottom:4px;}
-    .sub{color:#666;font-size:13px;margin-bottom:32px;}
-    table{width:100%;border-collapse:collapse;margin:20px 0;font-size:13px;}
-    th{text-align:left;padding:8px 10px;border-bottom:2px solid #ddd;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#666;}
-    td{padding:8px 10px;border-bottom:1px solid #eee;}
-    .summary{background:#f8f8f8;border-left:3px solid #00a86b;padding:14px 18px;margin:20px 0;font-size:14px;}
-    .caveat{background:#fffbe6;border-left:3px solid #f5a623;padding:12px 16px;margin:20px 0;font-size:12px;color:#555;}
-    ol{font-size:13px;line-height:1.8;}
-    .footer{margin-top:48px;padding-top:16px;border-top:1px solid #ddd;font-size:11px;color:#999;}
-  </style></head><body>
-  <h1>Vytreos Retinal Health Report</h1>
-  <div class="sub">Generated ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})} · Most recent scan: ${fmtDate(s.createdAt)}</div>
-  ${s.summary?`<div class="summary">${s.summary}</div>`:''}
-  <h2 style="font-size:16px;margin-bottom:4px;">Nutrient signals assessed</h2>
-  <table><thead><tr><th>Nutrient</th><th>Level</th><th>Status</th><th>Confidence</th><th>Evidence</th></tr></thead><tbody>${rows}</tbody></table>
-  ${recs?`<h2 style="font-size:16px;margin-top:32px;margin-bottom:8px;">Dietary recommendations</h2><ol>${recs}</ol>`:''}
-  ${s.caveats?`<div class="caveat">⚠ ${s.caveats}</div>`:''}
-  <div class="footer">Vytreos is a wellness exploration tool, not a medical device. Results are AI-generated estimates and do not constitute clinical diagnosis. Always consult a qualified healthcare professional.</div>
-  
+  const date=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const scanDate=fmtDate(s.createdAt);
+  const nutrients=s.nutrients||[];
+  const lowNuts=nutrients.filter(n=>n.status==='low'||n.status==='borderline');
+  const okNuts=nutrients.filter(n=>n.status==='ok');
+
+  const foodMap={
+    'Iron':'Chicken liver (85g, 2x/week), lentils (1 cup daily), cooked spinach with vitamin C',
+    'Vitamin B12':'Salmon (85g, 3x/week), eggs (1 daily). Vegans: 500mcg B12 supplement daily',
+    'Folate':'Cooked spinach (1 cup daily), avocado (half daily), black beans (3x/week)',
+    'Vitamin C':'Red bell pepper (half daily), kiwi (1 daily), strawberries (1 cup). Eat raw.',
+    'Vitamin A':'Sweet potato (1 medium daily), carrots (half cup). Eat with fat for absorption.',
+    'Lutein':'Cooked kale (1 cup daily) or spinach (1 cup). Eggs (2 daily) add additional lutein.',
+    'Zeaxanthin':'Corn (1 cup weekly), eggs (2 daily), orange peppers (3x/week)',
+    'Omega-3':'Salmon (85g, 2-3x/week), walnuts (1oz daily), or 1g fish oil supplement',
+    'Zinc':'Beef (85g, 3x/week), pumpkin seeds (1oz daily), chickpeas (1 cup weekly)',
+    'Magnesium':'Almonds (1oz daily), cooked spinach (1 cup), dark chocolate (1oz), black beans',
+    'Vitamin D':'Salmon (85g, 3x/week), fortified milk (1 cup daily). Consider 1000-2000 IU supplement.',
+    'Riboflavin':'Milk (1 cup daily), almonds (1oz), eggs (1 daily), spinach (3x/week)',
+    'Niacin':'Chicken breast (85g daily) or tuna (85g), peanuts (1oz as snack)',
+    'Choline':'Eggs (2 daily), chicken breast (85g, 3x/week). Eggs are the richest source.',
+    'Bioflavonoids':'Citrus fruits daily (include the pith), berries (1 cup), green tea (1 cup)',
+    'Vitamin K':'Cooked kale (1 cup daily), spinach, broccoli. Caution with blood thinners.',
+    'B6':'Chickpeas (1 cup daily), salmon (85g), banana (1 medium)',
+    'Biotin':'Eggs (2 daily), salmon (weekly), almonds (1oz daily). Avoid raw egg whites.',
+    'Antioxidants':'Blueberries (1 cup daily), dark chocolate 70%+ (1oz), green tea (1 cup), colorful vegetables',
+    'Vitamin E':'Almonds (1oz daily), olive oil (1 tbsp), avocado (half daily)',
+  };
+
+  const nutrientRows=nutrients.map(n=>{
+    const bar=Math.round(n.level||0);
+    const color=n.status==='low'?'#dc3030':n.status==='borderline'?'#e08c00':'#00a86b';
+    const statusLabel=n.status==='low'?'Low':n.status==='borderline'?'Borderline':'Normal';
+    const bgColor=n.status==='low'?'#fff5f5':n.status==='borderline'?'#fffbf0':'#f5fdf8';
+    return `<tr style="background:${bgColor}">
+      <td style="padding:10px 14px;font-weight:600;font-size:13px;">${n.name}</td>
+      <td style="padding:10px 14px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="flex:1;height:8px;background:#eee;border-radius:4px;overflow:hidden;">
+            <div style="width:${bar}%;height:100%;background:${color};border-radius:4px;"></div>
+          </div>
+          <span style="font-size:12px;font-weight:700;color:#333;width:32px;">${bar}</span>
+        </div>
+      </td>
+      <td style="padding:10px 14px;"><span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;background:${color}22;color:${color};">${statusLabel}</span></td>
+      <td style="padding:10px 14px;font-size:11px;color:#666;">${n.confidence||'—'}</td>
+    </tr>`;
+  }).join('');
+
+  const recCards=lowNuts.map(n=>{
+    const food=foodMap[n.name]||'Consult a dietitian for personalized guidance.';
+    const color=n.status==='low'?'#dc3030':'#e08c00';
+    return `<div style="border:1px solid ${color}33;border-radius:10px;padding:16px;margin-bottom:12px;background:${color}08;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+        <span style="font-size:13px;font-weight:700;color:#222;">${n.name}</span>
+        <span style="font-size:10px;padding:2px 8px;border-radius:20px;background:${color}22;color:${color};font-weight:700;">${n.status==='low'?'LOW':'BORDERLINE'}</span>
+      </div>
+      <div style="font-size:12px;color:#555;line-height:1.7;">▸ ${food}</div>
+    </div>`;
+  }).join('');
+
+  const html=`<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Vytreos Health Report · ${scanDate}</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1a1a1a;background:#fff;line-height:1.5;}
+  @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
+  .page{max-width:760px;margin:0 auto;padding:48px 40px;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid #00a86b;}
+  .logo{font-size:22px;font-weight:800;letter-spacing:-.5px;color:#00a86b;}
+  .logo span{color:#1a1a1a;}
+  .report-meta{text-align:right;font-size:12px;color:#888;}
+  .report-meta strong{display:block;font-size:13px;color:#333;margin-bottom:2px;}
+  .section{margin-bottom:36px;}
+  .section-title{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#888;margin-bottom:14px;}
+  .summary-box{background:#f0fdf7;border:1px solid #bbf0d8;border-radius:10px;padding:18px 20px;font-size:14px;color:#1a4a2e;line-height:1.7;}
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px;}
+  .stat-card{background:#f8f8f8;border-radius:10px;padding:16px;text-align:center;}
+  .stat-num{font-size:28px;font-weight:800;color:#00a86b;}
+  .stat-label{font-size:11px;color:#888;margin-top:3px;}
+  .stat-warn .stat-num{color:#dc3030;}
+  .stat-border .stat-num{color:#e08c00;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead tr{background:#f8f8f8;}
+  th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#888;border-bottom:2px solid #eee;}
+  tr{border-bottom:1px solid #f0f0f0;}
+  .caveat{background:#fffbf0;border:1px solid #f5e090;border-radius:10px;padding:14px 18px;font-size:12px;color:#7a5c00;line-height:1.7;}
+  .footer{margin-top:40px;padding-top:20px;border-top:1px solid #eee;font-size:11px;color:#aaa;text-align:center;line-height:1.8;}
+  .badge-type{display:inline-block;padding:4px 12px;background:#e8f5ee;color:#00a86b;border-radius:20px;font-size:11px;font-weight:700;margin-left:8px;}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div>
+      <div class="logo">Vytreos<span> Health Report</span></div>
+      <div style="font-size:12px;color:#888;margin-top:4px;">Retinal Eye Health Analysis</div>
+    </div>
+    <div class="report-meta">
+      <strong>Generated ${date}</strong>
+      Scan date: ${scanDate}
+      ${s.imageType?`<br><span style="text-transform:capitalize;">${s.imageType} photograph</span>`:''}
+      ${s.imageQuality?`<br>Quality: ${s.imageQuality}`:''}
+    </div>
+  </div>
+
+  <!-- SUMMARY STATS -->
+  <div class="stat-grid">
+    <div class="stat-card ${lowNuts.filter(n=>n.status==='low').length>0?'stat-warn':''}">
+      <div class="stat-num">${lowNuts.filter(n=>n.status==='low').length}</div>
+      <div class="stat-label">Low nutrients</div>
+    </div>
+    <div class="stat-card ${lowNuts.filter(n=>n.status==='borderline').length>0?'stat-border':''}">
+      <div class="stat-num">${lowNuts.filter(n=>n.status==='borderline').length}</div>
+      <div class="stat-label">Borderline</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">${nutrients.length}</div>
+      <div class="stat-label">Nutrients assessed</div>
+    </div>
+  </div>
+
+  <!-- CLINICAL SUMMARY -->
+  ${s.summary?`<div class="section">
+    <div class="section-title">Clinical observation</div>
+    <div class="summary-box">${s.summary}</div>
+  </div>`:''}
+
+  <!-- NUTRIENT TABLE -->
+  <div class="section">
+    <div class="section-title">Nutrient signals</div>
+    <table>
+      <thead><tr>
+        <th>Nutrient</th>
+        <th style="width:200px;">Level</th>
+        <th>Status</th>
+        <th>Confidence</th>
+      </tr></thead>
+      <tbody>${nutrientRows}</tbody>
+    </table>
+  </div>
+
+  <!-- DIETARY RECOMMENDATIONS -->
+  ${recCards?`<div class="section">
+    <div class="section-title">Dietary recommendations for low nutrients</div>
+    ${recCards}
+  </div>`:''}
+
+  <!-- CAVEATS -->
+  ${s.caveats?`<div class="section">
+    <div class="caveat">⚠ ${s.caveats}</div>
+  </div>`:''}
+
+  <!-- FOOTER -->
+  <div class="footer">
+    Vytreos · Retinal Eye Health Tracking · vytreos.vercel.app<br>
+    This report is generated by AI analysis and is intended for wellness exploration only.<br>
+    It does not constitute a medical diagnosis. Always consult a qualified healthcare professional for medical concerns.
+  </div>
+
+</div>
+</body>
+</html>`;
+
+  const w=window.open('','_blank');
+  if(!w){toast('Pop-up blocked — allow pop-ups and try again','err');return;}
+  w.document.write(html);
+  w.document.close();
+  setTimeout(()=>w.print(),500);
+};
+
 <!-- ── MOBILE SCAN WIZARD ── -->
 <div class="wizard-overlay" id="scanWizard">
   <div class="wizard-header">
