@@ -1171,11 +1171,20 @@ input[type="number"]:focus{border-color:var(--green);}
         <!-- REFERRAL CARD -->
         <div style="margin-top:24px;background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:28px 32px;">
           <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:8px;">🎁 Invite friends</div>
-          <div style="font-family:'Instrument Serif',serif;font-size:18px;color:var(--text);margin-bottom:8px;">Share Vytreos with friends</div>
-          <div style="font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:16px;">Share your personal invite link. When a friend signs up, you both get early access to premium features.</div>
-          <div style="display:flex;gap:8px;">
-            <input id="referral-link" readonly value="https://vytreos.vercel.app" style="flex:1;padding:10px 12px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text-2);font-family:'DM Mono',monospace;outline:none;">
-            <button onclick="copyReferral()" style="padding:10px 16px;background:var(--green);color:var(--bg);border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;" id="copyRefBtn">Copy link</button>
+          <div style="font-family:'Instrument Serif',serif;font-size:18px;color:var(--text);margin-bottom:8px;">Your personal invite link</div>
+          <div style="font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:16px;">Share this link with friends. When they sign up using your link, they get credited to your account — founding members get early premium access.</div>
+          <div id="referral-loading" style="font-size:12px;color:var(--text-3);margin-bottom:12px;">Generating your link...</div>
+          <div id="referral-content" style="display:none;">
+            <div style="display:flex;gap:8px;margin-bottom:14px;">
+              <input id="referral-link" readonly style="flex:1;padding:10px 12px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text-2);font-family:'DM Mono',monospace;outline:none;">
+              <button onclick="copyReferral()" style="padding:10px 16px;background:var(--green);color:var(--bg);border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;" id="copyRefBtn">Copy</button>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button onclick="shareReferral()" style="flex:1;padding:10px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text-2);">↗ Share</button>
+              <button onclick="shareReferralWhatsApp()" style="flex:1;padding:10px;background:#25D36622;border:1px solid #25D36644;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:#25D366;">WhatsApp</button>
+              <button onclick="shareReferralTwitter()" style="flex:1;padding:10px;background:rgba(29,161,242,0.1);border:1px solid rgba(29,161,242,0.3);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:#1da1f2;">X / Twitter</button>
+            </div>
+            <div id="referral-stats" style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;"></div>
           </div>
         </div>
 
@@ -1410,6 +1419,7 @@ window.doSignup=async()=>{
     const cred=await createUserWithEmailAndPassword(auth,email,pass);
     await updateProfile(cred.user,{displayName:name});
     setDoc(doc(db,'users',cred.user.uid),{name,email,createdAt:new Date().toISOString(),preferences:{}}).catch(()=>{});
+    saveReferral(cred.user.uid);
     currentUser=cred.user;isGuest=false;await enterApp();
   }catch(err){
     aerr('su-err',err.code==='auth/email-already-in-use'?'An account with this email already exists.':err.code==='auth/invalid-email'?'Invalid email address.':'Something went wrong. Please try again.');
@@ -1933,6 +1943,218 @@ function mergeResults(a, b){
     _modelCount:(a._modelCount||1)+(b._modelCount||1)
   };
 }
+
+// ── TAB SWITCHING ────────────────────────────────────────────────────────────
+function switchTab(tab){
+  if(tab==='profile')setTimeout(initReferralCard,100);
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  const tabEl=document.getElementById('tab-'+tab);
+  if(tabEl)tabEl.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(el=>{
+    if(el.getAttribute('onclick')&&el.getAttribute('onclick').includes("'"+tab+"'"))el.classList.add('active');
+  });
+  if(tab==='trends')populateTrends();
+  if(tab==='compare')populateCompare();
+}
+function setMobActive(id){
+  document.querySelectorAll('.mobile-nav-item').forEach(el=>el.classList.remove('active'));
+  const el=document.getElementById(id);if(el)el.classList.add('active');
+}
+
+// ── PUSH NOTIFICATIONS ────────────────────────────────────────────────────────
+function requestPushPermission(){
+  const banner=document.createElement('div');
+  banner.id='pushBanner';
+  banner.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:999;background:var(--bg-2);border:1px solid var(--border);border-radius:12px;padding:14px 18px;max-width:380px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.5);display:flex;align-items:center;gap:12px;';
+  banner.innerHTML=`<div style="font-size:22px;flex-shrink:0">🔔</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;">Weekly scan reminders</div><div style="font-size:11px;color:var(--text-2);">Get reminded to scan every week for the best trend data.</div></div><div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;"><button onclick="enablePush()" style="padding:6px 12px;background:var(--green);color:var(--bg);border:none;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;">Enable</button><button onclick="document.getElementById('pushBanner')?.remove()" style="padding:6px 12px;background:transparent;border:none;color:var(--text-3);font-size:11px;cursor:pointer;">Not now</button></div>`;
+  document.body.appendChild(banner);
+  setTimeout(()=>banner?.remove(),12000);
+}
+window.enablePush=async()=>{
+  document.getElementById('pushBanner')?.remove();
+  try{
+    const perm=await Notification.requestPermission();
+    if(perm==='granted'){toast('Weekly reminders enabled!');if(currentUser)setDoc(doc(db,'users',currentUser.uid),{pushEnabled:true},{merge:true}).catch(()=>{});}
+    else{toast('Notifications blocked — enable in browser settings','err');}
+  }catch(e){console.warn('Push error:',e);}
+};
+
+// ── NIH + USDA ENRICHMENT ─────────────────────────────────────────────────────
+const NIH_RDA={'Iron':{male:'8mg/day',female:'18mg/day',note:'Heme iron from meat absorbs ~25%; non-heme from plants ~5-12%'},'Vitamin B12':{all:'2.4mcg/day',note:'Animal products only — vegans need supplements or fortified foods'},'Folate':{all:'400mcg DFE/day',note:'600mcg if pregnant. Found in leafy greens, legumes, fortified foods'},'Vitamin C':{male:'90mg/day',female:'75mg/day',note:'Smokers need +35mg/day. Upper limit: 2000mg'},'Vitamin A':{male:'900mcg RAE/day',female:'700mcg RAE/day',note:'Preformed (retinol) in animal foods; provitamin A in plants'},'Omega-3':{all:'1.1-1.6g ALA/day',note:'EPA+DHA: 250-500mg/day for heart health. Fatty fish 2x/week'},'Zinc':{male:'11mg/day',female:'8mg/day',note:'Oysters are highest source. Absorption inhibited by phytates'},'Magnesium':{male:'400-420mg/day',female:'310-320mg/day',note:'Most Americans are deficient. Found in nuts, seeds, leafy greens'},'Vitamin D':{all:'600-800 IU/day',note:'Many experts recommend 1000-2000 IU. Sun exposure generates D3'},'Lutein':{all:'6-10mg/day',note:'Found in dark leafy greens. Fat boosts absorption'},'Zeaxanthin':{all:'2mg/day',note:'Corn, eggs, and orange peppers are richest sources'},'Vitamin K':{male:'120mcg/day',female:'90mcg/day',note:'K1 in leafy greens; K2 in fermented foods. Blood thinner interaction'},'B6':{all:'1.3-1.7mg/day',note:'Poultry, fish, potatoes, bananas'},'Biotin':{all:'30mcg/day',note:'Eggs, nuts, seeds. Raw egg whites block biotin absorption'},'Riboflavin':{male:'1.3mg/day',female:'1.1mg/day',note:'Dairy, eggs, meat, fortified cereals'},'Niacin':{male:'16mg NE/day',female:'14mg NE/day',note:'Meat, fish, peanuts'},'Choline':{male:'550mg/day',female:'425mg/day',note:'Eggs are richest source. Important for liver health'},'Bioflavonoids':{all:'200-500mg/day typical',note:'Citrus fruits, berries, onions, tea'},'Antioxidants':{all:'No single RDA',note:'Eat variety of colorful fruits/vegetables'}};
+
+async function enrichWithNIH(result){
+  if(!result||!result.nutrients)return result;
+  const enriched={...result};
+  enriched.nihData={};
+  enriched.usdaFoods={};
+  const usdaMap={'Iron':['Chicken liver (85g): 11mg','Lentils (1 cup): 6.6mg','Spinach (1 cup cooked): 6.4mg'],'Vitamin B12':['Beef liver (85g): 70mcg','Clams (85g): 84mcg','Salmon (85g): 4.9mcg'],'Vitamin A':['Sweet potato (1 medium): 961mcg','Carrots (half cup): 459mcg','Spinach (1 cup cooked): 573mcg'],'Lutein':['Kale (1 cup cooked): 23.7mg','Spinach (1 cup cooked): 20.4mg','Eggs (2 large): 0.4mg'],'Omega-3':['Salmon (85g): 1.8g EPA+DHA','Mackerel (85g): 1.0g','Walnuts (1oz): 2.5g ALA'],'Zinc':['Oysters (85g): 74mg','Beef (85g): 7mg','Pumpkin seeds (1oz): 2.2mg'],'Vitamin D':['Salmon (85g): 447 IU','Tuna canned (85g): 154 IU','Fortified milk (1 cup): 120 IU'],'Magnesium':['Pumpkin seeds (1oz): 156mg','Almonds (1oz): 80mg','Spinach (1 cup cooked): 157mg'],'Vitamin C':['Red bell pepper (half): 95mg','Kiwi (1): 64mg','Orange (1): 70mg'],'Folate':['Spinach (1 cup cooked): 263mcg','Black beans (1 cup): 256mcg','Avocado (half): 59mcg']};
+  for(const n of result.nutrients){
+    if(NIH_RDA[n.name])enriched.nihData[n.name]=NIH_RDA[n.name];
+    if(usdaMap[n.name])enriched.usdaFoods[n.name]=usdaMap[n.name];
+  }
+  return enriched;
+}
+
+async function enrichWithFoodFacts(result){
+  if(!result||!result.nutrients)return result;
+  const enriched={...result};
+  const foodMap={'Iron':['spinach','lentils','beef','oysters'],'Vitamin B12':['salmon','beef liver','eggs','milk'],'Vitamin A':['sweet potato','carrots','spinach','beef liver'],'Lutein':['kale','spinach','corn','eggs'],'Omega-3':['salmon','mackerel','sardines','walnuts'],'Zinc':['oysters','beef','pumpkin seeds','chickpeas'],'Vitamin D':['salmon','tuna','egg yolk','fortified milk'],'Magnesium':['pumpkin seeds','almonds','spinach','dark chocolate'],'Vitamin C':['red bell pepper','kiwi','orange','broccoli'],'Folate':['black beans','spinach','asparagus','avocado'],'Riboflavin':['beef liver','milk','almonds','eggs'],'Niacin':['chicken breast','tuna','salmon','peanuts'],'Choline':['eggs','beef liver','soybeans','chicken'],'Biotin':['eggs','almonds','sweet potato','salmon'],'Vitamin K':['kale','spinach','broccoli','Brussels sprouts'],'B6':['chickpeas','salmon','chicken','bananas'],'Antioxidants':['blueberries','dark chocolate','pecans','artichokes']};
+  enriched.foodFactsData={};
+  const lowNutrients=(result.nutrients||[]).filter(n=>n.status==='low'||n.status==='borderline').slice(0,5);
+  for(const n of lowNutrients){
+    if(foodMap[n.name])enriched.foodFactsData[n.name]=foodMap[n.name];
+  }
+  return enriched;
+}
+
+// ── PREMIUM MODAL ─────────────────────────────────────────────────────────────
+window.openPremiumModal=()=>{
+  document.getElementById('waitlist-form').style.display='block';
+  document.getElementById('waitlist-success').style.display='none';
+  if(currentUser?.email){const el=document.getElementById('waitlist-email');if(el)el.value=currentUser.email;}
+  document.getElementById('premiumModal').classList.add('open');
+};
+window.closePremiumModal=()=>document.getElementById('premiumModal').classList.remove('open');
+window.joinWaitlist=async()=>{
+  const email=document.getElementById('waitlist-email').value.trim();
+  if(!email||!email.includes('@')){toast('Please enter a valid email','err');return;}
+  try{
+    await setDoc(doc(db,'waitlist',email.replace(/[.#$[\]]/g,'_')),{email,uid:currentUser?.uid||null,joinedAt:serverTimestamp()});
+    document.getElementById('waitlist-form').style.display='none';
+    document.getElementById('waitlist-success').style.display='block';
+  }catch(e){console.error(e);toast('Something went wrong - try again','err');}
+};
+
+// ── REFERRAL SYSTEM ───────────────────────────────────────────────────────────
+function getReferralCode(){
+  if(!currentUser)return null;
+  return currentUser.uid.substring(0,8).toUpperCase();
+}
+function getReferralURL(){
+  const code=getReferralCode();
+  return code?`https://vytreos.vercel.app/?ref=${code}`:'https://vytreos.vercel.app';
+}
+async function initReferralCard(){
+  const loadingEl=document.getElementById('referral-loading');
+  const contentEl=document.getElementById('referral-content');
+  const input=document.getElementById('referral-link');
+  if(!loadingEl||!contentEl||!input)return;
+  const url=getReferralURL();
+  input.value=url;
+  loadingEl.style.display='none';
+  contentEl.style.display='block';
+  try{
+    const code=getReferralCode();
+    if(code){
+      const snap=await getDocs(query(collection(db,'referrals'),orderBy('joinedAt','desc')));
+      const refs=[];
+      snap.forEach(d=>{if(d.data().refCode===code)refs.push(d.data());});
+      const statsEl=document.getElementById('referral-stats');
+      if(statsEl)statsEl.innerHTML=`<div style="background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;"><div style="font-size:22px;font-weight:800;color:var(--green);">${refs.length}</div><div style="font-size:11px;color:var(--text-3);margin-top:2px;">Friends invited</div></div><div style="background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;"><div style="font-size:18px;font-weight:800;color:var(--text);letter-spacing:.05em;">${code}</div><div style="font-size:11px;color:var(--text-3);margin-top:2px;">Your invite code</div></div>`;
+    }
+  }catch(e){console.warn('Referral stats:',e);}
+}
+window.copyReferral=async()=>{
+  const url=getReferralURL();
+  try{
+    await navigator.clipboard.writeText(url);
+    const btn=document.getElementById('copyRefBtn');
+    if(btn){btn.textContent='Copied! ✓';btn.style.background='var(--text)';setTimeout(()=>{btn.textContent='Copy';btn.style.background='var(--green)';},2000);}
+    toast('Invite link copied!');
+  }catch(e){toast('Could not copy','err');}
+};
+window.shareReferral=async()=>{
+  const url=getReferralURL();
+  if(navigator.share){try{await navigator.share({title:'Try Vytreos',text:'Check out Vytreos — AI-powered retinal eye health tracking!',url});return;}catch(e){}}
+  await navigator.clipboard.writeText(url).catch(()=>{});
+  toast('Link copied — ready to share!');
+};
+window.shareReferralWhatsApp=()=>{
+  window.open(`https://wa.me/?text=${encodeURIComponent('Check out Vytreos — AI eye health tracking: '+getReferralURL())}`, '_blank');
+};
+window.shareReferralTwitter=()=>{
+  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent('Tracking my eye health with AI using Vytreos')}&url=${encodeURIComponent(getReferralURL())}`, '_blank');
+};
+function captureReferralCode(){
+  const params=new URLSearchParams(window.location.search);
+  const ref=params.get('ref');
+  if(ref)sessionStorage.setItem('vy_ref',ref);
+}
+captureReferralCode();
+async function saveReferral(uid){
+  const code=sessionStorage.getItem('vy_ref');
+  if(!code||code===uid.substring(0,8).toUpperCase())return;
+  try{
+    await setDoc(doc(db,'referrals',uid),{refCode:code,uid,joinedAt:serverTimestamp()});
+    sessionStorage.removeItem('vy_ref');
+  }catch(e){console.warn('Referral save error:',e);}
+}
+
+// ── DANGEROUS FINDINGS ────────────────────────────────────────────────────────
+const DANGEROUS_FINDINGS=[{nutrient:'Vitamin A',level:30,message:'Severe Vitamin A deficiency can cause irreversible vision loss.'},{nutrient:'Iron',level:25,message:'Severe iron deficiency anemia detected.'},{nutrient:'Vitamin B12',level:25,message:'Severe B12 deficiency can cause permanent nerve damage.'},{nutrient:'Zinc',level:20,message:'Severe zinc deficiency affecting eye health.'}];
+function checkDangerousFindings(result){
+  if(!result||!result.nutrients)return;
+  for(const danger of DANGEROUS_FINDINGS){
+    const n=result.nutrients.find(x=>x.name===danger.nutrient&&x.level<=danger.level&&x.confidence!=='low');
+    if(n){showDangerAlert(danger.message);break;}
+  }
+}
+function showDangerAlert(message){
+  const existing=document.getElementById('dangerAlert');if(existing)existing.remove();
+  const el=document.createElement('div');el.id='dangerAlert';
+  el.style.cssText='position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:9999;background:#1a0a0a;border:1px solid var(--red);border-radius:12px;padding:16px 20px;max-width:420px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.6);';
+  el.innerHTML=`<div style="display:flex;align-items:flex-start;gap:12px;"><div style="font-size:22px;flex-shrink:0">⚠️</div><div><div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:4px;">Potential concern detected</div><div style="font-size:12px;color:var(--text-2);line-height:1.6;margin-bottom:12px;">${message} This is not a diagnosis — please consult an eye care professional.</div><button onclick="findNearbyEyeCare()" style="padding:8px 16px;background:var(--red);color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;margin-right:8px;">Find eye care near me</button><button onclick="document.getElementById('dangerAlert').remove()" style="padding:8px 16px;background:var(--bg-3);border:1px solid var(--border);color:var(--text-2);border-radius:20px;font-size:12px;cursor:pointer;">Dismiss</button></div></div>`;
+  document.body.appendChild(el);
+}
+window.findNearbyEyeCare=()=>{
+  if(!navigator.geolocation){window.open('https://www.google.com/maps/search/ophthalmologist+near+me','_blank');return;}
+  navigator.geolocation.getCurrentPosition(pos=>{window.open(`https://www.google.com/maps/search/ophthalmologist/@${pos.coords.latitude},${pos.coords.longitude},14z`,'_blank');},()=>{window.open('https://www.google.com/maps/search/ophthalmologist+near+me','_blank');});
+};
+
+// ── DELETE SCAN ───────────────────────────────────────────────────────────────
+let scanToDelete=null;
+window.confirmDeleteScan=(id)=>{scanToDelete=id;document.getElementById('deleteModal').classList.add('open');};
+window.closeDeleteModal=()=>{document.getElementById('deleteModal').classList.remove('open');scanToDelete=null;};
+window.executeDeleteScan=async()=>{
+  if(!scanToDelete||!currentUser)return;
+  const btn=document.getElementById('confirmDeleteBtn');
+  if(btn){btn.disabled=true;btn.textContent='Deleting...';}
+  try{
+    await deleteDoc(doc(db,'users',currentUser.uid,'scans',scanToDelete));
+    closeDeleteModal();await loadScans();toast('Scan deleted');
+  }catch(e){console.error(e);toast('Failed to delete','err');if(btn){btn.disabled=false;btn.textContent='Delete';}}
+};
+
+// ── SHARE RESULTS ─────────────────────────────────────────────────────────────
+window.shareResults=async()=>{
+  if(!pendingResult)return;
+  const lows=(pendingResult.nutrients||[]).filter(n=>n.status==='low').map(n=>n.name);
+  const text=`My Vytreos retinal scan found ${lows.length} nutrient signals to watch${lows.length?': '+lows.join(', '):''}. Track your eye health at vytreos.vercel.app`;
+  if(navigator.share){try{await navigator.share({title:'My Vytreos Scan Results',text,url:'https://vytreos.vercel.app'});return;}catch(e){}}
+  try{await navigator.clipboard.writeText(text);toast('Results copied to clipboard!');}catch(e){toast('Share not supported','err');}
+};
+
+// ── LANDING EMAIL ─────────────────────────────────────────────────────────────
+window.collectLandingEmail=async()=>{
+  const input=document.getElementById('landing-email');if(!input)return;
+  const email=input.value.trim();
+  if(!email||!email.includes('@')){toast('Please enter a valid email','err');return;}
+  try{
+    await setDoc(doc(db,'waitlist',email.replace(/[.#$[\]]/g,'_')),{email,source:'landing',joinedAt:serverTimestamp()});
+    input.value='';input.placeholder='You are on the list!';input.style.borderColor='var(--green)';
+    toast('You are on the early access list!');
+  }catch(e){input.value='';input.placeholder='You are on the list!';toast('You are on the early access list!');}
+};
+
+// ── ONBOARDING ────────────────────────────────────────────────────────────────
+function showOnboarding(){
+  const overlay=document.createElement('div');overlay.id='onboardingOverlay';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:3000;display:flex;align-items:center;justify-content:center;padding:20px;';
+  overlay.innerHTML=`<div style="background:var(--bg-2);border:1px solid var(--border);border-radius:20px;max-width:480px;width:100%;overflow:hidden;"><div style="background:linear-gradient(135deg,rgba(0,217,139,0.1),rgba(77,143,255,0.06));padding:32px 36px 24px;border-bottom:1px solid var(--border);"><div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:8px;">Welcome to Vytreos</div><div style="font-family:'Instrument Serif',serif;font-size:24px;color:var(--text);margin-bottom:6px;">Your retinal health journey starts now</div></div><div style="padding:24px 36px;"><div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px;"><div style="display:flex;gap:14px;align-items:flex-start;"><div style="width:32px;height:32px;border-radius:50%;background:var(--green);color:var(--bg);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div><div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">Fill in your health profile</div><div style="font-size:12px;color:var(--text-2);">Go to Profile and add your age, sex, and diet.</div></div></div><div style="display:flex;gap:14px;align-items:flex-start;"><div style="width:32px;height:32px;border-radius:50%;background:var(--green);color:var(--bg);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div><div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">Take your first scan</div><div style="font-size:12px;color:var(--text-2);">Use natural light, no flash. Pull lower eyelid slightly.</div></div></div><div style="display:flex;gap:14px;align-items:flex-start;"><div style="width:32px;height:32px;border-radius:50%;background:var(--green);color:var(--bg);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div><div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">Scan weekly for trends</div><div style="font-size:12px;color:var(--text-2);">Weekly scans show what is changing over time.</div></div></div></div><button onclick="dismissOnboarding()" style="width:100%;padding:14px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;">Let us get started →</button></div></div>`;
+  document.body.appendChild(overlay);
+}
+window.dismissOnboarding=()=>{document.getElementById('onboardingOverlay')?.remove();localStorage.setItem('vy_onboarded','1');switchTab('analyzer');};
 
 window.retryAnalysis=function(){if(window._pendingImgData)window.runAnalysis(window._pendingImgData);};
 window.runAnalysis=async function runAnalysis(imgDataUrl){
