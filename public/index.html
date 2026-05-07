@@ -2250,45 +2250,20 @@ function renderAnalysis(r){
   const meta=`<div class="meta-pills">${r.imageType?`<span class="meta-pill">${typeMap[r.imageType]||r.imageType}</span>`:''}${qualityBadge}${r.nutrients?`<span class="meta-pill">${r.nutrients.length} nutrients assessed</span>`:''}${ensemblePill}</div>`;
   const confNote=r.confidenceNote?`<div class="caveat-box" style="margin-bottom:14px;border-left-color:var(--blue)">ℹ ${r.confidenceNote}</div>`:'';
   const rows=buildRows(r.nutrients||[],true);
-  // Nutrient-specific dietary recommendations
-  const foodMap={
-    'Iron':'85g chicken liver 2x/week (11mg), 1 cup lentils daily (6.6mg), cooked spinach with vitamin C. Avoid coffee/tea within 1hr of iron-rich meals.',
-    'Vitamin B12':'85g salmon 3x/week (4.9mcg), 1 egg daily (0.6mcg). Vegans: 500-1000mcg B12 supplement daily or fortified foods.',
-    'Folate':'1 cup cooked spinach daily (263mcg), half avocado daily (59mcg), black beans 3x/week (256mcg/cup).',
-    'Vitamin C':'Half red bell pepper daily (95mg), 1 kiwi daily (64mg), or 1 cup strawberries (85mg). Eat raw — heat destroys vitamin C.',
-    'Vitamin A':'1 medium sweet potato daily (961mcg RAE), carrots half cup (459mcg). Eat with fat for absorption.',
-    'Lutein':'1 cup cooked kale daily (23.7mg) or spinach (20.4mg). Cook lightly. 2 eggs daily add 0.4mg.',
-    'Zeaxanthin':'1 cup corn weekly (0.9mg), 2 eggs daily, orange peppers 3x/week (2.1mg each).',
-    'Omega-3':'85g salmon 2-3x/week (1.8g EPA+DHA), 1oz walnuts daily (2.5g ALA), or 1g fish oil supplement.',
-    'Zinc':'85g beef 3x/week (7mg), 1oz pumpkin seeds daily (2.2mg), 1 cup chickpeas weekly (2.5mg).',
-    'Magnesium':'1oz almonds daily (80mg), 1 cup cooked spinach (157mg), 1oz dark chocolate (64mg), black beans 3x/week.',
-    'Vitamin D':'85g salmon 3x/week (447 IU), 1 cup fortified milk daily (115 IU). Consider 1000-2000 IU supplement in winter.',
-    'Riboflavin':'1 cup milk daily (0.3mg), 1oz almonds (0.3mg), 1 egg daily (0.2mg), spinach 3x/week.',
-    'Niacin':'85g chicken breast daily (11mg) or 85g tuna (11.3mg), 1oz peanuts as snack (3.8mg).',
-    'Choline':'2 eggs daily (294mg total), 85g chicken breast 3x/week (72mg). Eggs are the richest source.',
-    'Bioflavonoids':'Citrus fruits daily (eat the pith), 1 cup berries, 1 cup green tea. Highest in citrus peel and white pith.',
-    'Vitamin K':'1 cup cooked kale daily (1062mcg), spinach, broccoli. Caution with blood thinners — consult doctor.',
-    'B6':'1 cup chickpeas daily (1.1mg), 85g salmon (0.9mg), 1 medium banana (0.4mg).',
-    'Biotin':'2 eggs daily (294mcg), 85g salmon weekly, 1oz almonds daily. Avoid raw egg whites which block absorption.',
-    'Antioxidants':'1 cup blueberries daily, 1oz dark chocolate (70%+), 1 cup green tea, varied colorful vegetables at every meal.',
-    'Vitamin E':'1oz almonds daily (7.3mg), 1 tbsp olive oil (1.9mg), half avocado daily (2.1mg).',
-  };
+  // Simple dietary recommendations
+  const quickFoods={'Iron':'Spinach, lentils, beef, chicken liver','Vitamin B12':'Salmon, eggs, milk, beef liver','Folate':'Spinach, avocado, black beans, asparagus','Vitamin C':'Bell peppers, kiwi, oranges, strawberries','Vitamin A':'Sweet potato, carrots, spinach, eggs','Lutein':'Kale, spinach, corn, eggs','Zeaxanthin':'Corn, eggs, orange peppers','Omega-3':'Salmon, sardines, walnuts, flaxseed','Zinc':'Oysters, beef, pumpkin seeds, chickpeas','Magnesium':'Almonds, spinach, dark chocolate, black beans','Vitamin D':'Salmon, fortified milk, egg yolk','Riboflavin':'Milk, almonds, eggs, spinach','Niacin':'Chicken, tuna, peanuts, salmon','Choline':'Eggs, chicken, soybeans','Bioflavonoids':'Citrus fruits, berries, green tea','Vitamin K':'Kale, spinach, broccoli','B6':'Chickpeas, salmon, banana, chicken','Biotin':'Eggs, almonds, sweet potato','Antioxidants':'Blueberries, dark chocolate, green tea','Vitamin E':'Almonds, olive oil, avocado'};
   const lowNuts=(r.nutrients||[]).filter(n=>n.status==='low'||n.status==='borderline');
-  const recsHtml=lowNuts.length
+  const recs=lowNuts.length
     ?lowNuts.map(n=>{
-        const food=foodMap[n.name]||(r.recommendations||[]).find(rec=>rec.toLowerCase().includes(n.name.toLowerCase()))||'Eat a varied whole-food diet rich in this nutrient.';
-        return `<div style="background:var(--bg-3);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-            <span style="font-size:13px;font-weight:700;color:var(--text);">${n.name}</span>
-            <span style="font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;background:${n.status==='low'?'rgba(220,50,50,0.15)':'rgba(245,166,35,0.15)'};color:${n.status==='low'?'var(--red)':'var(--amber)'};">${n.status==='low'?'LOW':'BORDERLINE'}</span>
-          </div>
-          <div style="font-size:12px;color:var(--text-2);line-height:1.7;">▸ ${food}</div>
+        const foods=quickFoods[n.name]||'Varied whole foods';
+        const col=n.status==='low'?'var(--red)':'var(--amber)';
+        const bg=n.status==='low'?'rgba(220,50,50,0.08)':'rgba(245,166,35,0.08)';
+        return `<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:${bg};border-radius:8px;margin-bottom:8px;">
+          <span style="font-size:11px;font-weight:700;color:${col};min-width:80px;">${n.name}</span>
+          <span style="font-size:12px;color:var(--text-2);">${foods}</span>
         </div>`;
       }).join('')
-    :(r.recommendations&&r.recommendations.length
-      ?r.recommendations.map((rec,i)=>`<div class="rec-item"><div class="rec-icon">${i+1}</div><span>${rec}</span></div>`).join('')
-      :'<div style="font-size:13px;color:var(--text-3);padding:8px 0;">No deficiencies detected — maintain your current diet and scan regularly.</div>');
-  const recs=recsHtml;
+    :'<div style="font-size:13px;color:var(--text-3);padding:8px 0;">No deficiencies detected — keep scanning to track changes.</div>';
   // NIH/USDA enrichment panel
   const nihPanel=r.nihData&&Object.keys(r.nihData).length?`
     <div style="margin-top:20px;background:var(--bg-3);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
@@ -2328,9 +2303,7 @@ function renderAnalysis(r){
     ${r.summary?`<div class="ai-narrative">${r.summary}</div>`:''}
     ${recs?`<div class="recs-section"><h4>Dietary recommendations</h4>${recs}</div>`:''}
     ${r.caveats?`<div class="caveat-box">▸ ${r.caveats}</div>`:''}
-    ${nihPanel}
-    ${usdaPanel}
-    ${foodFactsPanel}
+
     <div style="margin-top:12px;font-size:11px;color:var(--text-3);font-family:'DM Mono',monospace;line-height:1.7;">
       ℹ Some nutrients are not shown because they require eye anatomy that isn't visible in this photo type.
       ${r.imageType==='fundus'?'Anterior segment markers (conjunctiva, cornea, eyelids) require a close-up eye photo.':r.imageType==='anterior'?'Retinal markers (macula, optic disc, vessels) require a fundus photograph from an eye clinic.':'For the most complete analysis, use a fundus photograph from an eye exam.'}
