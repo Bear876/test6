@@ -148,6 +148,7 @@ h1 em{font-style:italic;color:var(--green);}
 .auth-btn:hover{background:var(--green-2);}
 .auth-btn:disabled{opacity:.4;cursor:not-allowed;}
 @keyframes spin{to{transform:rotate(360deg);}}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
 .auth-err{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,82,82,.2);border-radius:8px;padding:10px 14px;font-size:12px;margin-bottom:16px;display:none;}
 .auth-err.show{display:block;}
 .auth-switch{text-align:center;margin-top:20px;font-size:12px;color:var(--text-3);}
@@ -256,6 +257,7 @@ h1 em{font-style:italic;color:var(--green);}
 @keyframes pDot{0%,100%{transform:scale(1);}50%{transform:scale(1.8);opacity:.5;}}
 .spinner{width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;}
 @keyframes spin{to{transform:rotate(360deg);}}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
 
 /* ── RESULTS ── */
 .meta-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;}
@@ -543,6 +545,13 @@ input[type="number"]:focus{border-color:var(--green);}
 <body>
 
 <!-- LOADER -->
+<div id="errorBoundary" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;padding:32px;text-align:center;">
+  <div style="font-size:48px;">😵</div>
+  <div style="font-family:'Instrument Serif',serif;font-size:24px;color:var(--text);">Something went wrong</div>
+  <div style="font-size:14px;color:var(--text-2);max-width:360px;line-height:1.6;">Vytreos hit an unexpected error. Your data is safe — try refreshing the page.</div>
+  <button onclick="location.reload()" style="padding:12px 28px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;">Reload app</button>
+  <div style="font-size:11px;color:var(--text-3);" id="errDetail"></div>
+</div>
 <div id="appLoader">
   <div class="loader-eye">
     <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
@@ -713,7 +722,12 @@ input[type="number"]:focus{border-color:var(--green);}
   <div class="landing-footer">
     <div class="logo"><div class="logo-pip" style="width:5px;height:5px;"></div>Vytreos</div>
     <div class="footer-text">© 2026 Vytreos · Experimental retinal health tracking · Not a medical device · Results are for wellness exploration only</div>
-    <div class="footer-text">Made with care by Vytreos</div>
+    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:8px;">
+      <a onclick="showModal('privacy')" style="font-size:12px;color:var(--text-3);cursor:pointer;text-decoration:underline;">Privacy Policy</a>
+      <a onclick="showModal('terms')" style="font-size:12px;color:var(--text-3);cursor:pointer;text-decoration:underline;">Terms of Service</a>
+      <a onclick="showModal('faq')" style="font-size:12px;color:var(--text-3);cursor:pointer;text-decoration:underline;">FAQ</a>
+      <a onclick="showModal('about')" style="font-size:12px;color:var(--text-3);cursor:pointer;text-decoration:underline;">About</a>
+    </div>
   </div>
 </div>
 
@@ -812,7 +826,8 @@ input[type="number"]:focus{border-color:var(--green);}
     </div>
 
     <!-- MAIN CONTENT -->
-    <div class="app-content" id="appContent">
+    <div class="app-content" id="appContent" style="overflow-y:auto;">
+    <div id="ptr-indicator" style="display:none;text-align:center;padding:12px;font-size:12px;color:var(--green);font-family:'DM Mono',monospace;">↓ Release to refresh</div>
 
       <!-- DASHBOARD -->
       <div id="tab-dashboard" class="tab-content active">
@@ -870,6 +885,11 @@ input[type="number"]:focus{border-color:var(--green);}
         <div class="history-header">
           <h2>Recent scans</h2>
           <button class="btn btn-green" style="padding:7px 16px;font-size:12px" onclick="switchTab('analyzer')">+ New scan</button>
+        </div>
+        <div id="dash-skeleton" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
+          <div style="height:72px;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;animation:pulse 1.5s ease-in-out infinite;"></div>
+          <div style="height:72px;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;animation:pulse 1.5s ease-in-out infinite;opacity:.7;"></div>
+          <div style="height:72px;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;animation:pulse 1.5s ease-in-out infinite;opacity:.4;"></div>
         </div>
         <div id="dash-list" class="scan-list"></div>
         <div id="dash-empty" style="display:none;text-align:center;padding:48px 20px;background:var(--bg-2);border:1px solid var(--border);border-radius:14px;margin-top:8px;">
@@ -1087,6 +1107,16 @@ input[type="number"]:focus{border-color:var(--green);}
       <div id="tab-history" class="tab-content">
         <div class="page-title">Scan history</div>
         <p class="page-sub">Your full scan history — newest first. The more you scan, the more meaningful your trends become.</p>
+        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+          <input id="hist-search" type="text" placeholder="Search nutrients..." oninput="filterHistory()" style="flex:1;min-width:160px;padding:9px 14px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);font-family:'Syne',sans-serif;outline:none;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
+          <select id="hist-filter" onchange="filterHistory()" style="padding:9px 12px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);font-family:'Syne',sans-serif;outline:none;cursor:pointer;">
+            <option value="all">All scans</option>
+            <option value="low">Has low nutrients</option>
+            <option value="ok">All normal</option>
+            <option value="fundus">Fundus photos</option>
+            <option value="anterior">Phone photos</option>
+          </select>
+        </div>
         <div id="hist-list" class="scan-list"></div>
       </div>
 
@@ -1293,6 +1323,17 @@ input[type="number"]:focus{border-color:var(--green);}
   </div>
 </div>
 
+<!-- ═══════════════════════════════════ INFO MODAL ═══════════════════════════════════ -->
+<div id="infoModal" onclick="if(event.target===this)closeModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:4000;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:20px;max-width:600px;width:100%;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;">
+    <div style="padding:20px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+      <div id="infoModalTitle" style="font-size:16px;font-weight:700;color:var(--text);"></div>
+      <button onclick="closeModal()" style="background:var(--bg-3);border:1px solid var(--border);color:var(--text-2);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:14px;">✕</button>
+    </div>
+    <div id="infoModalBody" style="padding:24px 28px;overflow-y:auto;font-size:13px;color:var(--text-2);line-height:1.8;"></div>
+  </div>
+</div>
+
 <!-- ═══════════════════════════════════ DELETE CONFIRM MODAL ═══════════════════════════════════ -->
 <div class="modal-overlay" id="deleteModal" onclick="if(event.target===this)closeDeleteModal()">
   <div class="modal" style="max-width:380px;text-align:center;padding:36px 32px;">
@@ -1420,6 +1461,10 @@ window.doSignup=async()=>{
     await updateProfile(cred.user,{displayName:name});
     setDoc(doc(db,'users',cred.user.uid),{name,email,createdAt:new Date().toISOString(),preferences:{}}).catch(()=>{});
     saveReferral(cred.user.uid);
+    // Send email verification
+    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js').then(({sendEmailVerification})=>{
+      sendEmailVerification(cred.user).catch(()=>{});
+    });
     currentUser=cred.user;isGuest=false;await enterApp();
   }catch(err){
     aerr('su-err',err.code==='auth/email-already-in-use'?'An account with this email already exists.':err.code==='auth/invalid-email'?'Invalid email address.':'Something went wrong. Please try again.');
@@ -1494,7 +1539,7 @@ function fmtDate(ts){if(!ts)return'—';const d=ts.toDate?ts.toDate():new Date(t
 function scanItem(s){
   const lows=(s.nutrients||[]).filter(n=>n.status==='low');
   const thumbHtml=s.imageUrl?`<img src="${s.imageUrl}" style="width:48px;height:48px;object-fit:cover;border-radius:7px;">`:`<svg width="24" height="24" viewBox="0 0 140 140" fill="none"><circle cx="70" cy="70" r="55" stroke="rgba(0,217,139,0.35)" stroke-width="1.5"/><circle cx="70" cy="70" r="8" fill="rgba(255,180,80,0.6)"/></svg>`;
-  return`<div class="scan-item" style="position:relative;" onclick="openScan('${s.id}')"><div class="scan-thumb">${thumbHtml}</div><div class="scan-info"><div class="scan-date">${fmtDate(s.createdAt)}</div><div class="scan-summary">${(s.nutrients||[]).length} nutrients assessed${s.imageType?` · ${s.imageType}`:''}</div></div><div class="scan-badges">${lows.map(n=>`<span class="badge badge-warn">${n.name} low</span>`).join('')||'<span class="badge badge-ok">All normal</span>'}</div><button onclick="event.stopPropagation();confirmDeleteScan('${s.id}')" style="margin-left:auto;flex-shrink:0;background:transparent;border:1px solid var(--border);color:var(--text-3);border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-3)'">Delete</button></div>`;
+  return`<div class="scan-item" style="position:relative;" data-nutrients="${(s.nutrients||[]).map(n=>n.name).join(',').toLowerCase()}" data-type="${s.imageType||''}" data-has-low="${lows.length>0?'1':'0'}" onclick="openScan('${s.id}')"><div class="scan-thumb">${thumbHtml}</div><div class="scan-info"><div class="scan-date">${fmtDate(s.createdAt)}</div><div class="scan-summary">${(s.nutrients||[]).length} nutrients assessed${s.imageType?` · ${s.imageType}`:''}</div></div><div class="scan-badges">${lows.map(n=>`<span class="badge badge-warn">${n.name} low</span>`).join('')||'<span class="badge badge-ok">All normal</span>'}</div><button onclick="event.stopPropagation();confirmDeleteScan('${s.id}')" style="margin-left:auto;flex-shrink:0;background:transparent;border:1px solid var(--border);color:var(--text-3);border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-3)'">Delete</button></div>`;
 }
 
 function renderScans(){
@@ -1509,6 +1554,10 @@ function renderScans(){
   document.getElementById('dash-list').innerHTML=html;
   document.getElementById('hist-list').innerHTML=html;
   document.getElementById('prof-count').textContent=scans.length;
+  const skelEl=document.getElementById('dash-skeleton');
+  if(skelEl)skelEl.style.display='none';
+  const dashListEl=document.getElementById('dash-list');
+  if(dashListEl)dashListEl.style.display='block';
   const emptyEl=document.getElementById('dash-empty');
   if(emptyEl)emptyEl.style.display=scans.length===0?'block':'none';
   populateTrends();
@@ -1540,10 +1589,12 @@ function buildRows(nutrients,animate=false){
     const statusLabel=n.status==='low'?'↓ Below normal':n.status==='high'?'↑ Above normal':'✓ Normal range';
     const statusClass=n.status==='low'?'st-low':n.status==='high'?'st-high':'st-ok';
     const barClass=n.status==='low'?'bar-low':n.status==='high'?'bar-high':'bar-ok';
+    const tipText=n.level>=80?'Normal range — no concerning signals detected':n.level>=56?'Borderline — mild signal worth monitoring over time':n.level>=31?'Below normal — moderate signal detected':'Low — significant signal detected in this scan';
     return `
     <div class="nutrient-row">
       <div class="nr-top">
         <div class="nr-name">${n.name}</div>
+        <div title="${tipText}" style="width:16px;height:16px;border-radius:50%;background:var(--bg-3);border:1px solid var(--border);font-size:10px;color:var(--text-3);display:flex;align-items:center;justify-content:center;cursor:help;flex-shrink:0;">?</div>
         <div style="display:flex;align-items:center;gap:6px;margin-left:auto;">
           ${n.confidence?`<span style="font-size:10px;color:var(--text-3);font-family:'DM Mono',monospace;">${confLabel}</span>`:''}
           <div class="nr-status ${statusClass}">${statusLabel}</div>
@@ -2156,9 +2207,137 @@ function showOnboarding(){
 }
 window.dismissOnboarding=()=>{document.getElementById('onboardingOverlay')?.remove();localStorage.setItem('vy_onboarded','1');switchTab('analyzer');};
 
+// ── ERROR BOUNDARY ───────────────────────────────────────────────────────────
+window.addEventListener('error',e=>{
+  console.error('Global error:',e.error);
+  const eb=document.getElementById('errorBoundary');
+  const detail=document.getElementById('errDetail');
+  if(eb){eb.style.display='flex';}
+  if(detail&&e.error)detail.textContent=e.error.message||'';
+});
+window.addEventListener('unhandledrejection',e=>{
+  // Only show for critical errors, not API failures
+  if(e.reason&&e.reason.message&&e.reason.message.includes('Firebase')){
+    const eb=document.getElementById('errorBoundary');
+    if(eb)eb.style.display='flex';
+  }
+});
+
+// ── MODAL SYSTEM ─────────────────────────────────────────────────────────────
+const MODAL_CONTENT={
+  privacy:{
+    title:'Privacy Policy',
+    body:`<p style="margin-bottom:16px;"><strong>Last updated: May 2026</strong></p>
+<p style="margin-bottom:12px;"><strong>What we collect</strong><br>When you create an account, we collect your name and email. When you run a scan, we store the AI-generated analysis results (nutrient scores, summary, recommendations). We do not store the actual images you upload — they are sent to AI models for analysis and discarded.</p>
+<p style="margin-bottom:12px;"><strong>How we use your data</strong><br>Your scan data is used to show you your history and trends within the app. If you opt into research contribution, anonymized scan results (no name, no email, no images) are stored separately to help improve Vytreos. You can disable this at any time in Profile settings.</p>
+<p style="margin-bottom:12px;"><strong>Third-party services</strong><br>Vytreos uses Firebase (Google) for authentication and data storage, and multiple AI APIs (Google Gemini, Groq, Mistral, HuggingFace, Roboflow) to analyze images. Images are transmitted to these services and subject to their privacy policies.</p>
+<p style="margin-bottom:12px;"><strong>Data security</strong><br>Your data is stored in Firebase Firestore with security rules that ensure only you can access your account data. We use HTTPS for all transmissions.</p>
+<p style="margin-bottom:12px;"><strong>Your rights</strong><br>You can delete your account and all associated data at any time. Contact us at privacy@vytreos.app.</p>
+<p><strong>Not a medical device</strong><br>Vytreos is a wellness exploration tool. Results are AI estimates and are not intended for medical use. We do not sell your data to advertisers.</p>`
+  },
+  terms:{
+    title:'Terms of Service',
+    body:`<p style="margin-bottom:16px;"><strong>Last updated: May 2026</strong></p>
+<p style="margin-bottom:12px;"><strong>Acceptance</strong><br>By using Vytreos, you agree to these terms. If you disagree, do not use the service.</p>
+<p style="margin-bottom:12px;"><strong>Not medical advice</strong><br>Vytreos is an experimental wellness tool, not a medical device. Results are AI-generated estimates based on visual analysis of eye photographs. They do not constitute medical diagnosis, advice, or treatment. Always consult a qualified healthcare professional for any health concerns.</p>
+<p style="margin-bottom:12px;"><strong>Eligibility</strong><br>You must be 18 or older to use Vytreos. By creating an account, you confirm you are at least 18 years old.</p>
+<p style="margin-bottom:12px;"><strong>Acceptable use</strong><br>You may not misuse the service, attempt to reverse engineer it, or use it in ways that violate applicable laws. Scan limits exist to ensure fair access for all users.</p>
+<p style="margin-bottom:12px;"><strong>Accuracy disclaimer</strong><br>AI analysis results may be inaccurate, incomplete, or inconsistent. Vytreos makes no warranties about the accuracy of nutrient assessments. Use results as general wellness guidance only.</p>
+<p style="margin-bottom:12px;"><strong>Limitation of liability</strong><br>Vytreos is provided "as is." We are not liable for any health decisions made based on Vytreos results.</p>
+<p><strong>Changes</strong><br>We may update these terms at any time. Continued use constitutes acceptance of updated terms.</p>`
+  },
+  faq:{
+    title:'Frequently Asked Questions',
+    body:`<p style="margin-bottom:16px;font-weight:700;color:var(--text);">Is Vytreos a medical device?</p>
+<p style="margin-bottom:20px;">No. Vytreos is an experimental wellness exploration tool. Results are generated by AI models analyzing photographs and are not medically validated. Always see a qualified eye care professional for medical concerns.</p>
+<p style="margin-bottom:16px;font-weight:700;color:var(--text);">How accurate is the analysis?</p>
+<p style="margin-bottom:20px;">Accuracy varies significantly by image quality. Clinical fundus photographs from an eye doctor give the most reliable results. Phone selfies can show some signals (like conjunctival pallor for iron deficiency) but are less precise. Vytreos uses multiple AI models to cross-validate findings, but no AI analysis of eye photos is clinically validated for nutrition assessment.</p>
+<p style="margin-bottom:16px;font-weight:700;color:var(--text);">What camera should I use?</p>
+<p style="margin-bottom:20px;">The best option is a fundus photograph from your eye doctor (ask for a retinal photo at your next exam — usually $20-40 as an add-on). For phone photos, use natural light, no flash, and angle the phone slightly to avoid corneal reflection. Pull your lower eyelid down gently to expose the inner pink tissue.</p>
+<p style="margin-bottom:16px;font-weight:700;color:var(--text);">Are my images stored?</p>
+<p style="margin-bottom:20px;">No. Your images are sent to AI models for analysis and immediately discarded. Only the analysis results (nutrient scores, summary) are saved to your account.</p>
+<p style="margin-bottom:16px;font-weight:700;color:var(--text);">How many scans can I do?</p>
+<p style="margin-bottom:20px;">Free accounts can run up to 10 scans per day. Scanning weekly or monthly gives the most meaningful trend data.</p>
+<p style="margin-bottom:16px;font-weight:700;color:var(--text);">Why do I get different results on the same image?</p>
+<p>AI vision models can produce slightly different outputs on repeated runs. Vytreos uses multiple models and merges their results to improve consistency, but some variation is expected. Trends across many scans are more meaningful than any single result.</p>`
+  },
+  about:{
+    title:'About Vytreos',
+    body:`<p style="margin-bottom:20px;font-size:15px;color:var(--text);font-family:'Instrument Serif',serif;line-height:1.7;">Vytreos is an early-stage health technology project exploring whether AI can detect nutritional signals from retinal and eye photographs.</p>
+<p style="margin-bottom:16px;"><strong style="color:var(--text);">The science</strong><br>The field of oculomics — using eye photographs to detect systemic health signals — is a legitimate and growing area of research. Studies have shown that retinal photographs can reveal markers of cardiovascular risk, diabetes, anemia, and other conditions. Vytreos applies this emerging science to nutritional status.</p>
+<p style="margin-bottom:16px;"><strong style="color:var(--text);">Where we are today</strong><br>Vytreos is experimental. The specific application of oculomics to micronutrient deficiency detection is not yet clinically validated at a consumer level. We are honest about this limitation — results are wellness estimates, not diagnoses.</p>
+<p style="margin-bottom:16px;"><strong style="color:var(--text);">Our approach</strong><br>We use multiple AI vision models (Google Gemini, Groq, Mistral) running in parallel, merge their findings, and cross-reference with NIH dietary guidelines. The more you scan, the more meaningful your personal trends become.</p>
+<p style="margin-bottom:16px;"><strong style="color:var(--text);">Help build the future</strong><br>By opting into research contribution in your Profile settings, your anonymized scan data helps us build a dataset that could one day train a specialized model for this exact purpose.</p>
+<p><strong style="color:var(--text);">Contact</strong><br>Questions, feedback, or partnership inquiries: hello@vytreos.app</p>`
+  }
+};
+
+window.showModal=(type)=>{
+  const modal=document.getElementById('infoModal');
+  const title=document.getElementById('infoModalTitle');
+  const body=document.getElementById('infoModalBody');
+  if(!modal||!title||!body)return;
+  const c=MODAL_CONTENT[type];
+  if(!c)return;
+  title.textContent=c.title;
+  body.innerHTML=c.body;
+  modal.style.display='flex';
+};
+window.closeModal=()=>{
+  const modal=document.getElementById('infoModal');
+  if(modal)modal.style.display='none';
+};
+
+// ── HISTORY SEARCH/FILTER ─────────────────────────────────────────────────────
+window.filterHistory=()=>{
+  const q=(document.getElementById('hist-search')?.value||'').toLowerCase();
+  const filter=document.getElementById('hist-filter')?.value||'all';
+  const items=document.querySelectorAll('#hist-list .scan-item');
+  items.forEach(item=>{
+    const text=item.textContent.toLowerCase();
+    const nutrients=item.getAttribute('data-nutrients')||'';
+    const type=item.getAttribute('data-type')||'';
+    const hasLow=item.getAttribute('data-has-low')==='1';
+    let show=true;
+    if(q&&!text.includes(q)&&!nutrients.includes(q))show=false;
+    if(filter==='low'&&!hasLow)show=false;
+    if(filter==='ok'&&hasLow)show=false;
+    if(filter==='fundus'&&!type.includes('fundus'))show=false;
+    if(filter==='anterior'&&!type.includes('anterior'))show=false;
+    item.style.display=show?'':'none';
+  });
+};
+
+// ── PULL TO REFRESH ───────────────────────────────────────────────────────────
+(()=>{
+  let startY=0,pulling=false;
+  const el=document.getElementById('appContent');
+  if(!el)return;
+  el.addEventListener('touchstart',e=>{if(el.scrollTop===0)startY=e.touches[0].clientY;},{passive:true});
+  el.addEventListener('touchmove',e=>{
+    const dist=e.touches[0].clientY-startY;
+    if(dist>60&&el.scrollTop===0){pulling=true;const ind=document.getElementById('ptr-indicator');if(ind)ind.style.display='block';}
+  },{passive:true});
+  el.addEventListener('touchend',()=>{
+    if(pulling){pulling=false;const ind=document.getElementById('ptr-indicator');if(ind)ind.style.display='none';loadScans().then(()=>toast('Refreshed'));}
+    startY=0;
+  });
+})();
+
 window.retryAnalysis=function(){if(window._pendingImgData)window.runAnalysis(window._pendingImgData);};
 window.runAnalysis=async function runAnalysis(imgDataUrl){
   window._pendingImgData=imgDataUrl;
+  // Rate limit: 10 scans per day
+  if(currentUser){
+    const today=new Date().toDateString();
+    const key='vy_scans_'+currentUser.uid+'_'+today;
+    const count=parseInt(localStorage.getItem(key)||'0');
+    if(count>=10){
+      toast('Daily scan limit reached (10/day) — come back tomorrow','err');
+      return;
+    }
+    localStorage.setItem(key,count+1);
+  }
 
   const el=document.getElementById('analysisState');
 
