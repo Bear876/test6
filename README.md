@@ -106,6 +106,39 @@ The final composite summary also produces a short `qualityNotes(...)` string (e.
 
 See `public/vq.js` for the algorithms and `test-vq.mjs` for the synthetic-fixture tests (run with `node test-vq.mjs`).
 
+## Eye tracking (OD/OS)
+
+Every scan is tagged with an eye selector — Left (OS), Right (OD), or Both. The selector lives in the analyzer panel before each scan. Features:
+
+- **Eye badge** on each scan in history/dashboard (OD/OS pill).
+- **Per-eye filter** — toggle between All / OS / OD to see trends for a single eye.
+- **Eye stored in Firestore** — persists across sign-ins and devices.
+
+## CSV data export
+
+Export all your nutrient data as a spreadsheet-ready CSV file. Click the **📥 CSV** button in the history tab. The CSV includes:
+
+- Date, Eye (OD/OS/both), Nutrient name, Level (0–100), Status, Confidence, and Image quality.
+- UTF-8 BOM for Excel compatibility.
+- One row per nutrient per scan — ready for pivot tables.
+
+## Personalized food recommendations
+
+After each scan, if any nutrient signal is borderline or low, Vytreos surfaces a personalized food plan with:
+
+- **Specific foods, portions, and frequency** for each nutrient (e.g., "Chicken liver 85g, 2×/wk").
+- **Absorption tips** (e.g., "Pair iron with vitamin C; avoid tea 1hr after meals").
+- The food database covers all 20+ nutrients the AI assesses.
+
+## Lifestyle experiment log
+
+Track supplements, diet changes, or habits alongside your retinal scans. Lives in the **Trends** tab:
+
+- **Add experiments** — "Fish oil 1000mg" or "No dairy since March 1st."
+- **Timeline view** — see when you started each intervention.
+- **Correlate with trends** — overlay experiment start dates on nutrient charts to spot causal patterns.
+- **Stored in localStorage** — no backend required. Survives page reloads.
+
 ## Security headers
 
 `vercel.json` sets `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, and `Permissions-Policy` on every response. `/api/*` responses are sent `Cache-Control: no-store`. `/public/index.html` is `no-cache` to make rollouts immediate.
