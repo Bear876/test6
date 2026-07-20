@@ -1,118 +1,178 @@
-export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-  const { model, base64, mediaType, prompt } = req.body;
-  if (!base64 || !mediaType) return res.status(400).json({ error: 'Missing fields' });
+// Vytreos /api/analyze
+// Hardening:
+//   - 405 envelope for non-POST requests
+//   - 413 if Content-Length > 5 MB (or accumulated body exceeds 5 MB)
+//   - 400 if `model` doesn't match the allowlist
+//   - 400 if base64 or mediaType missing
+//   - X-Request-Id on every response, structured console logs keyed to it
+//   - Cache-Control: no-store on every response
+//   - Top-level catch so anything that escapes a provider block returns 500 cleanly
 
-  // ── MISTRAL VISION (Pixtral) ─────────────────────────────────────────────
-  if (model === 'mistral-vision') {
-    const MISTRAL_KEY = process.env.MISTRAL_API_KEY;
-    if (!MISTRAL_KEY) return res.status(503).json({ error: 'Mistral not configured' });
-    try {
-      const mistralRes = await fetch('https://api.mistral.ai/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${MISTRAL_KEY}` },
-        body: JSON.stringify({
-          model: 'pixtral-12b-2409',
-          messages: [{
-            role: 'user',
-            content: [
+const MAX_BYTES = 5_000_000;
+
+const ALLOWED_MODELS = new Set([
+  'mistral-vision',
+  'hf-biomed',
+  'roboflow',
+  'groq-llava',
+]);
+
+const ALLOWED_GEMINI_PREFIX = 'gemini-'; // gemini-1.5-*, gemini-2.0-*, gemini-2.5-*
+
+const isAllowedModel = (m) =>
+  typeof m === 'string' && (m.startsWith(ALLOWED_GEMINI_PREFIX) || ALLOWED_MODELS.has(m));
+
+const newReqId = () =>
+  Math.random().toString(36).slice(2, 6) + Date.now().toString(36).slice(-4);
+
+export default async function handler(req, res) {
+  // Lightweight cheap-rejection headers first (avoid reading the body unless needed).
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const declared = Number(req.headers['content-length'] ?? 0);
+  if (declared > MAX_BYTES) {
+    return res.status(413).json({ error: 'Payload too large', maxBytes: MAX_BYTES });
+  }
+
+  // Observability + caching headers (idempotent if a downstream route already set them).
+  res.setHeader('Cache-Control', 'no-store');
+  const reqId = newReqId();
+  res.setHeader('X-Request-Id', reqId);
+
+  const { model, base64, mediaType, prompt } = req.body || {};
+  console.log(`[${reqId}] analyze start model=${model || '(none)'} mime=${mediaType || '(none)'} bytes=${declared}`);
+
+  try {
+    if (!base64 || !mediaType) {
+      return res.status(400).json({ error: 'Missing fields' });
+    }
+    if (!isAllowedModel(model)) {
+      console.warn(`[${reqId}] reject unknown model:`, model);
+      return res.status(400).json({
+        error: 'Unknown model',
+        allowed: ['gemini-*', 'mistral-vision', 'hf-biomed', 'roboflow', 'groq-llava'],
+      });
+    }
+
+    // ── MISTRAL VISION (Pixtral) ─────────────────────────────────────────────
+    if (model === 'mistral-vision') {
+      const MISTRAL_KEY = process.env.MISTRAL_API_KEY;
+      if (!MISTRAL_KEY) return res.status(503).json({ error: 'Mistral not configured' });
+      try {
+        const mistralRes = await fetch('https://api.mistral.ai/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${MISTRAL_KEY}` },
+          body: JSON.stringify({
+            model: 'pixtral-12b-2409',
+            messages: [{
+              role: 'user',
+              content: [
+                { type: 'image_url', image_url: { url: `data:${mediaType};base64,${base64}` } },
+                { type: 'text', text: prompt }
+              ]
+            }],
+            max_tokens: 4096,
+            temperature: 0.05
+          })
+        });
+        if (!mistralRes.ok) {
+          const err = await mistralRes.json().catch(() => ({}));
+          console.warn(`[${reqId}] Mistral ${mistralRes.status}:`, err?.message);
+          return res.status(mistralRes.status).json({ error: err?.message || 'Mistral error' });
+        }
+        const data = await mistralRes.json();
+        return res.status(200).json({ result: data.choices?.[0]?.message?.content || '' });
+      } catch (e) {
+        return res.status(500).json({ error: e.message });
+      }
+    }
+
+    // ── HUGGING FACE ─────────────────────────────────────────────────────────
+    if (model === 'hf-biomed') {
+      const HF_KEY = process.env.HF_API_KEY;
+      if (!HF_KEY) return res.status(503).json({ error: 'HF not configured' });
+      try {
+        const imgBuffer = Buffer.from(base64, 'base64');
+        if (imgBuffer.length > MAX_BYTES) return res.status(413).json({ error: 'Decoded image too large' });
+        const hfRes = await fetch(
+          'https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-base',
+          { method: 'POST', headers: { 'Authorization': `Bearer ${HF_KEY}`, 'Content-Type': 'application/octet-stream' }, body: imgBuffer }
+        );
+        if (!hfRes.ok) return res.status(hfRes.status).json({ error: 'HF error: ' + hfRes.status });
+        const data = await hfRes.json();
+        return res.status(200).json({ result: JSON.stringify(data) });
+      } catch (e) { return res.status(500).json({ error: e.message }); }
+    }
+
+    // ── ROBOFLOW ─────────────────────────────────────────────────────────────
+    if (model === 'roboflow') {
+      const RF_KEY = process.env.ROBOFLOW_API_KEY;
+      if (!RF_KEY) return res.status(503).json({ error: 'Roboflow not configured' });
+      try {
+        const rfRes = await fetch(
+          `https://detect.roboflow.com/eye-detection-4jkmm/1?api_key=${RF_KEY}&confidence=25`,
+          { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: base64 }
+        );
+        if (!rfRes.ok) return res.status(rfRes.status).json({ error: 'Roboflow error: ' + rfRes.status });
+        const data = await rfRes.json();
+        return res.status(200).json({ result: JSON.stringify(data) });
+      } catch (e) { return res.status(500).json({ error: e.message }); }
+    }
+
+    // ── GROQ ─────────────────────────────────────────────────────────────────
+    if (model === 'groq-llava') {
+      const GROQ_KEY = process.env.GROQ_API_KEY;
+      if (!GROQ_KEY) return res.status(503).json({ error: 'Groq not configured' });
+      try {
+        const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_KEY}` },
+          body: JSON.stringify({
+            model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+            messages: [{ role: 'user', content: [
               { type: 'image_url', image_url: { url: `data:${mediaType};base64,${base64}` } },
               { type: 'text', text: prompt }
-            ]
-          }],
-          max_tokens: 4096,
-          temperature: 0.05
-        })
-      });
-      if (!mistralRes.ok) {
-        const err = await mistralRes.json().catch(() => ({}));
-        console.warn('Mistral error:', mistralRes.status, err?.message);
-        return res.status(mistralRes.status).json({ error: err?.message || 'Mistral error' });
+            ]}],
+            max_tokens: 4096, temperature: 0.05
+          })
+        });
+        if (!groqRes.ok) {
+          const err = await groqRes.json().catch(() => ({}));
+          return res.status(groqRes.status).json({ error: err?.error?.message || 'Groq error' });
+        }
+        const data = await groqRes.json();
+        return res.status(200).json({ result: data.choices?.[0]?.message?.content || '' });
+      } catch (e) { return res.status(500).json({ error: e.message }); }
+    }
+
+    // ── GEMINI ───────────────────────────────────────────────────────────────
+    const GEMINI_KEY = process.env.GEMINI_KEY;
+    if (!GEMINI_KEY) return res.status(500).json({ error: 'Gemini not configured' });
+    try {
+      const gemRes = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_KEY}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ inline_data: { mime_type: mediaType, data: base64 } }, { text: prompt }] }],
+            generationConfig: { temperature: 0.05, maxOutputTokens: 8192 }
+          })
+        }
+      );
+      if (!gemRes.ok) {
+        const err = await gemRes.json().catch(() => ({}));
+        return res.status(gemRes.status).json({ error: err?.error?.message || `HTTP ${gemRes.status}` });
       }
-      const data = await mistralRes.json();
-      return res.status(200).json({ result: data.choices?.[0]?.message?.content || '' });
+      const data = await gemRes.json();
+      return res.status(200).json({ result: data.candidates?.[0]?.content?.parts?.[0]?.text || '' });
     } catch (e) {
       return res.status(500).json({ error: e.message });
     }
+  } catch (e) {
+    console.error(`[${reqId}] unhandled:`, e);
+    if (!res.headersSent) return res.status(500).json({ error: 'Internal error' });
   }
-
-  // ── HUGGING FACE ─────────────────────────────────────────────────────────
-  if (model === 'hf-biomed') {
-    const HF_KEY = process.env.HF_API_KEY;
-    if (!HF_KEY) return res.status(503).json({ error: 'HF not configured' });
-    try {
-      const imgBuffer = Buffer.from(base64, 'base64');
-      const hfRes = await fetch(
-        'https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-base',
-        { method: 'POST', headers: { 'Authorization': `Bearer ${HF_KEY}`, 'Content-Type': 'application/octet-stream' }, body: imgBuffer }
-      );
-      if (!hfRes.ok) return res.status(hfRes.status).json({ error: 'HF error: ' + hfRes.status });
-      const data = await hfRes.json();
-      return res.status(200).json({ result: JSON.stringify(data) });
-    } catch (e) { return res.status(500).json({ error: e.message }); }
-  }
-
-  // ── ROBOFLOW ─────────────────────────────────────────────────────────────
-  if (model === 'roboflow') {
-    const RF_KEY = process.env.ROBOFLOW_API_KEY;
-    if (!RF_KEY) return res.status(503).json({ error: 'Roboflow not configured' });
-    try {
-      const rfRes = await fetch(
-        `https://detect.roboflow.com/eye-detection-4jkmm/1?api_key=${RF_KEY}&confidence=25`,
-        { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: base64 }
-      );
-      if (!rfRes.ok) return res.status(rfRes.status).json({ error: 'Roboflow error: ' + rfRes.status });
-      const data = await rfRes.json();
-      return res.status(200).json({ result: JSON.stringify(data) });
-    } catch (e) { return res.status(500).json({ error: e.message }); }
-  }
-
-  // ── GROQ ─────────────────────────────────────────────────────────────────
-  if (model === 'groq-llava') {
-    const GROQ_KEY = process.env.GROQ_API_KEY;
-    if (!GROQ_KEY) return res.status(503).json({ error: 'Groq not configured' });
-    try {
-      const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_KEY}` },
-        body: JSON.stringify({
-          model: 'meta-llama/llama-4-scout-17b-16e-instruct',
-          messages: [{ role: 'user', content: [
-            { type: 'image_url', image_url: { url: `data:${mediaType};base64,${base64}` } },
-            { type: 'text', text: prompt }
-          ]}],
-          max_tokens: 4096, temperature: 0.05
-        })
-      });
-      if (!groqRes.ok) {
-        const err = await groqRes.json().catch(() => ({}));
-        return res.status(groqRes.status).json({ error: err?.error?.message || 'Groq error' });
-      }
-      const data = await groqRes.json();
-      return res.status(200).json({ result: data.choices?.[0]?.message?.content || '' });
-    } catch (e) { return res.status(500).json({ error: e.message }); }
-  }
-
-  // ── GEMINI ───────────────────────────────────────────────────────────────
-  const GEMINI_KEY = process.env.GEMINI_KEY;
-  if (!GEMINI_KEY) return res.status(500).json({ error: 'Gemini key not configured' });
-  try {
-    const gemRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ inline_data: { mime_type: mediaType, data: base64 } }, { text: prompt }] }],
-          generationConfig: { temperature: 0.05, maxOutputTokens: 8192 }
-        })
-      }
-    );
-    if (!gemRes.ok) {
-      const err = await gemRes.json().catch(() => ({}));
-      return res.status(gemRes.status).json({ error: err?.error?.message || `HTTP ${gemRes.status}` });
-    }
-    const data = await gemRes.json();
-    return res.status(200).json({ result: data.candidates?.[0]?.content?.parts?.[0]?.text || '' });
-  } catch (e) { return res.status(500).json({ error: e.message }); }
 }

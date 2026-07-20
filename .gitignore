@@ -1,0 +1,33 @@
+# Node / package managers
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn.lock
+package-lock.json
+bun.lockb
+.pnpm-store/
+
+# Vercel
+.vercel/
+
+# Freebuff preview runtime state
+.freebuff/
+
+# Real env files (MUST never be committed)
+.env
+.env.local
+.env.development
+.env.production
+.env.*.local
+
+# Editors / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Build artifacts (none used today, future-proofing)
+dist/
+build/
+.cache/
