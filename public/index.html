@@ -3186,5 +3186,23 @@ if('serviceWorker' in navigator){
     <button class="wizard-skip" onclick="wizardSkip()">Skip this step</button>
   </div>
 </div>
+
+<!-- --- IMAGE QUALITY PIPELINE --- -->
+<!-- Loaded AFTER the main IIFE has executed. install() wraps window.runAnalysis
+     and window.scoreFrame so every webcam capture and file upload is scored
+     (focus / exposure / glare / color cast / green channel) and preprocessed
+     (gray-world + CLAHE-lite + hotspot attenuation) before /api/analyze. -->
+<script src="/vq.js"></script>
+<script>
+(function(){
+  try {
+    if (typeof VQ !== "undefined" && VQ.install) {
+      VQ.install({ glareIndicator: document.getElementById("glareIndicator") });
+    }
+  } catch (e) {
+    /* VQ module unavailable (network/CDN issue); fall through to unwrapped behavior. */
+  }
+})();
+</script>
 </body>
 </html>

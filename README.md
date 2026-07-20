@@ -68,6 +68,44 @@ See [`.env.example`](./.env.example). Every key is optional; an un-set provider 
 
 `PLAUSIBLE_DOMAIN` and `SENTRY_DSN` (optional) are documented in the same file — add them when wiring those services.
 
+## Image quality pipeline
+
+Phone-camera retinal photos are hard: motion blur, corneal glare, white-balance casts, and lens artifacts all degrade what reaches the vision model. Vytreos runs an on-device quality pipeline **before** any `/api/analyze` request — no backend round-trip, no extra cost, no new env vars.
+
+The pipeline lives in `public/vq.js` (≈ 350 lines, zero dependencies; loadable as a classic `<script>` in the browser and via Node for testing). It exposes five independent metrics over a downscaled ImageData:
+
+| Metric | What it catches | Algorithm |
+|---|---|---|
+| **Focus** | motion blur, out-of-focus camera | Laplacian variance over 3×3 luminance |
+| **Exposure** | under/over-exposed frames | luminance percentile sampling (p10/p50/p90) |
+| **Glare (specular peaks)** | corneal reflection, flash hot-spots | clustered bright+low-saturation pixels (≥4 px within 6 px = one hotspot) |
+| **Color cast** | off-white balance, ISP tinting | gray-world assumption (deviation of mean R/G/B from neutral) |
+| **Green-channel signal** | washed-out vessels vs. healthy vasculature | green-channel variance / luminance variance ratio |
+
+A composite `overall` score weights focus strongly (0.45), with smaller weights on glare, exposure, color cast, and signal — every photo gets a `Good / Fair / Poor` tier before it is sent to the model.
+
+### Preprocessing before the AI
+
+Any image that flows through `window.runAnalysis` (whether from the webcam or a file upload) is first copied to an off-screen canvas, then run through three transforms:
+
+1. **Gray-world normalization** — rescale R/G/B so the average pixel is neutral gray. Different phone ISPs lean warm or cool; this collapses the spread.
+2. **CLAHE-lite** — clip 0.5% tails of the luminance histogram, linear remap. Pulls crushed shadows back without amplifying sensor noise.
+3. **Hotspot attenuation** — for any detected glare cluster, replace with a mean of the surrounding ring (so the AI sees choroid pattern instead of a corneal flash).
+
+The transformed canvas is then `toDataURL('image/jpeg', 0.92)`-encoded and only that URL is sent to `/api/analyze`.
+
+### Quality hints → model prompt
+
+The final composite summary also produces a short `qualityNotes(...)` string (e.g., "Image quality: Fair (62/100). Mildly blurry — discount fine vessel detail. Specular highlights present…"). It is stashed on `window.__vqLastNotes` after each analysis so the SPA can append it to provider-specific prompts if desired.
+
+### What it does *not* do
+
+- It never blocks a scan — even a totally-blurred photo is still sent and the model still returns a result (the SPA already displays API errors gracefully).
+- It does **not** require any of the provider API keys — you can deploy with only `GEMINI_KEY` set and still get quality scoring on every scan.
+- It does **not** call any external service. All scoring and preprocessing run on the user's device in <50 ms on a typical phone.
+
+See `public/vq.js` for the algorithms and `test-vq.mjs` for the synthetic-fixture tests (run with `node test-vq.mjs`).
+
 ## Security headers
 
 `vercel.json` sets `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, and `Permissions-Policy` on every response. `/api/*` responses are sent `Cache-Control: no-store`. `/public/index.html` is `no-cache` to make rollouts immediate.
