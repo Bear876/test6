@@ -116,8 +116,10 @@ function serveStatic(req, res) {
   if (urlPath === '/') urlPath = '/index.html';
 
   // Resolve under PUBLIC_DIR; reject anything that escapes it.
+  // PUBLIC_DIR does not end with a separator, so use PUBLIC_DIR + path.sep
+  // to avoid sibling-prefix bypass (e.g. /public-evil matching /public).
   const candidate = path.normalize(path.join(PUBLIC_DIR, urlPath));
-  if (!candidate.startsWith(PUBLIC_DIR)) {
+  if (candidate !== PUBLIC_DIR && !candidate.startsWith(PUBLIC_DIR + path.sep)) {
     res.statusCode = 403;
     res.end('Forbidden');
     return;
