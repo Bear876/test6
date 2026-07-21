@@ -2447,6 +2447,7 @@ if(__validResults.length>0&&window.ACCURACY){
     const modelCount=[resA,resB,resC,resD].filter(Boolean).length;
     const src=modelCount>=2?modelCount+'-model consensus':'AI analysis complete';
     toast('Analysis complete · '+src);
+  }
   }catch(err){
     clearInterval(timer);console.error(err);
     el.innerHTML=`<div class="analysis-idle" style="color:var(--red)">⚠ Analysis failed<br><span style="font-size:11px;color:var(--text-3);display:block;margin-top:6px;font-family:'Space Mono',monospace">${err.message}</span><br><button onclick="window.retryAnalysis()" style="margin-top:14px;padding:9px 22px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;">Retry</button></div>`;
@@ -3005,13 +3006,14 @@ window.renderComparison=function(){
 
 // ── PDF REPORT ─────────────────────────────────────────────────────────────────
 window.downloadPDF=function(scan){
-  try{
-    var s=scan||(window.SCANS&&window.SCANS[0])||null;
-    if(!s)return;
-    if(window.PDF&&typeof PDF.render==='function'){return PDF.render(s);}
+  var s=scan||(window.SCANS&&window.SCANS[0])||null;
+  if(!s)return;
+  if(window.PDF&&typeof PDF.render==='function'){return PDF.render(s);}
     // Fallback to a minimal print if PDF.js is unavailable (e.g., failed to load).
-    var w=window.open('','_blank');if(w){w.document.write('<title>Vytreos Report</title><body style="font-family:serif;padding:24px;"><h1>Report unavailable</h1><p>The redesigned PDF module failed to load. Please reload the page.</p>
-<!-- ═════ FAMILY / PROFILE CHIP + MODAL (wired by /family.js) ═════ -->
+    var w=window.open('','_blank');if(w){w.document.write('<title>Vytreos Report</title><body style="font-family:serif;padding:24px;"><h1>Report unavailable</h1><p>The redesigned PDF module failed to load. Please reload the page.</p>');}
+  }
+</script>
+/* ═════ FAMILY / PROFILE CHIP + MODAL (wired by /family.js) ═════ */
 <div id="familyModal" class="modal-overlay"><div class="modal" style="max-width:560px;">
   <button class="modal-close" onclick="document.getElementById('familyModal').classList.remove('open')">×</button>
   <h2 style="font-family:'Fraunces',serif;font-size:24px;margin-bottom:6px;color:var(--text);">Family profiles</h2>
