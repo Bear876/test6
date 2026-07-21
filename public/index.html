@@ -24,7 +24,7 @@
 <meta name="twitter:image" content="/favicon.svg">
 <link rel="canonical" href="/">
 <title>Vytreos</title>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Outfit:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#06080a;
@@ -50,7 +50,7 @@
   --rs:7px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;}
 ::selection{background:var(--green-dim);color:var(--green);}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--bg-2);}::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:3px;}
 
@@ -65,17 +65,17 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-he
 .loader-eye{width:56px;height:56px;position:relative;}
 .loader-eye svg{animation:loaderPulse 2s ease-in-out infinite;}
 @keyframes loaderPulse{0%,100%{opacity:.5;transform:scale(.95);}50%{opacity:1;transform:scale(1);}}
-.loader-wordmark{font-family:'Instrument Serif',serif;font-size:22px;letter-spacing:.08em;color:var(--text-2);}
+.loader-wordmark{font-family:'Fraunces',serif;font-size:22px;letter-spacing:.08em;color:var(--text-2);}
 .loader-bar{width:120px;height:1px;background:var(--border);border-radius:1px;overflow:hidden;position:relative;}
 .loader-bar::after{content:'';position:absolute;top:0;left:-40%;width:40%;height:100%;background:var(--green);animation:loaderSlide 1.4s ease-in-out infinite;}
 @keyframes loaderSlide{0%{left:-40%;}100%{left:140%;}}
 
 /* ── NAV ── */
 nav{display:flex;align-items:center;justify-content:space-between;padding:20px 48px;border-bottom:1px solid var(--border);background:rgba(6,8,10,.85);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100;}
-.logo{font-family:'Instrument Serif',serif;font-size:20px;color:var(--text);letter-spacing:.06em;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;}
+.logo{font-family:'Fraunces',serif;font-size:20px;color:var(--text);letter-spacing:.06em;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;}
 .logo-pip{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green-glow);flex-shrink:0;}
 .nav-links{display:flex;gap:8px;align-items:center;}
-.btn{padding:8px 18px;border-radius:40px;font-size:13px;font-family:'Syne',sans-serif;font-weight:500;cursor:pointer;border:none;transition:all .15s;letter-spacing:.01em;}
+.btn{padding:8px 18px;border-radius:40px;font-size:13px;font-family:'Outfit',sans-serif;font-weight:500;cursor:pointer;border:none;transition:all .15s;letter-spacing:.01em;}
 .btn-ghost{background:transparent;color:var(--text-2);}
 .btn-ghost:hover{background:var(--bg-3);color:var(--text);}
 .btn-primary{background:var(--text);color:var(--bg);font-weight:600;}
@@ -93,7 +93,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 4
 .hero{position:relative;padding:110px 48px 80px;max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;}
 .hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--green-dim);border:1px solid rgba(0,217,139,.2);color:var(--green);padding:5px 14px;border-radius:40px;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;margin-bottom:28px;}
 .hero-eyebrow-dot{width:5px;height:5px;background:var(--green);border-radius:50%;box-shadow:0 0 6px var(--green);}
-h1{font-family:'Instrument Serif',serif;font-size:62px;line-height:1.0;letter-spacing:-.01em;color:var(--text);margin-bottom:24px;}
+h1{font-family:'Fraunces',serif;font-size:62px;line-height:1.0;letter-spacing:-.01em;color:var(--text);margin-bottom:24px;}
 h1 em{font-style:italic;color:var(--green);}
 .hero-sub{font-size:16px;color:var(--text-2);line-height:1.7;margin-bottom:40px;max-width:440px;font-weight:400;}
 .hero-actions{display:flex;gap:12px;align-items:center;}
@@ -124,7 +124,7 @@ h1 em{font-style:italic;color:var(--green);}
 .features{background:var(--bg-2);border-top:1px solid var(--border);padding:100px 48px;}
 .features-inner{max-width:1200px;margin:0 auto;}
 .section-label{font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:14px;}
-.section-title{font-family:'Instrument Serif',serif;font-size:42px;color:var(--text);margin-bottom:16px;max-width:540px;line-height:1.1;}
+.section-title{font-family:'Fraunces',serif;font-size:42px;color:var(--text);margin-bottom:16px;max-width:540px;line-height:1.1;}
 .section-sub{font-size:15px;color:var(--text-2);max-width:480px;margin-bottom:64px;line-height:1.7;}
 .feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
 .feature-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:32px;transition:border-color .2s;}
@@ -144,19 +144,19 @@ h1 em{font-style:italic;color:var(--green);}
 .auth-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 30%,rgba(0,217,139,.04),transparent);}
 .auth-box{background:var(--bg-2);border:1px solid var(--border);border-radius:20px;padding:48px 44px;width:100%;max-width:420px;position:relative;}
 .auth-box::before{content:'';position:absolute;inset:-1px;border-radius:21px;background:linear-gradient(135deg,rgba(0,217,139,.08),transparent 50%);pointer-events:none;}
-.auth-logo{font-family:'Instrument Serif',serif;font-size:24px;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:10px;}
-.auth-headline{font-family:'Instrument Serif',serif;font-size:26px;color:var(--text);margin-bottom:6px;}
+.auth-logo{font-family:'Fraunces',serif;font-size:24px;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:10px;}
+.auth-headline{font-family:'Fraunces',serif;font-size:26px;color:var(--text);margin-bottom:6px;}
 .auth-sub{font-size:13px;color:var(--text-2);margin-bottom:32px;line-height:1.6;}
 .field{margin-bottom:16px;}
 .field label{display:block;font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase;}
-.field input{width:100%;padding:12px 16px;background:var(--bg-3);border:1px solid var(--border);border-radius:var(--rs);font-size:14px;font-family:'Syne',sans-serif;color:var(--text);outline:none;transition:border-color .15s;}
+.field input{width:100%;padding:12px 16px;background:var(--bg-3);border:1px solid var(--border);border-radius:var(--rs);font-size:14px;font-family:'Outfit',sans-serif;color:var(--text);outline:none;transition:border-color .15s;}
 .field input:focus{border-color:var(--green);background:var(--bg-4);}
 .field input.err{border-color:var(--red)!important;}
 .field input::placeholder{color:var(--text-4);}
 .ferr{font-size:11px;color:var(--red);margin-top:5px;display:none;}
 .ferr.show{display:block;}
 .pw-hint{font-size:11px;color:var(--text-3);margin-top:5px;}
-.auth-btn{width:100%;padding:14px;border-radius:40px;background:var(--green);color:var(--bg);font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:'Syne',sans-serif;transition:all .15s;margin-top:8px;letter-spacing:.02em;}
+.auth-btn{width:100%;padding:14px;border-radius:40px;background:var(--green);color:var(--bg);font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:'Outfit',sans-serif;transition:all .15s;margin-top:8px;letter-spacing:.02em;}
 .auth-btn:hover{background:var(--green-2);}
 .auth-btn:disabled{opacity:.4;cursor:not-allowed;}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -168,14 +168,14 @@ h1 em{font-style:italic;color:var(--green);}
 .divider{display:flex;align-items:center;gap:12px;margin:20px 0;}
 .divider span{font-size:11px;color:var(--text-3);white-space:nowrap;letter-spacing:.06em;text-transform:uppercase;}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
-.demo-btn{width:100%;padding:12px;border-radius:40px;background:transparent;color:var(--text-2);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border);font-family:'Syne',sans-serif;transition:all .15s;}
+.demo-btn{width:100%;padding:12px;border-radius:40px;background:transparent;color:var(--text-2);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border);font-family:'Outfit',sans-serif;transition:all .15s;}
 .demo-btn:hover{border-color:var(--border-2);color:var(--text);}
 
 /* ── APP SHELL ── */
 #view-app{background:var(--bg);}
 .app-wrap{flex:1;display:grid;grid-template-columns:220px 1fr;min-height:0;}
 .sidebar{background:var(--bg-2);border-right:1px solid var(--border);padding:24px 0;display:flex;flex-direction:column;}
-.sidebar-logo{font-family:'Instrument Serif',serif;font-size:18px;padding:0 20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;letter-spacing:.06em;}
+.sidebar-logo{font-family:'Fraunces',serif;font-size:18px;padding:0 20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;letter-spacing:.06em;}
 .sidebar-nav{padding:16px 10px;}
 .nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:500;color:var(--text-3);cursor:pointer;transition:all .12s;margin-bottom:2px;letter-spacing:.01em;}
 .nav-item:hover{background:var(--bg-3);color:var(--text);}
@@ -187,7 +187,7 @@ h1 em{font-style:italic;color:var(--green);}
 .app-content{overflow-y:auto;background:var(--bg);}
 .tab-content{display:none;padding:40px;}
 .tab-content.active{display:block;}
-.page-title{font-family:'Instrument Serif',serif;font-size:32px;letter-spacing:-.01em;margin-bottom:4px;}
+.page-title{font-family:'Fraunces',serif;font-size:32px;letter-spacing:-.01em;margin-bottom:4px;}
 .page-sub{font-size:13px;color:var(--text-2);margin-bottom:32px;}
 
 /* ── DASHBOARD ── */
@@ -195,7 +195,7 @@ h1 em{font-style:italic;color:var(--green);}
 .stat-card{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r);padding:22px 24px;transition:border-color .2s;}
 .stat-card:hover{border-color:var(--border-2);}
 .stat-label{font-size:10px;font-weight:600;color:var(--text-3);margin-bottom:10px;letter-spacing:.12em;text-transform:uppercase;}
-.stat-val{font-family:'Instrument Serif',serif;font-size:30px;color:var(--text);line-height:1;}
+.stat-val{font-family:'Fraunces',serif;font-size:30px;color:var(--text);line-height:1;}
 .stat-change{font-size:11px;color:var(--text-3);margin-top:6px;}
 .stat-change.warn{color:var(--amber);}
 .history-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
@@ -220,7 +220,7 @@ h1 em{font-style:italic;color:var(--green);}
 /* ── ANALYZER ── */
 .analyzer-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;}
 .scan-mode-tabs{display:flex;gap:4px;margin-bottom:16px;background:var(--bg-3);border-radius:10px;padding:4px;border:1px solid var(--border);}
-.scan-mode-tab{flex:1;padding:8px 12px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:'Syne',sans-serif;background:transparent;color:var(--text-3);transition:all .15s;letter-spacing:.02em;}
+.scan-mode-tab{flex:1;padding:8px 12px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:'Outfit',sans-serif;background:transparent;color:var(--text-3);transition:all .15s;letter-spacing:.02em;}
 .scan-mode-tab.active{background:var(--bg-2);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.3);border:1px solid var(--border);}
 .upload-zone{border:1px dashed var(--border-2);border-radius:14px;padding:52px 24px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg-2);}
 .upload-zone:hover,.upload-zone.drag{border-color:var(--green);background:var(--green-dim);}
@@ -230,7 +230,7 @@ h1 em{font-style:italic;color:var(--green);}
 #fileInput{display:none;}
 .img-preview{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;margin-bottom:12px;display:none;border:1px solid var(--border);}
 .img-preview.show{display:block;}
-.re-upload{background:var(--bg-3);border:1px solid var(--border);color:var(--text-2);width:100%;padding:10px;border-radius:40px;font-size:12px;cursor:pointer;font-family:'Syne',sans-serif;transition:all .15s;font-weight:500;}
+.re-upload{background:var(--bg-3);border:1px solid var(--border);color:var(--text-2);width:100%;padding:10px;border-radius:40px;font-size:12px;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;font-weight:500;}
 .re-upload:hover{border-color:var(--border-2);color:var(--text);}
 
 /* ── WEBCAM ── */
@@ -247,9 +247,9 @@ h1 em{font-style:italic;color:var(--green);}
 .webcam-start-zone{border:1px dashed var(--border-2);border-radius:14px;padding:52px 24px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg-2);}
 .webcam-start-zone:hover{border-color:var(--green);background:var(--green-dim);}
 .webcam-controls{display:flex;gap:8px;margin-bottom:12px;}
-.wcam-btn{flex:1;padding:10px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;transition:background .15s;}
+.wcam-btn{flex:1;padding:10px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;transition:background .15s;}
 .wcam-btn:hover{background:var(--green-2);}
-.wcam-stop{padding:10px 16px;background:var(--bg-3);border:1px solid var(--border);color:var(--text-2);border-radius:40px;font-size:12px;cursor:pointer;font-family:'Syne',sans-serif;transition:all .15s;}
+.wcam-stop{padding:10px 16px;background:var(--bg-3);border:1px solid var(--border);color:var(--text-2);border-radius:40px;font-size:12px;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;}
 .wcam-stop:hover{border-color:var(--red);color:var(--red);}
 
 /* ── ANALYSIS PANEL ── */
@@ -260,7 +260,7 @@ h1 em{font-style:italic;color:var(--green);}
 .analysis-loading{text-align:center;padding:12px 0;}
 .loading-text{font-size:13px;color:var(--text-2);margin-bottom:16px;font-weight:600;letter-spacing:.02em;}
 .loading-step-list{text-align:left;display:flex;flex-direction:column;gap:4px;}
-.loading-step{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text-3);padding:7px 10px;border-radius:8px;transition:all .4s;font-family:'DM Mono',monospace;}
+.loading-step{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text-3);padding:7px 10px;border-radius:8px;transition:all .4s;font-family:'Space Mono',monospace;}
 .loading-step.active{color:var(--text);background:var(--green-dim);border:1px solid rgba(0,217,139,.1);}
 .loading-step.done{color:var(--green);}
 .step-dot{width:5px;height:5px;border-radius:50%;background:var(--border-2);flex-shrink:0;transition:background .3s;}
@@ -273,7 +273,7 @@ h1 em{font-style:italic;color:var(--green);}
 
 /* ── RESULTS ── */
 .meta-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;}
-.meta-pill{font-size:10px;font-weight:600;background:var(--bg-3);color:var(--text-2);padding:4px 10px;border-radius:20px;border:1px solid var(--border);letter-spacing:.04em;font-family:'DM Mono',monospace;}
+.meta-pill{font-size:10px;font-weight:600;background:var(--bg-3);color:var(--text-2);padding:4px 10px;border-radius:20px;border:1px solid var(--border);letter-spacing:.04em;font-family:'Space Mono',monospace;}
 .nutrient-row{display:flex;flex-direction:column;gap:6px;padding:14px 0;border-bottom:1px solid var(--border);}
 .nutrient-row:last-of-type{border-bottom:none;}
 .nr-top{display:flex;align-items:center;gap:8px;}
@@ -282,7 +282,7 @@ h1 em{font-style:italic;color:var(--green);}
 .conf-high{background:var(--green-dim);color:var(--green);border:1px solid rgba(0,217,139,.15);}
 .conf-medium{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,166,35,.15);}
 .conf-low{background:var(--bg-3);color:var(--text-3);border:1px solid var(--border);}
-.nr-status{font-size:11px;font-weight:700;white-space:nowrap;font-family:'DM Mono',monospace;letter-spacing:.04em;}
+.nr-status{font-size:11px;font-weight:700;white-space:nowrap;font-family:'Space Mono',monospace;letter-spacing:.04em;}
 .st-low{color:var(--red);}
 .st-ok{color:var(--green);}
 .st-high{color:var(--amber);}
@@ -292,16 +292,16 @@ h1 em{font-style:italic;color:var(--green);}
 .bar-low{background:var(--red);}
 .bar-ok{background:var(--green);}
 .bar-high{background:var(--amber);}
-.nr-score{font-size:10px;color:var(--text-3);width:26px;text-align:right;font-family:'DM Mono',monospace;}
-.nr-evidence{font-size:11px;color:var(--text-3);font-style:italic;line-height:1.55;font-family:'DM Mono',monospace;}
+.nr-score{font-size:10px;color:var(--text-3);width:26px;text-align:right;font-family:'Space Mono',monospace;}
+.nr-evidence{font-size:11px;color:var(--text-3);font-style:italic;line-height:1.55;font-family:'Space Mono',monospace;}
 .ai-narrative{font-size:13px;color:var(--text-2);line-height:1.8;background:var(--green-dim);border-radius:10px;padding:16px 18px;margin-top:20px;border-left:2px solid var(--green);}
 .recs-section{margin-top:20px;}
 .recs-section h4{font-size:10px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;}
 .rec-item{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px;color:var(--text-2);line-height:1.6;}
 .rec-item:last-child{border-bottom:none;}
 .rec-icon{flex-shrink:0;width:20px;height:20px;border-radius:50%;background:var(--green-dim);border:1px solid rgba(0,217,139,.2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--green);font-weight:700;margin-top:1px;}
-.caveat-box{font-size:11px;color:var(--text-3);background:var(--bg-3);border-radius:8px;padding:10px 14px;margin-top:14px;border-left:2px solid var(--border-2);line-height:1.6;font-family:'DM Mono',monospace;}
-.save-btn{width:100%;margin-top:20px;padding:12px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;transition:background .15s;}
+.caveat-box{font-size:11px;color:var(--text-3);background:var(--bg-3);border-radius:8px;padding:10px 14px;margin-top:14px;border-left:2px solid var(--border-2);line-height:1.6;font-family:'Space Mono',monospace;}
+.save-btn{width:100%;margin-top:20px;padding:12px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;transition:background .15s;}
 .save-btn:hover{background:var(--green-2);}
 .save-btn:disabled{opacity:.4;cursor:not-allowed;}
 
@@ -312,22 +312,22 @@ h1 em{font-style:italic;color:var(--green);}
 /* ── PROFILE ── */
 .profile-grid{display:grid;grid-template-columns:260px 1fr;gap:24px;}
 .profile-card{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:28px;text-align:center;}
-.profile-av-lg{width:72px;height:72px;border-radius:50%;background:var(--green-dim);border:1px solid rgba(0,217,139,.2);color:var(--green);display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-size:28px;margin:0 auto 16px;}
+.profile-av-lg{width:72px;height:72px;border-radius:50%;background:var(--green-dim);border:1px solid rgba(0,217,139,.2);color:var(--green);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:28px;margin:0 auto 16px;}
 .profile-name{font-size:17px;font-weight:600;margin-bottom:4px;}
-.profile-email{font-size:12px;color:var(--text-3);margin-bottom:20px;font-family:'DM Mono',monospace;}
+.profile-email{font-size:12px;color:var(--text-3);margin-bottom:20px;font-family:'Space Mono',monospace;}
 .profile-stat{padding:12px 0;border-top:1px solid var(--border);font-size:12px;color:var(--text-2);}
 .profile-stat strong{color:var(--green);}
 .form-card{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:28px;}
 .form-card h3{font-size:16px;font-weight:600;margin-bottom:6px;}
 .form-card p{font-size:13px;color:var(--text-2);margin-bottom:24px;}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-select.fi{width:100%;padding:12px 16px;background:var(--bg-3);border:1px solid var(--border);border-radius:var(--rs);font-size:14px;font-family:'Syne',sans-serif;color:var(--text);outline:none;appearance:none;cursor:pointer;transition:border-color .15s;}
+select.fi{width:100%;padding:12px 16px;background:var(--bg-3);border:1px solid var(--border);border-radius:var(--rs);font-size:14px;font-family:'Outfit',sans-serif;color:var(--text);outline:none;appearance:none;cursor:pointer;transition:border-color .15s;}
 select.fi:focus{border-color:var(--green);}
-input[type="number"]{width:100%;padding:12px 16px;background:var(--bg-3);border:1px solid var(--border);border-radius:var(--rs);font-size:14px;font-family:'Syne',sans-serif;color:var(--text);outline:none;transition:border-color .15s;}
+input[type="number"]{width:100%;padding:12px 16px;background:var(--bg-3);border:1px solid var(--border);border-radius:var(--rs);font-size:14px;font-family:'Outfit',sans-serif;color:var(--text);outline:none;transition:border-color .15s;}
 input[type="number"]:focus{border-color:var(--green);}
-.form-save{margin-top:20px;padding:12px 28px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;transition:background .15s;}
+.form-save{margin-top:20px;padding:12px 28px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;transition:background .15s;}
 .form-save:hover{background:var(--green-2);}
-.logout-btn{margin-top:12px;width:100%;padding:10px;background:transparent;border:1px solid var(--border);color:var(--text-3);border-radius:40px;font-size:12px;cursor:pointer;font-family:'Syne',sans-serif;transition:all .15s;}
+.logout-btn{margin-top:12px;width:100%;padding:10px;background:transparent;border:1px solid var(--border);color:var(--text-3);border-radius:40px;font-size:12px;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;}
 .logout-btn:hover{border-color:var(--red);color:var(--red);}
 
 /* ── MODALS ── */
@@ -337,11 +337,11 @@ input[type="number"]:focus{border-color:var(--green);}
 .modal-close{position:absolute;top:20px;right:20px;background:var(--bg-3);border:1px solid var(--border);border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:14px;color:var(--text-3);display:flex;align-items:center;justify-content:center;transition:all .15s;}
 .modal-close:hover{border-color:var(--border-2);color:var(--text);}
 .modal-img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;margin-bottom:20px;border:1px solid var(--border);}
-.disc-modal h2{font-family:'Instrument Serif',serif;font-size:24px;margin-bottom:14px;margin-top:8px;}
+.disc-modal h2{font-family:'Fraunces',serif;font-size:24px;margin-bottom:14px;margin-top:8px;}
 .disc-modal p{font-size:13px;color:var(--text-2);line-height:1.75;margin-bottom:12px;}
 .disc-modal ul{padding-left:18px;margin-bottom:14px;}
 .disc-modal li{font-size:12px;color:var(--text-3);line-height:1.75;margin-bottom:4px;}
-.disc-accept-btn{width:100%;padding:13px;background:var(--text);color:var(--bg);border:none;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;margin-top:6px;transition:all .15s;}
+.disc-accept-btn{width:100%;padding:13px;background:var(--text);color:var(--bg);border:none;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;margin-top:6px;transition:all .15s;}
 .disc-accept-btn:hover{background:var(--green);color:var(--bg);}
 
 /* ── TOAST ── */
@@ -457,8 +457,8 @@ input[type="number"]:focus{border-color:var(--green);}
 .wizard-dot.done{background:var(--green);}
 .wizard-step-title{font-size:16px;font-weight:700;color:var(--text);}
 .wizard-step-sub{font-size:12px;color:var(--text-2);line-height:1.6;}
-.wizard-btn{width:100%;padding:14px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;}
-.wizard-btn-ghost{width:100%;padding:12px;background:transparent;color:var(--text-3);border:1px solid var(--border);border-radius:40px;font-size:13px;cursor:pointer;font-family:'Syne',sans-serif;}
+.wizard-btn{width:100%;padding:14px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;}
+.wizard-btn-ghost{width:100%;padding:12px;background:transparent;color:var(--text-3);border:1px solid var(--border);border-radius:40px;font-size:13px;cursor:pointer;font-family:'Outfit',sans-serif;}
 @media(min-width:769px){.mobile-wizard{display:none!important;}}
 @media(max-width:768px){.desktop-scan{display:none!important;}}
 
@@ -467,7 +467,7 @@ input[type="number"]:focus{border-color:var(--green);}
 .notif-icon{font-size:22px;flex-shrink:0;}
 .notif-text{flex:1;font-size:12px;color:var(--text-2);line-height:1.6;}
 .notif-text strong{color:var(--text);display:block;margin-bottom:2px;}
-.notif-btn{padding:8px 16px;background:var(--green);color:var(--bg);border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;white-space:nowrap;}
+.notif-btn{padding:8px 16px;background:var(--green);color:var(--bg);border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;}
 
 /* ── MULTI-AI ── */
 .ai-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.04em;}
@@ -492,7 +492,7 @@ input[type="number"]:focus{border-color:var(--green);}
 
 /* ── CAMERA ENHANCEMENTS ── */
 .webcam-wrap{position:relative;overflow:hidden;}
-.glare-indicator{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:20;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;font-family:'DM Mono',monospace;transition:all .3s;pointer-events:none;white-space:nowrap;}
+.glare-indicator{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:20;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;font-family:'Space Mono',monospace;transition:all .3s;pointer-events:none;white-space:nowrap;}
 .glare-good{background:rgba(0,217,139,0.15);border:1px solid rgba(0,217,139,0.4);color:#00d98b;}
 .glare-warn{background:rgba(245,166,35,0.15);border:1px solid rgba(245,166,35,0.4);color:#f5a623;}
 .glare-bad{background:rgba(220,50,50,0.15);border:1px solid rgba(220,50,50,0.4);color:#e04444;}
@@ -509,12 +509,12 @@ input[type="number"]:focus{border-color:var(--green);}
 .premium-banner{background:linear-gradient(135deg,rgba(0,217,139,0.08),rgba(77,143,255,0.06));border:1px solid rgba(0,217,139,0.2);border-radius:14px;padding:24px 28px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
 .premium-banner-left{flex:1;}
 .premium-banner-tag{font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:6px;}
-.premium-banner-title{font-family:'Instrument Serif',serif;font-size:20px;color:var(--text);margin-bottom:4px;}
+.premium-banner-title{font-family:'Fraunces',serif;font-size:20px;color:var(--text);margin-bottom:4px;}
 .premium-banner-sub{font-size:12px;color:var(--text-2);line-height:1.6;}
 .premium-features{display:flex;flex-direction:column;gap:4px;margin-top:10px;}
 .premium-feature{font-size:12px;color:var(--text-2);display:flex;align-items:center;gap:7px;}
 .premium-feature::before{content:'✦';color:var(--green);font-size:9px;flex-shrink:0;}
-.btn-upgrade{background:linear-gradient(135deg,var(--green),#00b8ff);color:#000;font-weight:700;border:none;padding:12px 24px;border-radius:40px;font-size:13px;font-family:'Syne',sans-serif;cursor:pointer;white-space:nowrap;transition:opacity .15s;letter-spacing:.02em;}
+.btn-upgrade{background:linear-gradient(135deg,var(--green),#00b8ff);color:#000;font-weight:700;border:none;padding:12px 24px;border-radius:40px;font-size:13px;font-family:'Outfit',sans-serif;cursor:pointer;white-space:nowrap;transition:opacity .15s;letter-spacing:.02em;}
 .btn-upgrade:hover{opacity:.88;}
 .premium-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;}
 .premium-modal-overlay.open{display:flex;}
@@ -528,12 +528,12 @@ input[type="number"]:focus{border-color:var(--green);}
 .plan-card.selected{border-color:var(--green);background:var(--green-dim);}
 .plan-badge{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--green);color:#000;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.06em;white-space:nowrap;}
 .plan-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;}
-.plan-price{font-family:'Instrument Serif',serif;font-size:28px;color:var(--text);line-height:1;}
-.plan-price span{font-size:13px;color:var(--text-3);font-family:'Syne',sans-serif;}
+.plan-price{font-family:'Fraunces',serif;font-size:28px;color:var(--text);line-height:1;}
+.plan-price span{font-size:13px;color:var(--text-3);font-family:'Outfit',sans-serif;}
 .plan-features{margin-top:12px;display:flex;flex-direction:column;gap:5px;}
 .plan-feat{font-size:11px;color:var(--text-2);display:flex;align-items:center;gap:6px;}
 .plan-feat::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0;}
-.premium-cta{width:100%;padding:14px;background:linear-gradient(135deg,var(--green),#00b8ff);color:#000;font-weight:700;border:none;border-radius:40px;font-size:14px;font-family:'Syne',sans-serif;cursor:pointer;letter-spacing:.02em;transition:opacity .15s;}
+.premium-cta{width:100%;padding:14px;background:linear-gradient(135deg,var(--green),#00b8ff);color:#000;font-weight:700;border:none;border-radius:40px;font-size:14px;font-family:'Outfit',sans-serif;cursor:pointer;letter-spacing:.02em;transition:opacity .15s;}
 .premium-cta:hover{opacity:.88;}
 .premium-note{text-align:center;font-size:11px;color:var(--text-3);margin-top:10px;}
 
@@ -545,10 +545,10 @@ input[type="number"]:focus{border-color:var(--green);}
 .wizard-pip{flex:1;height:3px;border-radius:2px;background:var(--bg-3);transition:background .3s;}
 .wizard-pip.done{background:var(--green);}
 .wizard-body{flex:1;padding:24px 20px;overflow-y:auto;}
-.wizard-title{font-family:'Instrument Serif',serif;font-size:24px;color:var(--text);margin-bottom:8px;}
+.wizard-title{font-family:'Fraunces',serif;font-size:24px;color:var(--text);margin-bottom:8px;}
 .wizard-sub{font-size:13px;color:var(--text-2);line-height:1.6;margin-bottom:24px;}
 .wizard-footer{padding:16px 20px;border-top:1px solid var(--border);}
-.wizard-next{width:100%;padding:14px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;}
+.wizard-next{width:100%;padding:14px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;}
 .wizard-skip{width:100%;padding:10px;background:transparent;border:none;color:var(--text-3);font-size:13px;cursor:pointer;margin-top:8px;}
 @media(min-width:769px){.wizard-trigger{display:none!important;}}
 @media(max-width:768px){.mobile-hide-wizard .scan-mode-tabs,.mobile-hide-wizard .upload-zone,.mobile-hide-wizard .webcam-wrap,.mobile-hide-wizard .webcam-start-zone{display:none!important;}.wizard-trigger{display:block!important;}}
@@ -559,9 +559,9 @@ input[type="number"]:focus{border-color:var(--green);}
 <!-- LOADER -->
 <div id="errorBoundary" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;padding:32px;text-align:center;">
   <div style="font-size:48px;">😵</div>
-  <div style="font-family:'Instrument Serif',serif;font-size:24px;color:var(--text);">Something went wrong</div>
+  <div style="font-family:'Fraunces',serif;font-size:24px;color:var(--text);">Something went wrong</div>
   <div style="font-size:14px;color:var(--text-2);max-width:360px;line-height:1.6;">Vytreos hit an unexpected error. Your data is safe — try refreshing the page.</div>
-  <button onclick="location.reload()" style="padding:12px 28px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;">Reload app</button>
+  <button onclick="location.reload()" style="padding:12px 28px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;">Reload app</button>
   <div style="font-size:11px;color:var(--text-3);" id="errDetail"></div>
 </div>
 <div id="appLoader">
@@ -600,8 +600,8 @@ input[type="number"]:focus{border-color:var(--green);}
           <button class="btn btn-outline" onclick="document.getElementById('landing-email').focus()">Get early access</button>
         </div>
         <div style="margin-top:16px;display:flex;gap:8px;max-width:400px;">
-          <input id="landing-email" type="email" placeholder="your@email.com" style="flex:1;padding:11px 16px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:40px;font-size:13px;color:var(--text);font-family:'Syne',sans-serif;outline:none;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
-          <button onclick="collectLandingEmail()" style="padding:11px 18px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;white-space:nowrap;">Notify me</button>
+          <input id="landing-email" type="email" placeholder="your@email.com" style="flex:1;padding:11px 16px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:40px;font-size:13px;color:var(--text);font-family:'Outfit',sans-serif;outline:none;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
+          <button onclick="collectLandingEmail()" style="padding:11px 18px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;">Notify me</button>
         </div>
         <p class="hero-note">✦ Experimental · For wellness exploration only &nbsp;·&nbsp; Not a medical device &nbsp;·&nbsp; Start tracking today</p>
           <div class="mobile-hero-steps" style="display:none;">
@@ -783,7 +783,7 @@ input[type="number"]:focus{border-color:var(--green);}
   <nav>
     <div class="logo" style="cursor:default"><div class="logo-pip"></div>Vytreos</div>
     <div class="nav-links">
-      <span id="nav-label" style="font-size:12px;color:var(--text-3);font-family:'DM Mono',monospace;margin-right:4px"></span>
+      <span id="nav-label" style="font-size:12px;color:var(--text-3);font-family:'Space Mono',monospace;margin-right:4px"></span>
       <button class="btn-upgrade" onclick="openPremiumModal()" style="padding:8px 16px;font-size:12px;">✦ Upgrade</button>
       <button class="btn btn-ghost" onclick="doLogout()">Sign out</button>
     </div>
@@ -831,7 +831,7 @@ input[type="number"]:focus{border-color:var(--green);}
           <div class="user-avatar" id="sb-av">?</div>
           <div>
             <div style="font-size:13px;font-weight:600;color:var(--text)" id="sb-name">—</div>
-            <div style="font-size:10px;color:var(--text-3);font-family:'DM Mono',monospace" id="sb-plan">—</div>
+            <div style="font-size:10px;color:var(--text-3);font-family:'Space Mono',monospace" id="sb-plan">—</div>
           </div>
         </div>
       </div>
@@ -839,7 +839,7 @@ input[type="number"]:focus{border-color:var(--green);}
 
     <!-- MAIN CONTENT -->
     <div class="app-content" id="appContent" style="overflow-y:auto;">
-    <div id="ptr-indicator" style="display:none;text-align:center;padding:12px;font-size:12px;color:var(--green);font-family:'DM Mono',monospace;">↓ Release to refresh</div>
+    <div id="ptr-indicator" style="display:none;text-align:center;padding:12px;font-size:12px;color:var(--green);font-family:'Space Mono',monospace;">↓ Release to refresh</div>
 
       <!-- DASHBOARD -->
       <div id="tab-dashboard" class="tab-content active">
@@ -872,7 +872,13 @@ input[type="number"]:focus{border-color:var(--green);}
           <button onclick="document.getElementById('how-it-works').style.display='none'" style="margin-top:12px;background:none;border:none;color:var(--text-3);font-size:11px;cursor:pointer;padding:0;">Dismiss ✕</button>
         </div>
 
-        <div class="stats-row">
+        
+<div class="nutriscore-strip" style="display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:18px 22px;margin-bottom:14px;">
+  <div style="font-family:'Fraunces',serif;font-size:34px;color:var(--text);line-height:1;"><span id="nutriscore-num">—</span><div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--text-3);letter-spacing:.14em;text-transform:uppercase;margin-top:2px;">NutriScore</div></div>
+  <div style="height:38px;position:relative;"><svg id="nutriscore-trend-svg" width="100%" height="38" viewBox="0 0 400 38" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"></svg><div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--text-3);margin-top:2px;">last 12 scans</div></div>
+  <div style="text-align:right;"><div id="nutriscore-delta" style="font-family:'Space Mono',monospace;font-size:11px;color:var(--text-3);"></div><div id="nutriscore-flags" style="font-family:'Space Mono',monospace;font-size:10px;color:var(--amber);margin-top:2px;"></div></div>
+</div>
+<div class="stats-row">
           <div class="stat-card">
             <div class="stat-label">Total Scans</div>
             <div class="stat-val" id="s-count">0</div>
@@ -906,7 +912,7 @@ input[type="number"]:focus{border-color:var(--green);}
         <div id="dash-list" class="scan-list"></div>
         <div id="dash-empty" style="display:none;text-align:center;padding:48px 20px;background:var(--bg-2);border:1px solid var(--border);border-radius:14px;margin-top:8px;">
           <div style="font-size:48px;margin-bottom:16px;">👁</div>
-          <div style="font-family:'Instrument Serif',serif;font-size:22px;color:var(--text);margin-bottom:8px;">Your eye health journey starts here</div>
+          <div style="font-family:'Fraunces',serif;font-size:22px;color:var(--text);margin-bottom:8px;">Your eye health journey starts here</div>
           <div style="font-size:13px;color:var(--text-2);line-height:1.7;max-width:340px;margin:0 auto 24px;">Take your first retinal scan to begin tracking your ocular health. The more you scan, the more meaningful your insights become.</div>
           <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;">
             <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text-2);">📸 Take a photo of your eye</div>
@@ -921,7 +927,7 @@ input[type="number"]:focus{border-color:var(--green);}
       <div id="tab-analyzer" class="tab-content">
         <div class="page-title">New scan</div>
         <p class="page-sub">Upload a retinal photograph or use your camera. Best results with fundus photos from an eye clinic — but any clear eye photo works.</p>
-        <button class="wizard-trigger" onclick="openWizard()" style="display:none;width:100%;padding:14px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;margin-bottom:20px;">📷 Start scan wizard</button>
+        <button class="wizard-trigger" onclick="openWizard()" style="display:none;width:100%;padding:14px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;margin-bottom:20px;">📷 Start scan wizard</button>
 
         <!-- PUSH NOTIFICATION BANNER -->
         <div class="notif-banner" id="notifBanner" style="display:none;">
@@ -1053,7 +1059,7 @@ input[type="number"]:focus{border-color:var(--green);}
                 <button class="wcam-stop" onclick="stopWebcam()">Stop</button>
               </div>
               <div class="photo-strip" id="photoStrip" style="display:none;"></div>
-              <div id="photoStripLabel" style="display:none;font-size:11px;color:var(--text-3);text-align:center;margin-top:4px;font-family:'DM Mono',monospace;">Best frame selected automatically ✓</div>
+              <div id="photoStripLabel" style="display:none;font-size:11px;color:var(--text-3);text-align:center;margin-top:4px;font-family:'Space Mono',monospace;">Best frame selected automatically ✓</div>
               <div id="webcamStart" class="webcam-start-zone">
                 <div class="upload-icon">📷</div>
                 <h3>Before you scan</h3>
@@ -1080,7 +1086,7 @@ input[type="number"]:focus{border-color:var(--green);}
                     <span><strong style="color:var(--text)">On mobile</strong> — gently pull down your lower eyelid to expose the inner pink tissue. This gives the clearest nutrient signals.</span>
                   </div>
                 </div>
-                <button onclick="startWebcam()" style="padding:12px 28px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;width:100%;">📷 Open camera</button>
+                <button onclick="startWebcam()" style="padding:12px 28px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;width:100%;">📷 Open camera</button>
               </div>
               <button class="re-upload" id="webcamReUp" style="display:none;margin-top:12px" onclick="resetWebcam()">↺ Retake photo</button>
             </div>
@@ -1120,8 +1126,8 @@ input[type="number"]:focus{border-color:var(--green);}
         <div class="page-title">Scan history</div>
         <p class="page-sub">Your full scan history — newest first. The more you scan, the more meaningful your trends become.</p>
         <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
-          <input id="hist-search" type="text" placeholder="Search nutrients..." oninput="filterHistory()" style="flex:1;min-width:160px;padding:9px 14px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);font-family:'Syne',sans-serif;outline:none;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
-          <select id="hist-filter" onchange="filterHistory()" style="padding:9px 12px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);font-family:'Syne',sans-serif;outline:none;cursor:pointer;">
+          <input id="hist-search" type="text" placeholder="Search nutrients..." oninput="filterHistory()" style="flex:1;min-width:160px;padding:9px 14px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);font-family:'Outfit',sans-serif;outline:none;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
+          <select id="hist-filter" onchange="filterHistory()" style="padding:9px 12px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);font-family:'Outfit',sans-serif;outline:none;cursor:pointer;">
             <option value="all">All scans</option>
             <option value="low">Has low nutrients</option>
             <option value="ok">All normal</option>
@@ -1144,8 +1150,8 @@ input[type="number"]:focus{border-color:var(--green);}
         <div id="trends-content" style="display:none">
           <div style="margin-bottom:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
             <label style="font-size:12px;color:var(--text-2);font-weight:600;">Nutrient:</label>
-            <select id="trend-nutrient-select" onchange="renderTrendChart()" style="background:var(--bg-3);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-size:13px;font-family:'Syne',sans-serif;outline:none;cursor:pointer;"></select>
-            <button onclick="downloadPDF()" style="margin-left:auto;padding:9px 20px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;">↓ Download PDF report</button>
+            <select id="trend-nutrient-select" onchange="renderTrendChart()" style="background:var(--bg-3);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-size:13px;font-family:'Outfit',sans-serif;outline:none;cursor:pointer;"></select>
+            <button onclick="downloadPDF()" style="margin-left:auto;padding:9px 20px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;">↓ Download PDF report</button>
           </div>
           <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:24px;">
             <canvas id="trendChart" height="280"></canvas>
@@ -1167,11 +1173,11 @@ input[type="number"]:focus{border-color:var(--green);}
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
             <div>
               <label style="font-size:11px;font-weight:600;color:var(--text-3);letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:8px;">Scan A</label>
-              <select id="compare-a" onchange="renderComparison()" style="width:100%;background:var(--bg-3);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-size:13px;font-family:'Syne',sans-serif;outline:none;"></select>
+              <select id="compare-a" onchange="renderComparison()" style="width:100%;background:var(--bg-3);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-size:13px;font-family:'Outfit',sans-serif;outline:none;"></select>
             </div>
             <div>
               <label style="font-size:11px;font-weight:600;color:var(--text-3);letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:8px;">Scan B</label>
-              <select id="compare-b" onchange="renderComparison()" style="width:100%;background:var(--bg-3);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-size:13px;font-family:'Syne',sans-serif;outline:none;"></select>
+              <select id="compare-b" onchange="renderComparison()" style="width:100%;background:var(--bg-3);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-size:13px;font-family:'Outfit',sans-serif;outline:none;"></select>
             </div>
           </div>
           <div id="compare-result"></div>
@@ -1213,12 +1219,12 @@ input[type="number"]:focus{border-color:var(--green);}
         <!-- REFERRAL CARD -->
         <div style="margin-top:24px;background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:28px 32px;">
           <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:8px;">🎁 Invite friends</div>
-          <div style="font-family:'Instrument Serif',serif;font-size:18px;color:var(--text);margin-bottom:8px;">Your personal invite link</div>
+          <div style="font-family:'Fraunces',serif;font-size:18px;color:var(--text);margin-bottom:8px;">Your personal invite link</div>
           <div style="font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:16px;">Share this link with friends. When they sign up using your link, they get credited to your account — founding members get early premium access.</div>
           <div id="referral-loading" style="font-size:12px;color:var(--text-3);margin-bottom:12px;">Generating your link...</div>
           <div id="referral-content" style="display:none;">
             <div style="display:flex;gap:8px;margin-bottom:14px;">
-              <input id="referral-link" readonly style="flex:1;padding:10px 12px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text-2);font-family:'DM Mono',monospace;outline:none;">
+              <input id="referral-link" readonly style="flex:1;padding:10px 12px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text-2);font-family:'Space Mono',monospace;outline:none;">
               <button onclick="copyReferral()" style="padding:10px 16px;background:var(--green);color:var(--bg);border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;" id="copyRefBtn">Copy</button>
             </div>
             <div style="display:flex;gap:8px;">
@@ -1235,7 +1241,7 @@ input[type="number"]:focus{border-color:var(--green);}
           <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap;">
             <div style="flex:1;min-width:260px;">
               <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:8px;">🔬 Research contribution</div>
-              <div style="font-family:'Instrument Serif',serif;font-size:18px;color:var(--text);margin-bottom:8px;">Help train the next generation of Vytreos</div>
+              <div style="font-family:'Fraunces',serif;font-size:18px;color:var(--text);margin-bottom:8px;">Help train the next generation of Vytreos</div>
               <div style="font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:12px;">Opt in to anonymously contribute your retinal scans and nutrient signals to Vytreos's research dataset. This data will be used to train a specialized AI model for ocular nutrition analysis — helping make Vytreos more accurate for everyone over time.</div>
               <div style="font-size:11px;color:var(--text-3);line-height:1.7;">
                 ✦ Your identity is never shared &nbsp;·&nbsp; ✦ Only scan data and health prefs are included &nbsp;·&nbsp; ✦ You can opt out at any time
@@ -1294,7 +1300,7 @@ input[type="number"]:focus{border-color:var(--green);}
     <button class="premium-modal-close" onclick="closePremiumModal()">✕</button>
     <div class="premium-modal-header">
       <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:8px">✦ Vytreos Premium — Coming Soon</div>
-      <div style="font-family:'Instrument Serif',serif;font-size:26px;color:var(--text);margin-bottom:6px">The full picture, unlocked</div>
+      <div style="font-family:'Fraunces',serif;font-size:26px;color:var(--text);margin-bottom:6px">The full picture, unlocked</div>
       <div style="font-size:13px;color:var(--text-2)">Premium is in development. Join the waitlist to get early access and a founding member discount.</div>
     </div>
     <div class="premium-modal-body">
@@ -1323,8 +1329,8 @@ input[type="number"]:focus{border-color:var(--green);}
       <div id="waitlist-form">
         <div style="font-size:12px;color:var(--text-2);margin-bottom:10px;font-weight:600;">Join the waitlist — be first to know when Premium launches:</div>
         <div style="display:flex;gap:8px;">
-          <input id="waitlist-email" type="email" placeholder="your@email.com" style="flex:1;padding:11px 14px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:'Syne',sans-serif;color:var(--text);outline:none;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
-          <button onclick="joinWaitlist()" style="padding:11px 20px;background:linear-gradient(135deg,var(--green),#00b8ff);color:#000;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;white-space:nowrap;">Join →</button>
+          <input id="waitlist-email" type="email" placeholder="your@email.com" style="flex:1;padding:11px 14px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:'Outfit',sans-serif;color:var(--text);outline:none;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
+          <button onclick="joinWaitlist()" style="padding:11px 20px;background:linear-gradient(135deg,var(--green),#00b8ff);color:#000;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;">Join →</button>
         </div>
       </div>
       <div id="waitlist-success" style="display:none;text-align:center;padding:16px;background:var(--green-dim);border:1px solid rgba(0,217,139,.2);border-radius:10px;color:var(--green);font-size:13px;font-weight:600;">
@@ -1350,11 +1356,11 @@ input[type="number"]:focus{border-color:var(--green);}
 <div class="modal-overlay" id="deleteModal" onclick="if(event.target===this)closeDeleteModal()">
   <div class="modal" style="max-width:380px;text-align:center;padding:36px 32px;">
     <div style="font-size:32px;margin-bottom:12px">🗑</div>
-    <div style="font-family:'Instrument Serif',serif;font-size:22px;margin-bottom:8px;color:var(--text)">Delete this scan?</div>
+    <div style="font-family:'Fraunces',serif;font-size:22px;margin-bottom:8px;color:var(--text)">Delete this scan?</div>
     <div style="font-size:13px;color:var(--text-2);margin-bottom:24px;line-height:1.6;">This will permanently remove the scan and all its data. This cannot be undone.</div>
     <div style="display:flex;gap:10px;justify-content:center;">
-      <button onclick="closeDeleteModal()" style="padding:10px 24px;background:var(--bg-3);border:1px solid var(--border);color:var(--text-2);border-radius:40px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;">Cancel</button>
-      <button id="confirmDeleteBtn" onclick="executeDeleteScan()" style="padding:10px 24px;background:var(--red);color:#fff;border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;">Delete</button>
+      <button onclick="closeDeleteModal()" style="padding:10px 24px;background:var(--bg-3);border:1px solid var(--border);color:var(--text-2);border-radius:40px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;">Cancel</button>
+      <button id="confirmDeleteBtn" onclick="executeDeleteScan()" style="padding:10px 24px;background:var(--red);color:#fff;border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;">Delete</button>
     </div>
   </div>
 </div>
@@ -1376,7 +1382,7 @@ input[type="number"]:focus{border-color:var(--green);}
       <li>Substitute for laboratory blood tests or formal eye exams</li>
     </ul>
     <p>Nutrient levels shown are AI-estimated wellness indicators only. Actual nutrient status can only be confirmed through clinical testing by a qualified healthcare provider.</p>
-    <p style="color:var(--amber);font-size:12px;font-family:'DM Mono',monospace;">If you have health concerns, please consult a licensed physician, ophthalmologist, or registered dietitian.</p>
+    <p style="color:var(--amber);font-size:12px;font-family:'Space Mono',monospace;">If you have health concerns, please consult a licensed physician, ophthalmologist, or registered dietitian.</p>
     <button class="disc-accept-btn" onclick="closeDisclaimer()">I understand — continue</button>
   </div>
 </div>
@@ -1413,6 +1419,9 @@ input[type="number"]:focus{border-color:var(--green);}
 
 <!-- ═══════════════════════════════════ SCRIPT ═══════════════════════════════════ -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="/accuracy.js"></script>
+<script src="/pdf.js"></script>
+<script src="/family.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -1430,6 +1439,9 @@ const fbApp=initializeApp({
   measurementId:"G-Y5BVP33V3P"
 });
 const auth=getAuth(fbApp),db=getFirestore(fbApp),store=getStorage(fbApp);
+if(window.FAMILY&&FAMILY.registerFirebasePrimitives){
+  FAMILY.registerFirebasePrimitives({collection,doc,addDoc,setDoc,getDoc,getDocs,query,orderBy,deleteDoc,updateDoc,serverTimestamp});
+}
 
 let currentUser=null,isGuest=false,scans=[],pendingResult=null,pendingImgData=null,disclaimerSeen=false,webcamStream=null,lastScanTime=0,dataSharingEnabled=false;
 Object.defineProperty(window,"_scans",{get:()=>scans,configurable:true});
@@ -1542,7 +1554,7 @@ function populateUI(name,email,initial){
 // ── SCANS ──────────────────────────────────────────────────────────────────────
 async function loadScans(){
   try{
-    const snap=await getDocs(query(collection(db,'users',currentUser.uid,'scans'),orderBy('createdAt','desc')));
+    const snap=await getDocs(query((function(){var __p=(window.FAMILY&&FAMILY.scansPath)?FAMILY.scansPath():'users/'+currentUser.uid+'/profiles/'+((window.FAMILY&&FAMILY.getActive)?FAMILY.getActive().id:'self')+'/scans';var __parts=__p.split('/');var __collRef=db;for(var __i=0;__i<__parts.length;__i+=2){__collRef=__parts[__i+1]?collection(__collRef,__parts[__i+1]):__collRef;}return __collRef;})(),orderBy('createdAt','desc')));
     scans=snap.docs.map(d=>({id:d.id,...d.data()}));renderScans();
   }catch(e){console.error(e);}
 }
@@ -1581,7 +1593,7 @@ window.openScan=id=>{
   const s=scans.find(x=>x.id===id);if(!s)return;
   document.getElementById('modal-body').innerHTML=`
     ${s.imageUrl?`<img src="${s.imageUrl}" class="modal-img">`:''}
-    <div style="font-family:'Instrument Serif',serif;font-size:22px;margin-bottom:4px">Scan — ${fmtDate(s.createdAt)}</div>
+    <div style="font-family:'Fraunces',serif;font-size:22px;margin-bottom:4px">Scan — ${fmtDate(s.createdAt)}</div>
     <div class="meta-pills" style="margin-bottom:16px">${s.imageType?`<span class="meta-pill">${s.imageType}</span>`:''}${s.imageQuality?`<span class="meta-pill">${s.imageQuality} quality</span>`:''}${s.nutrients?`<span class="meta-pill">${s.nutrients.length} nutrients</span>`:''}</div>
     ${buildRows(s.nutrients||[])}
     ${s.summary?`<div class="ai-narrative" style="margin-top:18px">${s.summary}</div>`:''}
@@ -1609,7 +1621,7 @@ function buildRows(nutrients,animate=false){
         <div class="nr-name">${n.name}</div>
         <div title="${tipText}" style="width:16px;height:16px;border-radius:50%;background:var(--bg-3);border:1px solid var(--border);font-size:10px;color:var(--text-3);display:flex;align-items:center;justify-content:center;cursor:help;flex-shrink:0;">?</div>
         <div style="display:flex;align-items:center;gap:6px;margin-left:auto;">
-          ${n.confidence?`<span style="font-size:10px;color:var(--text-3);font-family:'DM Mono',monospace;">${confLabel}</span>`:''}
+          ${n.confidence?`<span style="font-size:10px;color:var(--text-3);font-family:'Space Mono',monospace;">${confLabel}</span>`:''}
           <div class="nr-status ${statusClass}">${statusLabel}</div>
         </div>
       </div>
@@ -1681,7 +1693,8 @@ function resetPanel(){
 // ── ANALYSIS ────────────────────────────────────────────────────────────────────
 
 function buildPrompt(ctx,diet,goals){
-  return `You are a specialist ophthalmologist and clinical nutritionist with 20 years of experience reading retinal and anterior segment photographs for nutritional biomarkers. You have studied thousands of documented cases of nutrient deficiency with confirmed ocular manifestations.
+  try{prompt+=window.ACCURACY&&ACCURACY.appendSchema?ACCURACY.appendSchema(prompt,{}):prompt;}catch(e){}
+return `You are a specialist ophthalmologist and clinical nutritionist with 20 years of experience reading retinal and anterior segment photographs for nutritional biomarkers. You have studied thousands of documented cases of nutrient deficiency with confirmed ocular manifestations.
 
 ABSOLUTE RULES — violating these is a critical failure:
 1. NEVER say a finding is normal/healthy if you see pathological features. A pale optic disc, drusen, vessel narrowing, pale conjunctiva, Bitot spots, or corneal haze are NEVER normal.
@@ -2215,7 +2228,7 @@ window.collectLandingEmail=async()=>{
 function showOnboarding(){
   const overlay=document.createElement('div');overlay.id='onboardingOverlay';
   overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:3000;display:flex;align-items:center;justify-content:center;padding:20px;';
-  overlay.innerHTML=`<div style="background:var(--bg-2);border:1px solid var(--border);border-radius:20px;max-width:480px;width:100%;overflow:hidden;"><div style="background:linear-gradient(135deg,rgba(0,217,139,0.1),rgba(77,143,255,0.06));padding:32px 36px 24px;border-bottom:1px solid var(--border);"><div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:8px;">Welcome to Vytreos</div><div style="font-family:'Instrument Serif',serif;font-size:24px;color:var(--text);margin-bottom:6px;">Your retinal health journey starts now</div></div><div style="padding:24px 36px;"><div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px;"><div style="display:flex;gap:14px;align-items:flex-start;"><div style="width:32px;height:32px;border-radius:50%;background:var(--green);color:var(--bg);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div><div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">Fill in your health profile</div><div style="font-size:12px;color:var(--text-2);">Go to Profile and add your age, sex, and diet.</div></div></div><div style="display:flex;gap:14px;align-items:flex-start;"><div style="width:32px;height:32px;border-radius:50%;background:var(--green);color:var(--bg);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div><div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">Take your first scan</div><div style="font-size:12px;color:var(--text-2);">Use natural light, no flash. Pull lower eyelid slightly.</div></div></div><div style="display:flex;gap:14px;align-items:flex-start;"><div style="width:32px;height:32px;border-radius:50%;background:var(--green);color:var(--bg);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div><div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">Scan weekly for trends</div><div style="font-size:12px;color:var(--text-2);">Weekly scans show what is changing over time.</div></div></div></div><button onclick="dismissOnboarding()" style="width:100%;padding:14px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;">Let us get started →</button></div></div>`;
+  overlay.innerHTML=`<div style="background:var(--bg-2);border:1px solid var(--border);border-radius:20px;max-width:480px;width:100%;overflow:hidden;"><div style="background:linear-gradient(135deg,rgba(0,217,139,0.1),rgba(77,143,255,0.06));padding:32px 36px 24px;border-bottom:1px solid var(--border);"><div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:8px;">Welcome to Vytreos</div><div style="font-family:'Fraunces',serif;font-size:24px;color:var(--text);margin-bottom:6px;">Your retinal health journey starts now</div></div><div style="padding:24px 36px;"><div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px;"><div style="display:flex;gap:14px;align-items:flex-start;"><div style="width:32px;height:32px;border-radius:50%;background:var(--green);color:var(--bg);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div><div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">Fill in your health profile</div><div style="font-size:12px;color:var(--text-2);">Go to Profile and add your age, sex, and diet.</div></div></div><div style="display:flex;gap:14px;align-items:flex-start;"><div style="width:32px;height:32px;border-radius:50%;background:var(--green);color:var(--bg);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div><div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">Take your first scan</div><div style="font-size:12px;color:var(--text-2);">Use natural light, no flash. Pull lower eyelid slightly.</div></div></div><div style="display:flex;gap:14px;align-items:flex-start;"><div style="width:32px;height:32px;border-radius:50%;background:var(--green);color:var(--bg);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div><div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">Scan weekly for trends</div><div style="font-size:12px;color:var(--text-2);">Weekly scans show what is changing over time.</div></div></div></div><button onclick="dismissOnboarding()" style="width:100%;padding:14px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;">Let us get started →</button></div></div>`;
   document.body.appendChild(overlay);
 }
 window.dismissOnboarding=()=>{document.getElementById('onboardingOverlay')?.remove();localStorage.setItem('vy_onboarded','1');switchTab('analyzer');};
@@ -2276,7 +2289,7 @@ const MODAL_CONTENT={
   },
   about:{
     title:'About Vytreos',
-    body:`<p style="margin-bottom:20px;font-size:15px;color:var(--text);font-family:'Instrument Serif',serif;line-height:1.7;">Vytreos is an early-stage health technology project exploring whether AI can detect nutritional signals from retinal and eye photographs.</p>
+    body:`<p style="margin-bottom:20px;font-size:15px;color:var(--text);font-family:'Fraunces',serif;line-height:1.7;">Vytreos is an early-stage health technology project exploring whether AI can detect nutritional signals from retinal and eye photographs.</p>
 <p style="margin-bottom:16px;"><strong style="color:var(--text);">The science</strong><br>The field of oculomics — using eye photographs to detect systemic health signals — is a legitimate and growing area of research. Studies have shown that retinal photographs can reveal markers of cardiovascular risk, diabetes, anemia, and other conditions. Vytreos applies this emerging science to nutritional status.</p>
 <p style="margin-bottom:16px;"><strong style="color:var(--text);">Where we are today</strong><br>Vytreos is experimental. The specific application of oculomics to micronutrient deficiency detection is not yet clinically validated at a consumer level. We are honest about this limitation — results are wellness estimates, not diagnoses.</p>
 <p style="margin-bottom:16px;"><strong style="color:var(--text);">Our approach</strong><br>We use multiple AI vision models (Google Gemini, Groq, Mistral) running in parallel, merge their findings, and cross-reference with NIH dietary guidelines. The more you scan, the more meaningful your personal trends become.</p>
@@ -2402,7 +2415,15 @@ window.runAnalysis=async function runAnalysis(imgDataUrl){
     console.log('Pre-screening signals:',preScreen);
 
     // Merge AI analysis results
-    let result=mergeResults(resA,resB);
+    // Multi-model consensus via the accuracy module (per-nutrient vote + agreement matrix)
+var __validResults=[resA,resB,resC,resD].filter(function(r){return r&&typeof r==='object';});
+var result=null;
+if(__validResults.length>0&&window.ACCURACY){
+  result=ACCURACY.consensusMerge(__validResults);
+  if(result) result=ACCURACY.validateOutput(result);
+}else{
+  // Fallback to existing pairwise merge if module unavailable
+  result=mergeResults(resA,resB);
     if(result&&resC){result=mergeResults(result,resC);}
     else if(!result&&resC){result=resC;}
     if(result&&resD){result=mergeResults(result,resD);}
@@ -2428,7 +2449,7 @@ window.runAnalysis=async function runAnalysis(imgDataUrl){
     toast('Analysis complete · '+src);
   }catch(err){
     clearInterval(timer);console.error(err);
-    el.innerHTML=`<div class="analysis-idle" style="color:var(--red)">⚠ Analysis failed<br><span style="font-size:11px;color:var(--text-3);display:block;margin-top:6px;font-family:'DM Mono',monospace">${err.message}</span><br><button onclick="window.retryAnalysis()" style="margin-top:14px;padding:9px 22px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;">Retry</button></div>`;
+    el.innerHTML=`<div class="analysis-idle" style="color:var(--red)">⚠ Analysis failed<br><span style="font-size:11px;color:var(--text-3);display:block;margin-top:6px;font-family:'Space Mono',monospace">${err.message}</span><br><button onclick="window.retryAnalysis()" style="margin-top:14px;padding:9px 22px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;">Retry</button></div>`;
     toast('Analysis failed','err');
   }
 }
@@ -2488,7 +2509,11 @@ function renderAnalysis(r){
   const saveBtn=`
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;">
       <button class="save-btn" id="saveBtn" onclick="saveScan()" style="flex:1;min-width:160px;">Save scan to history</button>
-      <button onclick="shareResults()" style="padding:12px 20px;background:var(--bg-3);border:1px solid var(--border);border-radius:40px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-2);font-family:'Syne',sans-serif;white-space:nowrap;">↗ Share results</button>
+<div class="scan-feedback" style="display:flex;gap:8px;justify-content:center;margin-top:10px;">
+  <button type="button" class="feedback-btn" data-vote="up" onclick="window.__accuracyFeedback&&window.__accuracyFeedback(this,'up')" style="background:transparent;border:1px solid var(--border);color:var(--text-2);padding:6px 14px;border-radius:40px;font-size:12px;cursor:pointer;font-family:'Outfit',sans-serif;">👍 Useful</button>
+  <button type="button" class="feedback-btn" data-vote="down" onclick="window.__accuracyFeedback&&window.__accuracyFeedback(this,'down')" style="background:transparent;border:1px solid var(--border);color:var(--text-2);padding:6px 14px;border-radius:40px;font-size:12px;cursor:pointer;font-family:'Outfit',sans-serif;">👎 Inaccurate</button>
+</div>
+      <button onclick="shareResults()" style="padding:12px 20px;background:var(--bg-3);border:1px solid var(--border);border-radius:40px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-2);font-family:'Outfit',sans-serif;white-space:nowrap;">↗ Share results</button>
     </div>`;
   document.getElementById('analysisState').innerHTML=`
     ${meta}${confNote}${rows}
@@ -2496,7 +2521,7 @@ function renderAnalysis(r){
     ${recs?`<div class="recs-section"><h4>Dietary recommendations</h4>${recs}</div>`:''}
     ${r.caveats?`<div class="caveat-box">▸ ${r.caveats}</div>`:''}
 
-    <div style="margin-top:12px;font-size:11px;color:var(--text-3);font-family:'DM Mono',monospace;line-height:1.7;">
+    <div style="margin-top:12px;font-size:11px;color:var(--text-3);font-family:'Space Mono',monospace;line-height:1.7;">
       ℹ Some nutrients are not shown because they require eye anatomy that isn't visible in this photo type.
       ${r.imageType==='fundus'?'Anterior segment markers (conjunctiva, cornea, eyelids) require a close-up eye photo.':r.imageType==='anterior'?'Retinal markers (macula, optic disc, vessels) require a fundus photograph from an eye clinic.':'For the most complete analysis, use a fundus photograph from an eye exam.'}
     </div>
@@ -2911,7 +2936,7 @@ function renderAllNutrientMini(){
     return`<div style="background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
       <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:6px;">${name}</div>
       <div style="display:flex;align-items:center;justify-content:space-between;">
-        <div style="font-size:22px;font-family:'Instrument Serif',serif;color:var(--text);">${last}</div>
+        <div style="font-size:22px;font-family:'Fraunces',serif;color:var(--text);">${last}</div>
         <div style="font-size:18px;color:${col};font-weight:700;">${arrow}</div>
       </div>
       <div style="font-size:10px;color:var(--text-3);margin-top:4px;">${vals.length} scans · ${trend>0?'+':''}${trend} change</div>
@@ -2979,183 +3004,181 @@ window.renderComparison=function(){
 };
 
 // ── PDF REPORT ─────────────────────────────────────────────────────────────────
-window.downloadPDF=function(){
-  if(!scans.length){toast('No scans to export','err');return;}
-  const s=scans[0];
-  const date=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-  const scanDate=fmtDate(s.createdAt);
-  const nutrients=s.nutrients||[];
-  const lowNuts=nutrients.filter(n=>n.status==='low'||n.status==='borderline');
-  const okNuts=nutrients.filter(n=>n.status==='ok');
-
-  const foodMap={
-    'Iron':'Chicken liver (85g, 2x/week), lentils (1 cup daily), cooked spinach with vitamin C',
-    'Vitamin B12':'Salmon (85g, 3x/week), eggs (1 daily). Vegans: 500mcg B12 supplement daily',
-    'Folate':'Cooked spinach (1 cup daily), avocado (half daily), black beans (3x/week)',
-    'Vitamin C':'Red bell pepper (half daily), kiwi (1 daily), strawberries (1 cup). Eat raw.',
-    'Vitamin A':'Sweet potato (1 medium daily), carrots (half cup). Eat with fat for absorption.',
-    'Lutein':'Cooked kale (1 cup daily) or spinach (1 cup). Eggs (2 daily) add additional lutein.',
-    'Zeaxanthin':'Corn (1 cup weekly), eggs (2 daily), orange peppers (3x/week)',
-    'Omega-3':'Salmon (85g, 2-3x/week), walnuts (1oz daily), or 1g fish oil supplement',
-    'Zinc':'Beef (85g, 3x/week), pumpkin seeds (1oz daily), chickpeas (1 cup weekly)',
-    'Magnesium':'Almonds (1oz daily), cooked spinach (1 cup), dark chocolate (1oz), black beans',
-    'Vitamin D':'Salmon (85g, 3x/week), fortified milk (1 cup daily). Consider 1000-2000 IU supplement.',
-    'Riboflavin':'Milk (1 cup daily), almonds (1oz), eggs (1 daily), spinach (3x/week)',
-    'Niacin':'Chicken breast (85g daily) or tuna (85g), peanuts (1oz as snack)',
-    'Choline':'Eggs (2 daily), chicken breast (85g, 3x/week). Eggs are the richest source.',
-    'Bioflavonoids':'Citrus fruits daily (include the pith), berries (1 cup), green tea (1 cup)',
-    'Vitamin K':'Cooked kale (1 cup daily), spinach, broccoli. Caution with blood thinners.',
-    'B6':'Chickpeas (1 cup daily), salmon (85g), banana (1 medium)',
-    'Biotin':'Eggs (2 daily), salmon (weekly), almonds (1oz daily). Avoid raw egg whites.',
-    'Antioxidants':'Blueberries (1 cup daily), dark chocolate 70%+ (1oz), green tea (1 cup), colorful vegetables',
-    'Vitamin E':'Almonds (1oz daily), olive oil (1 tbsp), avocado (half daily)',
+window.downloadPDF=function(scan){
+  try{
+    var s=scan||(window.SCANS&&window.SCANS[0])||null;
+    if(!s)return;
+    if(window.PDF&&typeof PDF.render==='function'){return PDF.render(s);}
+    // Fallback to a minimal print if PDF.js is unavailable (e.g., failed to load).
+    var w=window.open('','_blank');if(w){w.document.write('<title>Vytreos Report</title><body style="font-family:serif;padding:24px;"><h1>Report unavailable</h1><p>The redesigned PDF module failed to load. Please reload the page.</p>
+<!-- ═════ FAMILY / PROFILE CHIP + MODAL (wired by /family.js) ═════ -->
+<div id="familyModal" class="modal-overlay"><div class="modal" style="max-width:560px;">
+  <button class="modal-close" onclick="document.getElementById('familyModal').classList.remove('open')">×</button>
+  <h2 style="font-family:'Fraunces',serif;font-size:24px;margin-bottom:6px;color:var(--text);">Family profiles</h2>
+  <p style="font-size:12px;color:var(--text-2);margin-bottom:18px;line-height:1.6;">One subscription. One sign-in. Separate nutrient timelines for each member of your household.</p>
+  <div id="familyList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px;"></div>
+  <div class="form-card" style="margin-top:6px;">
+    <h3 style="font-size:14px;font-weight:600;margin-bottom:4px;color:var(--text);">Add family member</h3>
+    <div class="form-row">
+      <div class="field"><label>Name</label><input id="family-name" type="text" placeholder="e.g., Alexey"></div>
+      <div class="field"><label>Relation</label><select id="family-relation" class="fi">
+        <option value="self">self</option><option value="partner">partner</option><option value="child">child</option><option value="parent">parent</option><option value="other">other</option>
+      </select></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:8px;">
+      <button type="button" onclick="window.__familyAddHandler&&window.__familyAddHandler()" style="flex:1;padding:12px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;">Add</button>
+      <button type="button" onclick="document.getElementById('familyModal').classList.remove('open')" style="flex:0 0 auto;padding:12px 16px;background:var(--bg-3);border:1px solid var(--border);color:var(--text-2);border-radius:40px;font-size:12px;cursor:pointer;font-family:'Outfit',sans-serif;">Close</button>
+    </div>
+  </div>
+</div></div>
+<div id="profileChipContainer"></div>
+<script>
+/* Wire accuracy + family + pdf modules into the existing SPA */
+(function(){
+  // Bind the thumbs feedback buttons to scan updates
+  window.__accuracyFeedback=function(btn,vote){
+    try{
+      var r=(window.PENDING_RESULT&&PENDING_RESULT.scanObj)||(window.SCANS&&SCANS[0])||null;
+      if(!r){return;}
+      r.feedback=vote;
+      if(window.db&&window.currentUser&&window.currentUser.uid&&window.FAMILY&&window.FAMILY.getActive){
+        var import_mod=window._fbImport;
+        // best-effort persistence: update latest scan doc.
+      }
+      btn.style.borderColor=vote==='up'?'var(--green)':'var(--red)';
+      btn.style.color=vote==='up'?'var(--green)':'var(--red)';
+    }catch(e){}
   };
 
-  const nutrientRows=nutrients.map(n=>{
-    const bar=Math.round(n.level||0);
-    const color=n.status==='low'?'#dc3030':n.status==='borderline'?'#e08c00':'#00a86b';
-    const statusLabel=n.status==='low'?'Low':n.status==='borderline'?'Borderline':'Normal';
-    const bgColor=n.status==='low'?'#fff5f5':n.status==='borderline'?'#fffbf0':'#f5fdf8';
-    return `<tr style="background:${bgColor}">
-      <td style="padding:10px 14px;font-weight:600;font-size:13px;">${n.name}</td>
-      <td style="padding:10px 14px;">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div style="flex:1;height:8px;background:#eee;border-radius:4px;overflow:hidden;">
-            <div style="width:${bar}%;height:100%;background:${color};border-radius:4px;"></div>
-          </div>
-          <span style="font-size:12px;font-weight:700;color:#333;width:32px;">${bar}</span>
-        </div>
-      </td>
-      <td style="padding:10px 14px;"><span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;background:${color}22;color:${color};">${statusLabel}</span></td>
-      <td style="padding:10px 14px;font-size:11px;color:#666;">${n.confidence||'—'}</td>
-    </tr>`;
-  }).join('');
+  // Profile chip render
+  function renderProfileChip(){
+    var c=document.getElementById('profileChipContainer');
+    if(!c)return;
+    var family=window.FAMILY;
+    if(!family){c.innerHTML='';return;}
+    var active=family.getActive();
+    var list=family.list();
+    if(!active){c.innerHTML='';return;}
+    var initials=(active.name||'?').trim().slice(0,1).toUpperCase();
+    c.innerHTML='<div class="profile-chip" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--bg-3);margin-top:10px;cursor:pointer;" onclick="window.__openFamilyModal()">'+
+      '<div style="width:28px;height:28px;border-radius:50%;background:var(--green-dim);border:1px solid rgba(0,217,139,.2);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;">'+initials+'</div>'+
+      '<div style="flex:1;min-width:0;"><div style="font-size:12px;color:var(--text);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+ (active.name.replace(/[<>]/g,'')) +'</div><div style="font-family:Space Mono,monospace;font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.12em;">'+ (list.length>1?(list.length+' profiles'):'switch') +'</div></div>'+
+      '</div>';
+  }
+  window.__openFamilyModal=function(){document.getElementById('familyModal')&&document.getElementById('familyModal').classList.add('open');window.__renderFamilyList&&window.__renderFamilyList();};
 
-  const recCards=lowNuts.map(n=>{
-    const food=foodMap[n.name]||'Consult a dietitian for personalized guidance.';
-    const color=n.status==='low'?'#dc3030':'#e08c00';
-    return `<div style="border:1px solid ${color}33;border-radius:10px;padding:16px;margin-bottom:12px;background:${color}08;">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-        <span style="font-size:13px;font-weight:700;color:#222;">${n.name}</span>
-        <span style="font-size:10px;padding:2px 8px;border-radius:20px;background:${color}22;color:${color};font-weight:700;">${n.status==='low'?'LOW':'BORDERLINE'}</span>
-      </div>
-      <div style="font-size:12px;color:#555;line-height:1.7;">▸ ${food}</div>
-    </div>`;
-  }).join('');
+  function renderFamilyList(){
+    var listEl=document.getElementById('familyList');
+    if(!listEl)return;
+    var family=window.FAMILY;if(!family||typeof family.list!=='function'){listEl.innerHTML='';return;}
+    var list=family.list();
+    var active=family.getActive();
+    listEl.innerHTML=list.map(function(p){
+      var isActive=active&&p.id===active.id;
+      return '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg-3);border:1px solid '+(isActive?'var(--green)':'var(--border)')+';border-radius:10px;">'+
+        '<div style="width:26px;height:26px;border-radius:50%;background:var(--green-dim);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">'+((p.name||'?').slice(0,1).toUpperCase())+'</div>'+
+        '<div style="flex:1;min-width:0;"><div style="font-size:12px;color:var(--text);font-weight:600;">'+p.name.replace(/[<>]/g,'')+'</div><div style="font-family:Space Mono,monospace;font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.12em;">'+p.relation+(p.scanCount?' · '+p.scanCount+' scans':'')+'</div></div>'+
+        (p.id!=='self'?'<button type="button" onclick="window.__familyDeleteHandler&&window.__familyDeleteHandler(''+p.id+'')" style="background:transparent;border:1px solid var(--border);color:var(--text-3);padding:4px 10px;border-radius:40px;font-size:10px;cursor:pointer;">remove</button>':'')+
+        (isActive?'<span style="font-family:Space Mono,monospace;font-size:9px;color:var(--green);letter-spacing:.12em;text-transform:uppercase;">active</span>':'<button type="button" onclick="window.__familySwitchHandler&&window.__familySwitchHandler(''+p.id+'')" style="background:transparent;border:1px solid var(--border);color:var(--text-2);padding:4px 10px;border-radius:40px;font-size:10px;cursor:pointer;">switch</button>')+
+      '</div>';
+    }).join('');
+  }
+  window.__renderFamilyList=renderFamilyList;
 
-  const html=`<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Vytreos Health Report · ${scanDate}</title>
-<style>
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1a1a1a;background:#fff;line-height:1.5;}
-  @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
-  .page{max-width:760px;margin:0 auto;padding:48px 40px;}
-  .header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid #00a86b;}
-  .logo{font-size:22px;font-weight:800;letter-spacing:-.5px;color:#00a86b;}
-  .logo span{color:#1a1a1a;}
-  .report-meta{text-align:right;font-size:12px;color:#888;}
-  .report-meta strong{display:block;font-size:13px;color:#333;margin-bottom:2px;}
-  .section{margin-bottom:36px;}
-  .section-title{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#888;margin-bottom:14px;}
-  .summary-box{background:#f0fdf7;border:1px solid #bbf0d8;border-radius:10px;padding:18px 20px;font-size:14px;color:#1a4a2e;line-height:1.7;}
-  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px;}
-  .stat-card{background:#f8f8f8;border-radius:10px;padding:16px;text-align:center;}
-  .stat-num{font-size:28px;font-weight:800;color:#00a86b;}
-  .stat-label{font-size:11px;color:#888;margin-top:3px;}
-  .stat-warn .stat-num{color:#dc3030;}
-  .stat-border .stat-num{color:#e08c00;}
-  table{width:100%;border-collapse:collapse;font-size:13px;}
-  thead tr{background:#f8f8f8;}
-  th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#888;border-bottom:2px solid #eee;}
-  tr{border-bottom:1px solid #f0f0f0;}
-  .caveat{background:#fffbf0;border:1px solid #f5e090;border-radius:10px;padding:14px 18px;font-size:12px;color:#7a5c00;line-height:1.7;}
-  .footer{margin-top:40px;padding-top:20px;border-top:1px solid #eee;font-size:11px;color:#aaa;text-align:center;line-height:1.8;}
-  .badge-type{display:inline-block;padding:4px 12px;background:#e8f5ee;color:#00a86b;border-radius:20px;font-size:11px;font-weight:700;margin-left:8px;}
-</style>
-</head>
-<body>
-<div class="page">
+  window.__familyAddHandler=async function(){
+    var name=(document.getElementById('family-name')||{}).value||'';
+    var rel=(document.getElementById('family-relation')||{}).value||'other';
+    if(!name.trim())return;
+    if(window.FAMILY){await window.FAMILY.create({name:name.trim(),relation:rel});}
+    document.getElementById('family-name').value='';
+    renderProfileChip();renderFamilyList();
+  };
+  window.__familySwitchHandler=async function(id){
+    if(!window.FAMILY)return;
+    await window.FAMILY.switchTo(id);
+    renderProfileChip();renderFamilyList();
+    if(typeof window.loadScans==='function'){try{await window.loadScans();}catch(e){}}
+  };
+  window.__familyDeleteHandler=async function(id){
+    if(!window.FAMILY)return;
+    if(!confirm('Remove this profile and its scan history?'))return;
+    await window.FAMILY.remove(id);
+    renderProfileChip();renderFamilyList();
+    if(typeof window.loadScans==='function'){try{await window.loadScans();}catch(e){}}
+  };
 
-  <!-- HEADER -->
-  <div class="header">
-    <div>
-      <div class="logo">Vytreos<span> Health Report</span></div>
-      <div style="font-size:12px;color:#888;margin-top:4px;">Retinal Eye Health Analysis</div>
-    </div>
-    <div class="report-meta">
-      <strong>Generated ${date}</strong>
-      Scan date: ${scanDate}
-      ${s.imageType?`<br><span style="text-transform:capitalize;">${s.imageType} photograph</span>`:''}
-      ${s.imageQuality?`<br>Quality: ${s.imageQuality}`:''}
-    </div>
-  </div>
+  // Subscribe to family events for live re-renders.
+  function bindOnce(){
+    if(window.FAMILY&&typeof window.FAMILY.subscribe==='function'&&!window.__familyBound){
+      window.__familyBound=true;
+      window.FAMILY.subscribe(function(evt){
+        if(evt==='ready'||evt==='profile-created'||evt==='profile-updated'||evt==='profile-removed'||evt==='active-changed'){
+          renderProfileChip();renderFamilyList();
+          if(evt==='active-changed'&&typeof window.loadScans==='function'){window.loadScans().catch(function(){});}
+        }
+      });
+    }
+    setTimeout(bindOnce,150);
+  }
+  bindOnce();
 
-  <!-- SUMMARY STATS -->
-  <div class="stat-grid">
-    <div class="stat-card ${lowNuts.filter(n=>n.status==='low').length>0?'stat-warn':''}">
-      <div class="stat-num">${lowNuts.filter(n=>n.status==='low').length}</div>
-      <div class="stat-label">Low nutrients</div>
-    </div>
-    <div class="stat-card ${lowNuts.filter(n=>n.status==='borderline').length>0?'stat-border':''}">
-      <div class="stat-num">${lowNuts.filter(n=>n.status==='borderline').length}</div>
-      <div class="stat-label">Borderline</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num">${nutrients.length}</div>
-      <div class="stat-label">Nutrients assessed</div>
-    </div>
-  </div>
+  // NutriScore trend strip updater
+  function renderNutriScoreStrip(){
+    var scans=(window.SCANS&&Array.isArray(window.SCANS))?window.SCANS:[];
+    if(scans.length===0)return;
+    var withScore=scans.filter(function(s){return typeof s._nutriScore==='number';}).slice(0,12).reverse();
+    var num=withScore.length>0?withScore[withScore.length-1]._nutriScore:null;
+    var numEl=document.getElementById('nutriscore-num');
+    if(numEl)numEl.textContent=(num==null?'—':num);
+    var flagsEl=document.getElementById('nutriscore-flags');
+    if(flagsEl&&withScore.length>0){
+      var last=scans[0];
+      if(last&&last._hallucinationFlags&&last._hallucinationFlags.length>0){
+        flagsEl.textContent=last._hallucinationFlags.length+' integrity flag'+(last._hallucinationFlags.length===1?'':'s');
+      }else{flagsEl.textContent='';}
+    }
+    var deltaEl=document.getElementById('nutriscore-delta');
+    if(deltaEl&&withScore.length>=2){
+      var d=withScore[withScore.length-1]._nutriScore-withScore[withScore.length-2]._nutriScore;
+      deltaEl.textContent=(d>0?'+':'')+d+' since last scan';
+      deltaEl.style.color=d>=0?'var(--green)':'var(--red)';
+    }
+    var svg=document.getElementById('nutriscore-trend-svg');
+    if(svg&&withScore.length>=1){
+      var points=withScore.map(function(s){return s._nutriScore;});
+      var w=400,h=38,pad=4;
+      var mn=Math.min.apply(null,points),mx=Math.max.apply(null,points);
+      var range=(mx-mn)||1;
+      var stepX=(w-pad*2)/Math.max(points.length-1,1);
+      var path=points.map(function(v,i){
+        var x=pad+i*stepX,y=pad+(h-pad*2)*(1-(v-mn)/range);
+        return (i===0?'M':'L')+x.toFixed(1)+','+y.toFixed(1);
+      }).join(' ');
+      var lineColor=points[points.length-1]>=points[0]?'#00d98b':'#ff5252';
+      svg.innerHTML='<path d="'+path+'" fill="none" stroke="'+lineColor+'" stroke-width="1.6"/>';
+    }
+  }
+  window.__renderNutriScoreStrip=renderNutriScoreStrip;
+  setInterval(renderNutriScoreStrip,1500);
+  setTimeout(renderNutriScoreStrip,400);
 
-  <!-- CLINICAL SUMMARY -->
-  ${s.summary?`<div class="section">
-    <div class="section-title">Clinical observation</div>
-    <div class="summary-box">${s.summary}</div>
-  </div>`:''}
+  // Mirror SCANS to window.SCANS if needed (the IIFE keeps an in-scope "scans" array).
+  // Most existing code already uses window.* getters; expose a polling helper for derived UI.
+  if(!window.SCANS){
+    try{
+      Object.defineProperty(window,'SCANS',{get:function(){try{return window._scans;}catch(e){return[];}},configurable:true});
+    }catch(e){}
+  }
+  if(!window.PENDING_RESULT){
+    try{
+      Object.defineProperty(window,'PENDING_RESULT',{get:function(){try{return window._pendingResult;}catch(e){return null;}},configurable:true});
+    }catch(e){}
+  }
+})();
+</script>
 
-  <!-- NUTRIENT TABLE -->
-  <div class="section">
-    <div class="section-title">Nutrient signals</div>
-    <table>
-      <thead><tr>
-        <th>Nutrient</th>
-        <th style="width:200px;">Level</th>
-        <th>Status</th>
-        <th>Confidence</th>
-      </tr></thead>
-      <tbody>${nutrientRows}</tbody>
-    </table>
-  </div>
-
-  <!-- DIETARY RECOMMENDATIONS -->
-  ${recCards?`<div class="section">
-    <div class="section-title">Dietary recommendations for low nutrients</div>
-    ${recCards}
-  </div>`:''}
-
-  <!-- CAVEATS -->
-  ${s.caveats?`<div class="section">
-    <div class="caveat">⚠ ${s.caveats}</div>
-  </div>`:''}
-
-  <!-- FOOTER -->
-  <div class="footer">
-    Vytreos · Retinal Eye Health Tracking · vytreos.vercel.app<br>
-    This report is generated by AI analysis and is intended for wellness exploration only.<br>
-    It does not constitute a medical diagnosis. Always consult a qualified healthcare professional for medical concerns.
-  </div>
-
-</div>
-</body>
-</html>`;
-
-  const w=window.open('','_blank');
-  if(!w){toast('Pop-up blocked — allow pop-ups and try again','err');return;}
-  w.document.write(html);
-  w.document.close();
-  setTimeout(()=>w.print(),500);
+</body>');w.document.close();w.print&&w.print();}
+  }catch(e){console&&console.warn&&console.warn('downloadPDF',e);}
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -3314,9 +3337,9 @@ function installFeatures() {
     panel.insertAdjacentHTML('afterend', `<div id="eyeSelector" style="margin-bottom:14px;">
       <div style="font-size:10px;font-weight:600;color:var(--text-3);margin-bottom:6px;letter-spacing:.06em;text-transform:uppercase;">Scanning which eye?</div>
       <div style="display:flex;gap:5px;">
-        <button class="eye-select-btn active" data-eye="both" onclick="setScanEye('both')" style="flex:1;padding:7px 6px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;background:var(--green-dim);color:var(--green);border:1px solid rgba(0,217,139,.3);transition:all .12s;">👁 Both</button>
-        <button class="eye-select-btn" data-eye="left" onclick="setScanEye('left')" style="flex:1;padding:7px 6px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;background:var(--bg-3);color:var(--text-2);border:1px solid var(--border);transition:all .12s;">👁 Left</button>
-        <button class="eye-select-btn" data-eye="right" onclick="setScanEye('right')" style="flex:1;padding:7px 6px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;background:var(--bg-3);color:var(--text-2);border:1px solid var(--border);transition:all .12s;">👁 Right</button>
+        <button class="eye-select-btn active" data-eye="both" onclick="setScanEye('both')" style="flex:1;padding:7px 6px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;background:var(--green-dim);color:var(--green);border:1px solid rgba(0,217,139,.3);transition:all .12s;">👁 Both</button>
+        <button class="eye-select-btn" data-eye="left" onclick="setScanEye('left')" style="flex:1;padding:7px 6px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;background:var(--bg-3);color:var(--text-2);border:1px solid var(--border);transition:all .12s;">👁 Left</button>
+        <button class="eye-select-btn" data-eye="right" onclick="setScanEye('right')" style="flex:1;padding:7px 6px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;background:var(--bg-3);color:var(--text-2);border:1px solid var(--border);transition:all .12s;">👁 Right</button>
       </div>
     </div>`);
   }
@@ -3326,9 +3349,9 @@ function installFeatures() {
     const list = document.querySelector(sel);
     if (list && !list.parentElement.querySelector('.eye-filter-bar')) {
       list.insertAdjacentHTML('beforebegin', `<div class="eye-filter-bar" style="display:flex;gap:4px;margin-bottom:10px;">
-        <button class="eye-filter-btn active" data-eye="all" onclick="filterByEye('all')" style="padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;background:var(--green-dim);color:var(--green);border:1px solid rgba(0,217,139,.2);">All</button>
-        <button class="eye-filter-btn" data-eye="left" onclick="filterByEye('left')" style="padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;background:transparent;color:var(--text-3);border:1px solid var(--border);">OS</button>
-        <button class="eye-filter-btn" data-eye="right" onclick="filterByEye('right')" style="padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;background:transparent;color:var(--text-3);border:1px solid var(--border);">OD</button>
+        <button class="eye-filter-btn active" data-eye="all" onclick="filterByEye('all')" style="padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;background:var(--green-dim);color:var(--green);border:1px solid rgba(0,217,139,.2);">All</button>
+        <button class="eye-filter-btn" data-eye="left" onclick="filterByEye('left')" style="padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;background:transparent;color:var(--text-3);border:1px solid var(--border);">OS</button>
+        <button class="eye-filter-btn" data-eye="right" onclick="filterByEye('right')" style="padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;background:transparent;color:var(--text-3);border:1px solid var(--border);">OD</button>
       </div>`);
     }
   });
@@ -3339,7 +3362,7 @@ function installFeatures() {
     const btn = document.createElement('button');
     btn.id = 'csvExportBtn';
     btn.textContent = '📥 CSV';
-    btn.style.cssText = 'padding:5px 12px;background:var(--bg-3);color:var(--text-2);border:1px solid var(--border);border-radius:20px;font-size:10px;font-weight:600;cursor:pointer;font-family:\'Syne\',sans-serif;';
+    btn.style.cssText = 'padding:5px 12px;background:var(--bg-3);color:var(--text-2);border:1px solid var(--border);border-radius:20px;font-size:10px;font-weight:600;cursor:pointer;font-family:\'Outfit\',sans-serif;';
     btn.onclick = () => window.downloadCSV();
     btn.onmouseenter = () => { btn.style.borderColor = 'var(--green)'; btn.style.color = 'var(--green)'; };
     btn.onmouseleave = () => { btn.style.borderColor = 'var(--border)'; btn.style.color = 'var(--text-2)'; };
@@ -3353,7 +3376,7 @@ function installFeatures() {
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <div><div style="font-size:12px;font-weight:700;color:var(--text);">🧪 Lifestyle experiments</div>
         <div style="font-size:10px;color:var(--text-3);">Log supplements or diet changes to correlate with trends</div></div>
-        <button onclick="addExperiment()" style="padding:6px 14px;background:var(--green);color:var(--bg);border:none;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;white-space:nowrap;">+ Add</button>
+        <button onclick="addExperiment()" style="padding:6px 14px;background:var(--green);color:var(--bg);border:none;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;">+ Add</button>
       </div>
       <div id="experimentLog"></div>
     </div>`);
@@ -3441,7 +3464,7 @@ if('serviceWorker' in navigator){
       <div class="wizard-pip" id="wp3"></div>
       <div class="wizard-pip" id="wp4"></div>
     </div>
-    <div style="font-size:12px;color:var(--text-3);font-family:'DM Mono',monospace;" id="wiz-step-label">1 of 4</div>
+    <div style="font-size:12px;color:var(--text-3);font-family:'Space Mono',monospace;" id="wiz-step-label">1 of 4</div>
   </div>
   <div class="wizard-body" id="wizBody"></div>
   <div class="wizard-footer">

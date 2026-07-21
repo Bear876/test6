@@ -68,6 +68,111 @@ See [`.env.example`](./.env.example). Every key is optional; an un-set provider 
 
 `PLAUSIBLE_DOMAIN` and `SENTRY_DSN` (optional) are documented in the same file — add them when wiring those services.
 
+## AI accuracy & anti-hallucination pipeline
+
+Phone-camera retinal photos already go through the **Image quality pipeline** (below). On top of that, Vytreos runs an on-device **AI integrity layer** that hardens the prompt, votes across the multi-model ensemble, and flags results that look like confabulations. Lives in `public/accuracy.js` (~630 lines, zero deps). Exposes `window.ACCURACY`.
+
+### 1. Strict JSON contract on every prompt
+
+`ACCURACY.appendSchema(prompt)` is appended to every provider prompt (Gemini, Groq, Mistral, Claude, etc.). It pins the model to:
+
+- A 24-name allowlist (`Vitamin A`, `Beta-carotene`, `Lutein`, …). Any other nutrient name the model writes gets dropped from the merged result.
+- Integer `level` in `[0, 100]` (out-of-range gets clamped to 50).
+- A strict `confidence` enum of `low | medium | high`.
+- A `status` enum of `low (<40) | ok (40-75) | high (>75)`.
+
+The schema is appended at the **end** of each prompt. LLMs heavily weight the last instruction — putting the contract there prevents the model from drifting back into conversational prose.
+
+### 2. Per-nutrient consensus vote
+
+The existing pairwise `mergeResults(a, b)` is replaced by `ACCURACY.consensusMerge([resA, resB, resC, resD])` inside `runAnalysis`:
+
+- Each canonical nutrient gathers one vote from every provider that flagged it.
+- Level = **median** (robust to a single adversarial or off-model outlier).
+- Confidence = boosted (`low → medium → high`) when ≥34%/66% of providers agree.
+- Single-model runs preserve the model's reported confidence rather than auto-bumping to `high`.
+- **Orphan recommendations** (strings that don't reference any flagged nutrient or any food keyword) are dropped before they reach the UI.
+
+### 3. Post-merge validator
+
+`ACCURACY.validateOutput(merged)` clamps levels to `[0, 100]`, canonicalizes names, drops nutrients not on the allowlist, coerces bad confidence values to `low`, and collects a `_hallucinationFlags: string[]` array the UI surfaces for confidence:
+
+- `unknown_nutrient:<name>` — model invented a nutrient
+- `bad_confidence:<value>` — model wrote a string not in the enum
+- `no_valid_nutrients` — every nutrient got dropped
+- `low_confidence_majority` — more than half of the surviving nutrients are `low` confidence (probable confabulation pile-up)
+- `overcount_nutrients` — more nutrients than the 24-name allowlist
+
+The dashboard's NutriScore strip surfaces the latest scan's flag count so users always know when an AI run was less trustworthy.
+
+### 4. Vision gate (optional)
+
+`ACCURACY.VISION_GATE_PROMPT` is a short yes/no question: *"Is this a photograph of a human eye, retinal surface, or ocular region?"* `ACCURACY.parseVisionGate(text)` parses the model's JSON answer. Useful to short-circuit before the full nutrient ensemble when the upload is obviously not a retinal photo — cheap, optional, not yet hot-wired into `runAnalysis`.
+
+### NutriScore composite
+
+`ACCURACY.computeNutriScore(nutrients)` returns a weighted mean of nutrient levels (`Lutein`/`Zeaxanthin`/`Omega-3` weighted heaviest, with a confidence-based downweight on the numerator — not the denominator — so low-confidence drags the score down rather than cancelling itself out). Used by the redesigned PDF and the dashboard's top-of-page strip.
+
+See `public/accuracy.js` for the algorithms and `test-accuracy.mjs` for the 21 synthetic-fixture tests (run with `node test-accuracy.mjs`).
+
+## Redesigned wellness PDF
+
+The robotic one-page report has been replaced by an editorial-grade printable report:
+
+- **Branded masthead** — Vytreos wordmark + scan date + active profile + eye + model consensus badge
+- **NutriScore donut (SVG)** — composite score from 0-100 with delta vs previous scan
+- **Executive summary** — narrative from the longest non-empty AI summary, set in Instrument Serif italic
+- **Top 3 to act on** — three cards for the most-deviated nutrients, with delta-vs-prior + a one-line tag (top up / rebalance / maintain)
+- **Nutrient heatmap** — every assessed nutrient as a row with a colored bar, score, confidence chip, trend sparkline, and 1-line evidence snippet
+- **All recommendations** — full numbered list
+- **AI integrity flags** — surfaces hallucination-guard flags in an amber callout when present
+- **Mandatory disclaimer footer** — paper-set, full medical-disclaimer language
+
+Lives in `public/pdf.js` (~620 lines, zero deps, exposes `window.PDF.render(scan)`). The existing `window.downloadPDF` is now a thin wrapper that delegates to `PDF.render()` — the on-screen "Download PDF" button keeps working unchanged.
+
+Theme alignment: paper-white body (`#fbfaf6`), existing brand green accent (`#00d98b` → paperprint dark `#00a36b`), warm `#e5e0d2` hairlines. Print-aware page breaks via `@page { size: A4; margin: 14mm 12mm; }` so a real printer produces a magazine page, not a CLI output.
+
+## Family profiles
+
+Up to 5 profiles under one account, each with its own isolated scan history. Lives in `public/family.js` (~505 lines, zero deps, exposes `window.FAMILY`).
+
+### Data model
+
+```
+users/{uid}                              → user doc, gains activeProfile field
+users/{uid}/profiles/{pid}               → { id, name, relation, dob?, gender?, scanCount, isDefault }
+users/{uid}/profiles/{pid}/scans/{sid}   → per-profile scan docs
+```
+
+### Migration (zero data loss for existing users)
+
+On `FAMILY.init()`, if no profiles exist for the resolved user:
+
+1. A default `self` profile is created (`relation: "self"`, name defaults to "Me").
+2. Any legacy scans sitting at `users/{uid}/scans/` are copied into `users/{uid}/profiles/self/scans/`, tagged with `migratedFrom: "users/{uid}/scans/{oldId}"`.
+3. A migration marker doc is written so the migration runs at most once.
+
+### UI primitives
+
+- **Profile chip** in the app sidebar — shows the active profile's first initial + name; clicking opens the manage-family modal.
+- **Manage-family modal** — lists all profiles, lets you switch, add, or remove. The default `self` profile cannot be removed (always one profile per account).
+- **Per-scan feedback (👍 / 👎)** — every analysis result gets thumbs-up / thumbs-down buttons so future users can spot consistent failures.
+
+### Helpers the host SPA uses
+
+- `FAMILY.list()` / `FAMILY.getActive()` / `FAMILY.getProfileById(id)`
+- `FAMILY.switchTo(id)` (also persists `activeProfile` on the user doc)
+- `FAMILY.create({name, relation, dob?, gender?})` / `FAMILY.update(id, partial)` / `FAMILY.remove(id)`
+- `FAMILY.scansPath()` returns the canonical Firestore path for the current profile
+- `FAMILY.addScanMeta(scan)` tags each saved scan with the active profile + bumps `scanCount`
+- `FAMILY.compare(pidA, pidB)` returns the matched nutrient pairs + absolute deltas (used by the dashboard's "compare with…" feature in Trends)
+
+### What it does *not* do
+
+- It does **not** change any provider API keys. Still exactly the same env vars as before.
+- It does **not** upload the original retinal photo to Firestore (only metadata).
+- It does **not** introduce any third-party service. Family management runs entirely on top of the Firebase Auth + Firestore pair the app was already using.
+
 ## Image quality pipeline
 
 Phone-camera retinal photos are hard: motion blur, corneal glare, white-balance casts, and lens artifacts all degrade what reaches the vision model. Vytreos runs an on-device quality pipeline **before** any `/api/analyze` request — no backend round-trip, no extra cost, no new env vars.
@@ -162,6 +267,11 @@ Every successful invocation gets an `X-Request-Id` header for debugging through 
 │   └── analyze.js          # Vercel-style serverless handler
 ├── public/
 │   ├── index.html          # single-page app (wellness UI)
+│   ├── vq.js               # on-device image quality scoring + preprocessing
+│   ├── accuracy.js         # AI integrity module (allowlist, consensus voter, validator)
+│   ├── pdf.js              # redesigned printable wellness report
+│   ├── family.js           # family / profile management (Firestore sub-collection)
+│   ├── app-extras.js       # eye selector, CSV export, food recs, lifestyle log
 │   ├── sw.js               # PWA service worker
 │   ├── manifest.json
 │   ├── robots.txt
