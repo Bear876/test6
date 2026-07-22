@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(reg){try{reg.unregister();}catch(_){}})});}</script>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#06080a">
@@ -2248,8 +2252,11 @@ window.addEventListener('error',e=>{
   if(detail&&e.error)detail.textContent=e.error.message||'';
 });
 window.addEventListener('unhandledrejection',e=>{
-  // Only show for critical errors, not API failures
-  if(e.reason&&e.reason.message&&e.reason.message.includes('Firebase')){
+  console.error('Unhandled rejection:',e.reason);
+  const reasonStr=(e.reason&&(e.reason.message||(e.reason.code?String(e.reason.code):'')))||(e.reason?String(e.reason):'Unhandled rejection');
+  const detail=document.getElementById('errDetail');
+  if(detail)detail.textContent=reasonStr;
+  if(/Firebase|Invalid|Reference|Syntax|TypeError/i.test(reasonStr)){
     const eb=document.getElementById('errorBoundary');
     if(eb)eb.style.display='flex';
   }
