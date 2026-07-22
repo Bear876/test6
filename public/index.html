@@ -1426,7 +1426,6 @@ input[type="number"]:focus{border-color:var(--green);}
 <script src="/accuracy.js"></script>
 <script src="/pdf.js"></script>
 <script src="/family.js"></script>
-<script src="/app-extras.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -3027,8 +3026,8 @@ window.downloadPDF=function(scan){
     var w=window.open('','_blank');if(w){w.document.write('<title>Vytreos Report</title><body style="font-family:serif;padding:24px;"><h1>Report unavailable</h1><p>The redesigned PDF module failed to load. Please reload the page.</p>');}
   }
 </script>
-/* ═════ FAMILY / PROFILE CHIP + MODAL (wired by /family.js) ═════ */
-<div id="familyModal" class="modal-overlay"><div class="modal" style="max-width:560px;">
+<div id="familyModal" class="modal-overlay"><div clas<script type="module" src="/app-extras.js"></script>
+s="modal" style="max-width:560px;">
   <button class="modal-close" onclick="document.getElementById('familyModal').classList.remove('open')">×</button>
   <h2 style="font-family:'Fraunces',serif;font-size:24px;margin-bottom:6px;color:var(--text);">Family profiles</h2>
   <p style="font-size:12px;color:var(--text-2);margin-bottom:18px;line-height:1.6;">One subscription. One sign-in. Separate nutrient timelines for each member of your household.</p>
