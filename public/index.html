@@ -1554,7 +1554,13 @@ function populateUI(name,email,initial){
 // ── SCANS ──────────────────────────────────────────────────────────────────────
 async function loadScans(){
   try{
-    const snap=await getDocs(query((function(){var __p=(window.FAMILY&&FAMILY.scansPath)?FAMILY.scansPath():'users/'+currentUser.uid+'/profiles/'+((window.FAMILY&&FAMILY.getActive)?FAMILY.getActive().id:'self')+'/scans';var __parts=__p.split('/');var __collRef=db;for(var __i=0;__i<__parts.length;__i+=2){__collRef=__parts[__i+1]?collection(__collRef,__parts[__i+1]):__collRef;}return __collRef;})(),orderBy('createdAt','desc')));
+    let snap;
+    if(currentUser&&currentUser.uid){
+      const __activePid=(window.FAMILY&&FAMILY.getActive&&FAMILY.getActive())?FAMILY.getActive().id:((window.FAMILY&&window.FAMILY.DEFAULT_PROFILE_ID)||'self');
+      snap=await getDocs(query(collection(db,'users',currentUser.uid,'profiles',__activePid,'scans'),orderBy('createdAt','desc')));
+    } else {
+      snap={forEach:function(){},docs:[]};
+    }
     scans=snap.docs.map(d=>({id:d.id,...d.data()}));renderScans();
   }catch(e){console.error(e);}
 }
