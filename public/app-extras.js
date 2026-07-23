@@ -14,7 +14,7 @@ window.setScanEye = function(eye) {
 const _origSaveScan = window.saveScan;
 if (_origSaveScan) {
   window.saveScan = async function() {
-    if (pendingResult) pendingResult.eye = _scanEye;
+    if (window.pendingResult) window.pendingResult.eye = _scanEye;
     return _origSaveScan();
   };
 }
@@ -25,9 +25,9 @@ window.filterByEye = function(eye) {
   _eyeFilter = eye;
   document.querySelectorAll('.eye-filter-btn').forEach(b =>
     b.classList.toggle('active', b.dataset.eye === eye));
-  if (typeof renderScans === 'function') {
+  if (typeof window.renderScans === 'function') {
     // Re-render with filter applied via DOM
-    renderScans();
+    window.renderScans();
     applyEyeFilter();
   }
 };
@@ -51,9 +51,9 @@ function eyePillHTML(eye) {
 
 // ── CSV EXPORT ────────────────────────────────────────────────────────────
 window.downloadCSV = function() {
-  if (!scans || !scans.length) { toast('No scans to export', 'err'); return; }
+  if (!window.scans || !window.scans.length) { window.toast('No scans to export', 'err'); return; }
   const rows = [['Date', 'Eye', 'Nutrient', 'Level', 'Status', 'Confidence', 'Quality']];
-  scans.forEach(s => {
+  window.scans.forEach(s => {
     const ts = s.createdAt;
     const date = ts ? new Date((ts.seconds || ts) * (ts.seconds ? 1000 : 1)).toISOString().split('T')[0] : '';
     const eye = s.eye || 'both';
@@ -68,7 +68,7 @@ window.downloadCSV = function() {
   a.download = 'vytreos-export-' + new Date().toISOString().split('T')[0] + '.csv';
   a.click();
   URL.revokeObjectURL(a.href);
-  toast('CSV downloaded', '');
+  window.toast('CSV downloaded', '');
 };
 
 // ── NUTRITION CARDS V2 ─────────────────────────────────────────────────────
@@ -121,7 +121,7 @@ window.addExperiment = function() {
   _experiments.push({ label: label.trim(), date, addedAt: new Date().toISOString() });
   localStorage.setItem('vytreos_experiments', JSON.stringify(_experiments));
   renderExperiments();
-  toast('Experiment logged', '');
+  window.toast('Experiment logged', '');
 };
 window.removeExperiment = function(idx) {
   _experiments.splice(idx, 1);
@@ -213,8 +213,8 @@ function enrichScanItems() {
     // Find scan index from onclick attribute
     const onclick = el.getAttribute('onclick') || '';
     const match = onclick.match(/openScan\((\d+)\)/);
-    if (match && scans && scans[parseInt(match[1])]) {
-      const eye = scans[parseInt(match[1])].eye;
+    if (match && window.scans && window.scans[parseInt(match[1])]) {
+      const eye = window.scans[parseInt(match[1])].eye;
       if (eye && eye !== 'both') {
         const pill = eyePillHTML(eye);
         dateEl.insertAdjacentHTML('afterbegin', pill);
