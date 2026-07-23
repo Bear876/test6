@@ -565,7 +565,7 @@ input[type="number"]:focus{border-color:var(--green);}
   <div style="font-size:48px;line-height:1;">🌿</div>
   <div style="font-family:'Fraunces',serif;font-size:24px;color:var(--text);">A small bump — let's try again</div>
   <div style="font-size:14px;color:var(--text-2);max-width:360px;line-height:1.6;">No worries — your scans and profile are safe. A quick refresh will get us back to exploring.</div>
-  <button onclick="location.reload()" style="padding:12px 28px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;font-family:'Outfit',sans-serif;">Reload app</button>
+  <button onclick="try{event.stopPropagation();event.preventDefault();sessionStorage.setItem('__vytreosReloadPending','1');}catch(_){};setTimeout(function(){try{location.reload();}catch(_){}},30);return false;" style="padding:12px 28px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;font-family:'Outfit',sans-serif;">Reload app</button>
   <div style="font-size:11px;color:var(--text-3);" id="errDetail"></div>
 </div>
 <div id="appLoader">
@@ -3019,6 +3019,14 @@ window.renderComparison=function(){
 
 // ── PDF REPORT ─────────────────────────────────────────────────────────────────
 window.downloadPDF=function(scan){
+  // ==== Reload-suppression (BUG-2 FIX) ====
+  // When the user taps the "Reload app" button (in errorBoundary), it pre-sets
+  // sessionStorage.__vytreosReloadPending=1 BEFORE calling location.reload(). So on the
+  // fresh page load, the FIRST auto-fired downloadPDF (likely a stale render-state hook
+  // re-running after reload) is silently swallowed so the user does NOT get a PDF they
+  // never asked for. Any subsequent legitimate user-initiated downloadPDF call passes
+  // through untouched.
+  try{if(sessionStorage&&sessionStorage.getItem('__vytreosReloadPending')==='1'){sessionStorage.removeItem('__vytreosReloadPending');if(sessionStorage.getItem('__vytreosReloadDone')!=='1'){sessionStorage.setItem('__vytreosReloadDone','1');return;}}}catch(_){}
   var s=scan||(window.SCANS&&window.SCANS[0])||null;
   if(!s)return;
   if(window.PDF&&typeof PDF.render==='function'){return PDF.render(s);}
