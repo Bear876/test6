@@ -916,7 +916,7 @@ input[type="number"]:focus{border-color:var(--green);}
         <div id="dash-list" class="scan-list"></div>
         <div id="dash-empty" style="display:none;text-align:center;padding:48px 20px;background:var(--bg-2);border:1px solid var(--border);border-radius:14px;margin-top:8px;">
           <div style="font-size:48px;margin-bottom:16px;">👁</div>
-          <div style="font-family:'Fraunces',serif;font-size:22px;color:var(--text);margin-bottom:8px;">Your eye health journey starts here</div>
+          <div style="font-family:'Fraunces',serif;font-size:22px;color:var(--text);margin-bottom:8px;">Your eye health journey begins here</div>
           <div style="font-size:13px;color:var(--text-2);line-height:1.7;max-width:340px;margin:0 auto 24px;">Take your first retinal scan to begin tracking your ocular health. The more you scan, the more meaningful your insights become.</div>
           <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;">
             <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text-2);">📸 Take a photo of your eye</div>
@@ -1426,7 +1426,6 @@ input[type="number"]:focus{border-color:var(--green);}
 <script src="/accuracy.js"></script>
 <script src="/pdf.js"></script>
 <script src="/family.js"></script>
-<script src="/app-extras.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -1586,7 +1585,7 @@ function renderScans(){
   document.getElementById('s-def-sub').textContent=scans.length?`Across ${scans.length} scan${scans.length>1?'s':''}`:' Run a scan first';
   document.getElementById('s-last').textContent=scans.length?fmtDate(scans[0].createdAt):'—';
   document.getElementById('s-acct').textContent=(currentUser?.displayName||'Free').split(' ')[0];
-  const html=scans.length?scans.map(scanItem).join(''):`<div class="empty-state"><div style="font-size:36px;margin-bottom:12px;opacity:.4">👁</div><p>No scans yet. Start your first retinal analysis.</p><button class="btn btn-green" onclick="switchTab('analyzer')">Start first scan</button></div>`;
+  const html=scans.length?scans.map(scanItem).join(''):`<div class="empty-state"><div style="font-size:36px;margin-bottom:12px;opacity:.4">👁</div><p>No scans yet.</div>`;
   document.getElementById('dash-list').innerHTML=html;
   document.getElementById('hist-list').innerHTML=html;
   document.getElementById('prof-count').textContent=scans.length;
@@ -3027,7 +3026,6 @@ window.downloadPDF=function(scan){
     var w=window.open('','_blank');if(w){w.document.write('<title>Vytreos Report</title><body style="font-family:serif;padding:24px;"><h1>Report unavailable</h1><p>The redesigned PDF module failed to load. Please reload the page.</p>');}
   }
 </script>
-/* ═════ FAMILY / PROFILE CHIP + MODAL (wired by /family.js) ═════ */
 <div id="familyModal" class="modal-overlay"><div class="modal" style="max-width:560px;">
   <button class="modal-close" onclick="document.getElementById('familyModal').classList.remove('open')">×</button>
   <h2 style="font-family:'Fraunces',serif;font-size:24px;margin-bottom:6px;color:var(--text);">Family profiles</h2>
@@ -3060,5 +3058,6 @@ window.downloadPDF=function(scan){
   }
 })();
 </script>
+<script type="module" src="/app-extras.js"></script>
 </body>
 </html>
