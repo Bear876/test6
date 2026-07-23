@@ -562,10 +562,10 @@ input[type="number"]:focus{border-color:var(--green);}
 
 <!-- LOADER -->
 <div id="errorBoundary" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;padding:32px;text-align:center;">
-  <div style="font-size:48px;">😵</div>
-  <div style="font-family:'Fraunces',serif;font-size:24px;color:var(--text);">Something went wrong</div>
-  <div style="font-size:14px;color:var(--text-2);max-width:360px;line-height:1.6;">Vytreos hit an unexpected error. Your data is safe — try refreshing the page.</div>
-  <button onclick="location.reload()" style="padding:12px 28px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;">Reload app</button>
+  <div style="font-size:48px;line-height:1;">🌿</div>
+  <div style="font-family:'Fraunces',serif;font-size:24px;color:var(--text);">A small bump — let's try again</div>
+  <div style="font-size:14px;color:var(--text-2);max-width:360px;line-height:1.6;">No worries — your scans and profile are safe. A quick refresh will get us back to exploring.</div>
+  <button onclick="location.reload()" style="padding:12px 28px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;font-family:'Outfit',sans-serif;">Reload app</button>
   <div style="font-size:11px;color:var(--text-3);" id="errDetail"></div>
 </div>
 <div id="appLoader">
@@ -2463,7 +2463,7 @@ if(__validResults.length>0&&window.ACCURACY){
   }
   }catch(err){
     clearInterval(timer);console.error(err);
-    el.innerHTML=`<div class="analysis-idle" style="color:var(--red)">⚠ Analysis failed<br><span style="font-size:11px;color:var(--text-3);display:block;margin-top:6px;font-family:'Space Mono',monospace">${err.message}</span><br><button onclick="window.retryAnalysis()" style="margin-top:14px;padding:9px 22px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;">Retry</button></div>`;
+    el.innerHTML=`<div class="analysis-idle" style="color:var(--amber);">🌿 Let’s give it another try<br><span style="font-size:11px;color:var(--text-3);display:block;margin-top:6px;font-family:'Space Mono',monospace;">${err.message}</span><br><button onclick="window.retryAnalysis()" style="margin-top:14px;padding:9px 22px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;">Try again</button></div>`;
     toast('Analysis failed','err');
   }
 }
