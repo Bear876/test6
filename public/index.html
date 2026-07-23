@@ -3032,18 +3032,30 @@ window.downloadPDF=function(scan){
   if(window.PDF&&typeof PDF.render==='function'){return PDF.render(s);}
     // Fallback to a minimal print if PDF.js is unavailable (e.g., failed to load).
     var w=window.open('','_blank');if(w){w.document.write('<title>Vytreos Report</title><body style="font-family:serif;padding:24px;"><h1>Report unavailable</h1><p>The redesigned PDF module failed to load. Please reload the page.</p>');}
-  }
+  };
 // ==== CROSS-MODULE BRIDGE: module-local bindings -> window ====
 // Lets external modules (public/app-extras.js) read these symbols.
 // Mutable bindings are exposed as accessor properties that track the
 // current value on every read; functions are copied once.
-(function __vytreos_bridge__(){
-  const W = window;
-  Object.defineProperty(W, "scans",          { get(){ return scans; },          configurable: true });
-  Object.defineProperty(W, "pendingResult",  { get(){ return pendingResult; },  configurable: true });
-  Object.defineProperty(W, "pendingImgData", { get(){ return pendingImgData; }, configurable: true });
-  W.toast = toast;
-  W.renderScans = renderScans;
+;
+(function __vytreos_bridge__safe__(){
+  try {
+    var W = window;
+    function _expose(name, fn) {
+      try { Object.defineProperty(W, name, { get: fn, configurable: true }); return; }
+      catch(_) {}
+      try { W.__defineGetter__(name, fn); return; }
+      catch(_) {}
+      try { var v = fn(); W[name] = v; } catch(_) {}
+    }
+    _expose('scans',          function(){ return scans;          });
+    _expose('pendingResult',  function(){ return pendingResult;  });
+    _expose('pendingImgData', function(){ return pendingImgData; });
+    if (typeof toast      === 'function') try { W.toast       = toast;       } catch(_) {}
+    if (typeof renderScans === 'function') try { W.renderScans = renderScans; } catch(_) {}
+  } catch (bridgeErr) {
+    try { console.warn('[vytreos] bridge init failed:', bridgeErr && bridgeErr.message); } catch(_) {}
+  }
 })();
 </script>
 <div id="familyModal" class="modal-overlay"><div class="modal" style="max-width:560px;">
