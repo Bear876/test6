@@ -232,12 +232,12 @@ if (_origSwitchTab) {
   };
 }
 
-// Also hook into renderScans if accessible
-const _origLoadScans = loadScans;
-if (typeof _origLoadScans === 'function') {
-  const origLoadScans = loadScans;
-  // We can't reassign module-scoped const, so we use a polling approach
-}
+// Note: A prior attempt tried to capture module-scoped loadScans /
+// renderScans identifiers declared inside the inline
+// <script type="module"> block of public/index.html, but module
+// top-level bindings are not auto-promoted to window and resolve to
+// undefined in this external module, causing ReferenceError on page
+// load. The polling loop below is the supported installation path.
 
 // Poll for DOM changes and inject features
 let _pollTimer = null;
