@@ -326,7 +326,7 @@ h1 em{font-style:italic;color:var(--green);}
 .form-card p{font-size:13px;color:var(--text-2);margin-bottom:24px;}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 select.fi{width:100%;padding:12px 16px;background:var(--bg-3);border:1px solid var(--border);border-radius:var(--rs);font-size:14px;font-family:'Outfit',sans-serif;color:var(--text);outline:none;appearance:none;cursor:pointer;transition:border-color .15s;}
-select.fi:focus{border-color:var(--green);}
+select.fi:focus{border-color:var(--green);}.vdrop{position:relative;width:100%;}.vtrigger{display:flex;align-items:center;justify-content:space-between;width:100%;padding:12px 16px;background:var(--bg-3);border:1px solid var(--border);border-radius:var(--rs);font-size:14px;font-family:"Outfit",sans-serif;color:var(--text);cursor:pointer;transition:all .15s;text-align:left;outline:none;line-height:1.2;}.vtrigger:hover{border-color:var(--border-2);background:var(--bg-4);}.vtrigger:focus-visible,.vdrop.open .vtrigger{border-color:var(--green);background:var(--bg-4);box-shadow:0 0 0 3px rgba(0,217,139,.15);}.vlabel{display:inline-flex;align-items:center;gap:9px;flex:1;min-width:0;color:var(--text);}.vlabel .vico{flex-shrink:0;color:var(--green);}.vlabel>span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}.vchev{color:var(--text-3);transition:transform .15s,color .15s;flex-shrink:0;}.vdrop.open .vchev{transform:rotate(180deg);color:var(--green);}.vmenu{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--bg-2);border:1px solid var(--border-2);border-radius:12px;padding:6px;box-shadow:0 16px 36px rgba(0,0,0,.55);z-index:60;display:none;max-height:300px;overflow-y:auto;backdrop-filter:blur(8px);}.vdrop.open .vmenu{display:block;animation:vdropFade .15s ease-out;}@keyframes vdropFade{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}.vopt{display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border:none;background:transparent;color:var(--text-2);font-family:"Outfit",sans-serif;font-size:13px;text-align:left;border-radius:8px;cursor:pointer;transition:background .12s,color .12s;outline:none;line-height:1.2;}.vopt:hover,.vopt:focus-visible{background:var(--bg-3);color:var(--text);}.vopt.selected{background:var(--green-dim);color:var(--green);font-weight:600;}.vopt.selected .vico{color:var(--green);}.vico{flex-shrink:0;color:var(--text-3);transition:color .12s;}.vopt:hover .vico{color:var(--text);}.vico-spacer{display:inline-block;width:16px;height:16px;flex-shrink:0;}.vopt-text{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.vcheck{margin-left:auto;color:var(--green);font-weight:700;opacity:0;transition:opacity .15s;font-size:13px;}.vopt.selected .vcheck{opacity:1;}.vdrop-native{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;left:0;top:0;}@media(max-width:768px){.vtrigger,.vdrop>.vmenu{display:none!important;}.vdrop-native{position:static;width:100%;height:auto;opacity:1;pointer-events:auto;appearance:auto;-webkit-appearance:auto;background:var(--bg-3);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);padding:12px 16px;font-size:14px;font-family:"Outfit",sans-serif;}.vdrop-native:focus{border-color:var(--green);outline:none;}}
 input[type="number"]{width:100%;padding:12px 16px;background:var(--bg-3);border:1px solid var(--border);border-radius:var(--rs);font-size:14px;font-family:'Outfit',sans-serif;color:var(--text);outline:none;transition:border-color .15s;}
 input[type="number"]:focus{border-color:var(--green);}
 .form-save{margin-top:20px;padding:12px 28px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;transition:background .15s;}
@@ -1209,11 +1209,69 @@ input[type="number"]:focus{border-color:var(--green);}
               <p>Helps the AI personalize your nutrition analysis and dietary recommendations.</p>
               <div class="form-row">
                 <div class="field"><label>Age</label><input type="number" id="pref-age" placeholder="e.g. 32" min="1" max="120"></div>
-                <div class="field"><label>Biological sex</label><select id="pref-sex" class="fi"><option value="">Select…</option><option>Male</option><option>Female</option><option>Other / prefer not to say</option></select></div>
+                <div class="field"><label>Biological sex</label>
+<div class="vdrop" data-target="pref-sex">
+<button type="button" class="vtrigger" aria-haspopup="listbox" aria-expanded="false"><span class="vlabel"><svg class="vico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg><span>Select…</span></span><svg class="vchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+<div class="vmenu" role="listbox">
+<button type="button" class="vopt" data-value="" role="option" aria-selected="false"><svg class="vico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg><span class="vopt-text">Select…</span><span class="vcheck" aria-hidden="true">✓</span></button>
+<button type="button" class="vopt" data-value="Male" role="option" aria-selected="false"><svg class="vico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="14" r="5"/><path d="m14.5 11 5.5-5.5"/><path d="m18 4 3 3"/><path d="m21 4-3 3"/></svg><span class="vopt-text">Male</span><span class="vcheck" aria-hidden="true">✓</span></button>
+<button type="button" class="vopt" data-value="Female" role="option" aria-selected="false"><svg class="vico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="5"/><path d="M12 14v8"/><path d="M9 19h6"/></svg><span class="vopt-text">Female</span><span class="vcheck" aria-hidden="true">✓</span></button>
+<button type="button" class="vopt" data-value="Other / prefer not to say" role="option" aria-selected="false"><svg class="vico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9h.01"/><path d="M15 9h.01"/><path d="M9.5 13h5"/><path d="M19 6h.01"/><path d="M5 6h.01"/></svg><span class="vopt-text">Prefer not to say</span><span class="vcheck" aria-hidden="true">✓</span></button>
+</div>
+<select id="pref-sex" class="fi vdrop-native" tabindex="-1" aria-hidden="true" data-vdrop="1">
+<option value="">Select…</option>
+<option value="Male">Male</option>
+<option value="Female">Female</option>
+<option value="Other / prefer not to say">Prefer not to say</option>
+</select>
+</div>
+</div>
               </div>
               <div class="form-row">
-                <div class="field"><label>Diet type</label><select id="pref-diet" class="fi"><option value="">Select…</option><option>Omnivore</option><option>Vegetarian</option><option>Vegan</option><option>Pescatarian</option><option>Keto / low-carb</option><option>Paleo</option></select></div>
-                <div class="field"><label>Health goals</label><select id="pref-goals" class="fi"><option value="">Select…</option><option>General wellness</option><option>Eye health</option><option>Athletic performance</option><option>Healthy aging</option><option>Energy optimization</option></select></div>
+                <div class="field"><label>Diet type</label>
+<div class="vdrop" data-target="pref-diet">
+<button type="button" class="vtrigger" aria-haspopup="listbox" aria-expanded="false"><span class="vlabel"><svg class="vico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg><span>Select…</span></span><svg class="vchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+<div class="vmenu" role="listbox">
+<button type="button" class="vopt" data-value="" role="option" aria-selected="false"><svg class="vico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg><span class="vopt-text">Select…</span><span class="vcheck" aria-hidden="true">✓</span></button>
+<button type="button" class="vopt" data-value="Omnivore" role="option" aria-selected="false"><svg class="vico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 19.5C5 18 4 16 4 13.5A6.5 6.5 0 0 1 10.5 7h3A6.5 6.5 0 0 1 20 13.5c0 2.5-1 4.5-2.5 6"/><path d="M5 7l-2 3"/><path d="M21 7l2 3"/></svg><span class="vopt-text">Omnivore</span><span class="vcheck" aria-hidden="true">✓</span></button>
+<button type="button" class="vopt" data-value="Vegetarian" role="option" aria-selected="false"><svg class="vico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 4 13C4 8 7 5 11 5c2 0 4 1 5 2.5S21 8 21 13c0 4-3 7-7 7"/><path d="M2 22c4-2 6-3 9-3"/></svg><span class="vopt-text">Vegetarian</span><span class="vcheck" aria-hidden="true">✓</span></button>
+<button type="button" class="vopt" data-value="Vegan" role="option" aria-selected="false"><svg class="vico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5 8-7.5 8-13a14 14 0 0 0-8 13"/><path d="M2 9c2 4 5 6 7 7"/></svg><span class="vopt-text">Vegan</span><span class="vcheck" aria-hidden="true">✓</span></button>
+<button type="button" class="vopt" data-value="Pescatarian" role="option" aria-selected="false"><svg class="vico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12C4 9 6 5 12 5s8 4 8 7-4 7-8 7c-3 0-5-1-6-2z"/><path d="M2 12h4"/><path d="M2 9l3 3-3 3"/><circle cx="17" cy="11" r="1" fill="currentColor"/></svg><span class="vopt-text">Pescatarian</span><span class="vcheck" aria-hidden="true">✓</span></button>
+<button type="button" class="vopt" data-value="Keto / low-carb" role="option" aria-selected="false"><svg class="vico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6c2 6 6 10 9 12"/><path d="M21 6c-2 6-6 10-9 12"/><path d="M9 6h12"/></svg><span class="vopt-text">Keto / low-carb</span><span class="vcheck" aria-hidden="true">✓</span></button>
+<button type="button" class="vopt" data-value="Paleo" role="option" aria-selected="false"><svg class="vico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m3 20 6-9 4 6 4-4 4 7"/><circle cx="8" cy="6" r="1.5" fill="currentColor"/><circle cx="16" cy="4" r="1" fill="currentColor"/></svg><span class="vopt-text">Paleo</span><span class="vcheck" aria-hidden="true">✓</span></button>
+</div>
+<select id="pref-diet" class="fi vdrop-native" tabindex="-1" aria-hidden="true" data-vdrop="1">
+<option value="">Select…</option>
+<option value="Omnivore">Omnivore</option>
+<option value="Vegetarian">Vegetarian</option>
+<option value="Vegan">Vegan</option>
+<option value="Pescatarian">Pescatarian</option>
+<option value="Keto / low-carb">Keto / low-carb</option>
+<option value="Paleo">Paleo</option>
+</select>
+</div>
+</div>
+                <div class="field"><label>Health goals</label>
+<div class="vdrop" data-target="pref-goals">
+<button type="button" class="vtrigger" aria-haspopup="listbox" aria-expanded="false"><span class="vlabel"><svg class="vico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg><span>Select…</span></span><svg class="vchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+<div class="vmenu" role="listbox">
+<button type="button" class="vopt" data-value="" role="option" aria-selected="false"><svg class="vico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg><span class="vopt-text">Select…</span><span class="vcheck" aria-hidden="true">✓</span></button>
+<button type="button" class="vopt" data-value="General wellness" role="option" aria-selected="false"><svg class="vico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 4 13 7 7 0 0 1 11 6a7 7 0 0 1 7 7 7 7 0 0 1-7 7"/><path d="M11 6V2"/><path d="m8 4 6 4"/></svg><span class="vopt-text">General wellness</span><span class="vcheck" aria-hidden="true">✓</span></button>
+<button type="button" class="vopt" data-value="Eye health" role="option" aria-selected="false"><svg class="vico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12"/><circle cx="12" cy="12" r="3"/></svg><span class="vopt-text">Eye health</span><span class="vcheck" aria-hidden="true">✓</span></button>
+<button type="button" class="vopt" data-value="Athletic performance" role="option" aria-selected="false"><svg class="vico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8"/></svg><span class="vopt-text">Athletic performance</span><span class="vcheck" aria-hidden="true">✓</span></button>
+<button type="button" class="vopt" data-value="Healthy aging" role="option" aria-selected="false"><svg class="vico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 22h14"/><path d="M5 22a7 7 0 0 0 14 0"/><path d="M9 14h6"/><path d="M12 14v-7"/><path d="M9 8c0-1.7 1.3-3 3-3s3 1.3 3 3v6"/></svg><span class="vopt-text">Healthy aging</span><span class="vcheck" aria-hidden="true">✓</span></button>
+<button type="button" class="vopt" data-value="Energy optimization" role="option" aria-selected="false"><svg class="vico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 7h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><path d="M10 17H8a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h2"/><path d="M8 12h8"/></svg><span class="vopt-text">Energy optimization</span><span class="vcheck" aria-hidden="true">✓</span></button>
+</div>
+<select id="pref-goals" class="fi vdrop-native" tabindex="-1" aria-hidden="true" data-vdrop="1">
+<option value="">Select…</option>
+<option value="General wellness">General wellness</option>
+<option value="Eye health">Eye health</option>
+<option value="Athletic performance">Athletic performance</option>
+<option value="Healthy aging">Healthy aging</option>
+<option value="Energy optimization">Energy optimization</option>
+</select>
+</div>
+</div>
               </div>
               <button class="form-save" onclick="savePrefs()">Save preferences</button>
             </div>
@@ -3033,6 +3091,127 @@ window.downloadPDF=function(scan){
     // Fallback to a minimal print if PDF.js is unavailable (e.g., failed to load).
     var w=window.open('','_blank');if(w){w.document.write('<title>Vytreos Report</title><body style="font-family:serif;padding:24px;"><h1>Report unavailable</h1><p>The redesigned PDF module failed to load. Please reload the page.</p>');}
   };
+// ==== VY TREOS CUSTOM DROPDOWNS (init) ====
+// Beautiful trigger + animated menu layered over hidden native <select>.
+// Dual-element keeps form semantics intact + lets OS-native picker take over on mobile.
+function initVytreosDropdowns(){
+  if (window.__vytreosDropdownsInited) return;
+  window.__vytreosDropdownsInited = true;
+  var DDS = document.querySelectorAll(".vdrop");
+  for (var i = 0; i < DDS.length; i++) (function(dd){
+    var id = dd.dataset.target;
+    var native = document.getElementById(id);
+    var trigger = dd.querySelector(".vtrigger");
+    var label = dd.querySelector(".vlabel");
+    if (!native || !trigger) return;
+    function sync(){
+      var val = native.value;
+      var opts = dd.querySelectorAll(".vopt");
+      var match = null;
+      for (var k = 0; k < opts.length; k++) if (opts[k].dataset.value === val) { match = opts[k]; break; }
+      while (label.firstChild) label.removeChild(label.firstChild);
+      var icoHolder = document.createElement("span");
+      icoHolder.className = "vico";
+      if (match) {
+        var srcIcon = match.querySelector(".vico");
+        if (srcIcon) icoHolder.innerHTML = srcIcon.innerHTML;
+        var span = document.createElement("span");
+        span.textContent = match.querySelector(".vopt-text").textContent;
+        label.appendChild(icoHolder);
+        label.appendChild(span);
+      } else {
+        icoHolder.innerHTML = "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"/></svg>";
+        var span = document.createElement("span");
+        var orig = native.options[native.selectedIndex];
+        span.textContent = (orig && orig.textContent) || "Select…";
+        label.appendChild(icoHolder);
+        label.appendChild(span);
+      }
+      for (var j = 0; j < opts.length; j++) {
+        var isSel = (opts[j].dataset.value === val);
+        opts[j].classList.toggle("selected", isSel);
+        opts[j].setAttribute("aria-selected", isSel ? "true" : "false");
+      }
+    }
+    sync();
+    trigger.addEventListener("click", function(e){
+      e.stopPropagation();
+      var wasOpen = dd.classList.contains("open");
+      var all = document.querySelectorAll(".vdrop.open");
+      for (var m = 0; m < all.length; m++) {
+        if (all[m] !== dd) {
+          all[m].classList.remove("open");
+          var tx = all[m].querySelector(".vtrigger");
+          if (tx) tx.setAttribute("aria-expanded","false");
+        }
+      }
+      dd.classList.toggle("open", !wasOpen);
+      trigger.setAttribute("aria-expanded", wasOpen ? "false" : "true");
+    });
+    var opts = dd.querySelectorAll(".vopt");
+    for (var n = 0; n < opts.length; n++) {
+      opts[n].addEventListener("click", function(e){
+        e.stopPropagation();
+        var v = this.dataset.value;
+        native.value = v;
+        try { native.dispatchEvent(new Event("change", { bubbles: true })); } catch(_) {}
+        dd.classList.remove("open");
+        trigger.setAttribute("aria-expanded","false");
+        sync();
+      });
+    }
+  })(DDS[i]);
+  document.addEventListener("click", function(){
+    var all = document.querySelectorAll(".vdrop.open");
+    for (var i = 0; i < all.length; i++) {
+      all[i].classList.remove("open");
+      var tx = all[i].querySelector(".vtrigger");
+      if (tx) tx.setAttribute("aria-expanded","false");
+    }
+  });
+  document.addEventListener("keydown", function(e){
+    if (e.key !== "Escape") return;
+    var all = document.querySelectorAll(".vdrop.open");
+    for (var i = 0; i < all.length; i++) {
+      all[i].classList.remove("open");
+      var tx = all[i].querySelector(".vtrigger");
+      if (tx) tx.setAttribute("aria-expanded","false");
+    }
+  });
+  // Also re-sync if any native select changes value (programmatic update)
+  for (var k = 0; k < DDS.length; k++) (function(dd){
+    var id = dd.dataset.target;
+    var native = document.getElementById(id);
+    var opts = dd.querySelectorAll(".vopt");
+    if (!native) return;
+    native.addEventListener("change", function(){
+      var val = native.value;
+      var match = null;
+      for (var j = 0; j < opts.length; j++) if (opts[j].dataset.value === val) { match = opts[j]; break; }
+      var label = dd.querySelector(".vlabel");
+      while (label.firstChild) label.removeChild(label.firstChild);
+      var icoHolder = document.createElement("span"); icoHolder.className = "vico";
+      if (match) {
+        var srcIcon = match.querySelector(".vico");
+        if (srcIcon) icoHolder.innerHTML = srcIcon.innerHTML;
+        label.appendChild(icoHolder);
+        var span = document.createElement("span"); span.textContent = match.querySelector(".vopt-text").textContent;
+        label.appendChild(span);
+      }
+      for (var z = 0; z < opts.length; z++) {
+        var isSel = (opts[z].dataset.value === val);
+        opts[z].classList.toggle("selected", isSel);
+        opts[z].setAttribute("aria-selected", isSel ? "true" : "false");
+      }
+    });
+  })(DDS[k]);
+}
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initVytreosDropdowns);
+} else {
+  try { initVytreosDropdowns(); } catch(_) {}
+}
+
 // ==== CROSS-MODULE BRIDGE: module-local bindings -> window ====
 // Lets external modules (public/app-extras.js) read these symbols.
 // Mutable bindings are exposed as accessor properties that track the
