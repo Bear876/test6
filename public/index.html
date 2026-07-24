@@ -1592,9 +1592,11 @@ async function enterApp(){
     const snap=await getDoc(doc(db,'users',currentUser.uid));
     if(snap.exists()){const p=snap.data().preferences||{};
       if(p.age)document.getElementById('pref-age').value=p.age;
-      if(p.sex)document.getElementById('pref-sex').value=p.sex;
-      if(p.diet)document.getElementById('pref-diet').value=p.diet;
-      if(p.goals)document.getElementById('pref-goals').value=p.goals;
+      ['pref-sex','pref-diet','pref-goals'].forEach(function(id){
+        var sel=document.getElementById(id);
+        var val=(p.sex&&id==='pref-sex')?p.sex:(p.diet&&id==='pref-diet')?p.diet:(p.goals&&id==='pref-goals')?p.goals:'';
+        if(val){sel.value=val;try{sel.dispatchEvent(new Event('change',{bubbles:true}));}catch(_){}}
+      });
       if(p.dataSharing){dataSharingEnabled=true;updateShareToggleUI();}
     }
   }catch(e){}
@@ -2667,6 +2669,7 @@ window.switchTab=tab=>{
   const map={dashboard:0,analyzer:1,history:2,trends:3,compare:4,profile:5};
   document.querySelectorAll('.nav-item')[map[tab]]?.classList.add('active');
   if(tab==='analyzer'&&!disclaimerSeen){setTimeout(openDisclaimer,300);disclaimerSeen=true;}
+  if(tab==='profile'){['pref-sex','pref-diet','pref-goals'].forEach(function(id){var s=document.getElementById(id);if(s){try{s.dispatchEvent(new Event('change',{bubbles:true}));}catch(_){}}});}
 };
 
 window.setMobActive=id=>{
