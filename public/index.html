@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Vytreos">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="description" content="Vytreos is a free, AI-powered retinal wellness tool. Capture an eye photo and explore nutrient signals in seconds. Not a medical device.">
 <meta name="robots" content="index,follow">
 <meta property="og:type" content="website">
@@ -522,7 +522,7 @@ input[type="number"]:focus{border-color:var(--green);}
 .btn-upgrade:hover{opacity:.88;}
 .premium-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;}
 .premium-modal-overlay.open{display:flex;}
-.premium-modal{background:var(--bg-2);border:1px solid var(--border);border-radius:20px;padding:0;width:100%;max-width:560px;overflow:hidden;position:relative;}
+.premium-modal{background:var(--bg-2);border:1px solid var(--border);border-radius:20px;padding:0;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;overflow-x:hidden;position:relative;}
 .premium-modal-header{background:linear-gradient(135deg,rgba(0,217,139,0.12),rgba(77,143,255,0.08));padding:32px 36px 24px;border-bottom:1px solid var(--border);}
 .premium-modal-close{position:absolute;top:16px;right:16px;background:var(--bg-3);border:1px solid var(--border);color:var(--text-2);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
 .premium-modal-body{padding:28px 36px;}
@@ -540,6 +540,18 @@ input[type="number"]:focus{border-color:var(--green);}
 .premium-cta{width:100%;padding:14px;background:linear-gradient(135deg,var(--green),#00b8ff);color:#000;font-weight:700;border:none;border-radius:40px;font-size:14px;font-family:'Outfit',sans-serif;cursor:pointer;letter-spacing:.02em;transition:opacity .15s;}
 .premium-cta:hover{opacity:.88;}
 .premium-note{text-align:center;font-size:11px;color:var(--text-3);margin-top:10px;}
+
+/* ── PREMIUM RUNDOWN (mobile-aware) ── */
+.prem-feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+html{-webkit-text-size-adjust:100%;}
+@media(max-width:560px){.prem-feat-grid{grid-template-columns:1fr;}.premium-modal-header{padding:22px 18px 16px;}.premium-modal-body{padding:18px;}}
+@supports(padding:env(safe-area-inset-bottom)){
+  .mobile-nav{padding-bottom:calc(8px + env(safe-area-inset-bottom));}
+  .tab-content{padding-bottom:calc(90px + env(safe-area-inset-bottom));}
+  .toast{bottom:calc(28px + env(safe-area-inset-bottom));}
+  .premium-modal-overlay{padding:calc(20px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left));}
+  .modal-overlay{padding:calc(24px + env(safe-area-inset-top)) calc(24px + env(safe-area-inset-right)) calc(24px + env(safe-area-inset-bottom)) calc(24px + env(safe-area-inset-left));}
+}
 
 /* ── MOBILE WIZARD ── */
 .wizard-overlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:500;flex-direction:column;}
@@ -826,8 +838,8 @@ input[type="number"]:focus{border-color:var(--green);}
       <div style="padding:12px 14px;">
         <div onclick="openPremiumModal()" style="background:linear-gradient(135deg,rgba(0,217,139,0.1),rgba(77,143,255,0.07));border:1px solid rgba(0,217,139,0.2);border-radius:10px;padding:12px 14px;cursor:pointer;transition:opacity .15s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
           <div style="font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:4px;">✦ Premium</div>
-          <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">Unlock trend graphs</div>
-          <div style="font-size:11px;color:var(--text-3);">From $6/mo · 7-day free trial</div>
+          <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">Unlock the full timeline</div>
+          <div style="font-size:11px;color:var(--text-3);">Pro consensus · Unlimited history · Family plans</div>
         </div>
       </div>
       <div class="sidebar-footer">
@@ -1361,31 +1373,41 @@ input[type="number"]:focus{border-color:var(--green);}
   <div class="premium-modal">
     <button class="premium-modal-close" onclick="closePremiumModal()">✕</button>
     <div class="premium-modal-header">
-      <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:8px">✦ Vytreos Premium — Coming Soon</div>
-      <div style="font-family:'Fraunces',serif;font-size:26px;color:var(--text);margin-bottom:6px">The full picture, unlocked</div>
-      <div style="font-size:13px;color:var(--text-2)">Premium is in development. Join the waitlist to get early access and a founding member discount.</div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:8px">✦ Vytreos Premium</div>
+      <div style="font-family:'Fraunces',serif;font-size:26px;color:var(--text);margin-bottom:6px">One subscription. A full eye-health timeline.</div>
+      <div style="font-size:13px;color:var(--text-2)">Premium is in development. Join the waitlist for early access and a founding member discount.</div>
     </div>
     <div class="premium-modal-body">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+      <div class="prem-feat-grid">
         <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
-          <div style="font-size:18px;margin-bottom:6px">📈</div>
-          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Trend graphs</div>
-          <div style="font-size:11px;color:var(--text-3);">See how every nutrient changes across all your scans over time.</div>
+          <div style="font-size:18px;margin-bottom:6px">🧠</div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Pro-model consensus</div>
+          <div style="font-size:11px;color:var(--text-3);">Every scan is cross-checked by 4+ frontier vision models. Free runs the fast lane — Premium runs the full board.</div>
         </div>
         <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
-          <div style="font-size:18px;margin-bottom:6px">🔍</div>
-          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Scan comparison</div>
-          <div style="font-size:11px;color:var(--text-3);">Place two scans side by side to spot what changed.</div>
+          <div style="font-size:18px;margin-bottom:6px">♾️</div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Unlimited history</div>
+          <div style="font-size:11px;color:var(--text-3);">Free keeps your last 10 scans. Premium keeps everything, forever — with year-over-year comparisons.</div>
+        </div>
+        <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
+          <div style="font-size:18px;margin-bottom:6px">👨‍👩‍👧‍👦</div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Family profiles</div>
+          <div style="font-size:11px;color:var(--text-3);">One sign-in, separate timelines for up to 6 household members. Free covers you — Premium covers everyone.</div>
         </div>
         <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
           <div style="font-size:18px;margin-bottom:6px">📄</div>
-          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">PDF health report</div>
-          <div style="font-size:11px;color:var(--text-3);">Export a full report to share with your doctor or dietitian.</div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Clinician-ready PDF</div>
+          <div style="font-size:11px;color:var(--text-3);">A charted, doctor-friendly report with food & supplement plans — built from every scan in your history.</div>
         </div>
         <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
-          <div style="font-size:18px;margin-bottom:6px">⚡</div>
-          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Priority analysis</div>
-          <div style="font-size:11px;color:var(--text-3);">Skip the queue — faster scans with no rate limit waits.</div>
+          <div style="font-size:18px;margin-bottom:6px">📬</div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Weekly digest</div>
+          <div style="font-size:11px;color:var(--text-3);">A Monday email summing what changed and what to focus on this week — no log-in required.</div>
+        </div>
+        <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
+          <div style="font-size:18px;margin-bottom:6px">🗓️</div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">14-day action plan</div>
+          <div style="font-size:11px;color:var(--text-3);">Free shows your top-3 foods. Premium turns your current gaps into a day-by-day food & supplement schedule.</div>
         </div>
       </div>
       <div id="waitlist-form">
