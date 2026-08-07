@@ -800,7 +800,7 @@ html{-webkit-text-size-adjust:100%;}
     <div class="logo" style="cursor:default"><div class="logo-pip"></div>Vytreos</div>
     <div class="nav-links">
       <span id="nav-label" style="font-size:12px;color:var(--text-3);font-family:'Space Mono',monospace;margin-right:4px"></span>
-      <button class="btn-upgrade" onclick="openPremiumModal()" style="padding:8px 16px;font-size:12px;">✦ Upgrade</button>
+      <button class="btn-upgrade" id="navUpgradeBtn" onclick="openPremiumModal()" style="padding:8px 16px;font-size:12px;">✦ Upgrade</button>
       <button class="btn btn-ghost" onclick="doLogout()">Sign out</button>
     </div>
   </nav>
@@ -838,8 +838,8 @@ html{-webkit-text-size-adjust:100%;}
       <div style="padding:12px 14px;">
         <div onclick="openPremiumModal()" style="background:linear-gradient(135deg,rgba(0,217,139,0.1),rgba(77,143,255,0.07));border:1px solid rgba(0,217,139,0.2);border-radius:10px;padding:12px 14px;cursor:pointer;transition:opacity .15s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
           <div style="font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:4px;">✦ Premium</div>
-          <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">Unlock the full timeline</div>
-          <div style="font-size:11px;color:var(--text-3);">Pro consensus · Unlimited history · Family plans</div>
+          <div id="premiumSideTitle" style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">Unlock the full timeline</div>
+          <div id="premiumSideSub" style="font-size:11px;color:var(--text-3);">Pro consensus · Unlimited history · Family plans</div>
         </div>
       </div>
       <div class="sidebar-footer">
@@ -1211,7 +1211,8 @@ html{-webkit-text-size-adjust:100%;}
               <div class="profile-name" id="prof-name">—</div>
               <div class="profile-email" id="prof-email">—</div>
               <div class="profile-stat"><strong id="prof-count">0</strong> scans completed</div>
-              <div class="profile-stat"><a onclick="openPremiumModal()" style="color:var(--green);cursor:pointer;font-weight:600">✦ Upgrade to Premium →</a></div>
+              <div class="profile-stat" id="prof-premium-row"><a onclick="openPremiumModal()" style="color:var(--green);cursor:pointer;font-weight:600">✦ Upgrade to Premium →</a></div>
+              <div class="profile-stat"><a onclick="openFamilyModal()" style="color:var(--text-2);cursor:pointer;font-weight:600">👨‍👩‍👧‍👦 Family profiles →</a></div>
               <button class="logout-btn" onclick="doLogout()">Sign out</button>
             </div>
           </div>
@@ -1410,6 +1411,7 @@ html{-webkit-text-size-adjust:100%;}
           <div style="font-size:11px;color:var(--text-3);">Free shows your top-3 foods. Premium turns your current gaps into a day-by-day food & supplement schedule.</div>
         </div>
       </div>
+      <div id="premiumLocked">
       <div id="waitlist-form">
         <div style="font-size:12px;color:var(--text-2);margin-bottom:10px;font-weight:600;">Join the waitlist — be first to know when Premium launches:</div>
         <div style="display:flex;gap:8px;">
@@ -1419,6 +1421,14 @@ html{-webkit-text-size-adjust:100%;}
       </div>
       <div id="waitlist-success" style="display:none;text-align:center;padding:16px;background:var(--green-dim);border:1px solid rgba(0,217,139,.2);border-radius:10px;color:var(--green);font-size:13px;font-weight:600;">
         ✓ You're on the list! We'll email you when Premium launches.
+      </div>
+      <button onclick="previewPremium()" style="width:100%;margin-top:14px;padding:13px;background:linear-gradient(135deg,var(--green),#00b8ff);color:#000;border:none;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;">🔓 Preview Premium free — no card</button>
+      </div>
+      <div id="premiumActive" style="display:none;text-align:center;padding:20px;background:var(--green-dim);border:1px solid rgba(0,217,139,.25);border-radius:14px;">
+        <div style="font-size:30px;margin-bottom:8px;">👑</div>
+        <div style="font-size:16px;font-weight:700;color:var(--green);margin-bottom:4px;">You're on Premium</div>
+        <div style="font-size:12px;color:var(--text-2);line-height:1.7;margin-bottom:14px;">Unlimited history · full-model consensus · up to 6 family profiles are all live for you.</div>
+        <button onclick="endPremiumPreview()" style="padding:9px 22px;background:var(--bg-3);border:1px solid var(--border);color:var(--text-2);border-radius:40px;font-size:12px;cursor:pointer;font-family:'Outfit',sans-serif;">End preview</button>
       </div>
       <div style="text-align:center;font-size:11px;color:var(--text-3);margin-top:10px;">No spam · Unsubscribe anytime · Founding members get 40% off</div>
     </div>
@@ -1506,6 +1516,7 @@ html{-webkit-text-size-adjust:100%;}
 <script src="/accuracy.js"></script>
 <script src="/pdf.js"></script>
 <script src="/family.js"></script>
+<script src="/premium.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -1527,7 +1538,7 @@ if(window.FAMILY&&FAMILY.registerFirebasePrimitives){
   FAMILY.registerFirebasePrimitives({collection,doc,addDoc,setDoc,getDoc,getDocs,query,orderBy,deleteDoc,updateDoc,serverTimestamp});
 }
 
-let currentUser=null,isGuest=false,scans=[],pendingResult=null,pendingImgData=null,disclaimerSeen=false,webcamStream=null,lastScanTime=0,dataSharingEnabled=false;
+let currentUser=null,isGuest=false,scans=[],pendingResult=null,pendingImgData=null,disclaimerSeen=false,webcamStream=null,lastScanTime=0,dataSharingEnabled=false,_totalScans=0;
 Object.defineProperty(window,"_scans",{get:()=>scans,configurable:true});
 
 // ── AUTH OBSERVER ──────────────────────────────────────────────────────────────
@@ -1622,6 +1633,9 @@ async function enterApp(){
       if(p.dataSharing){dataSharingEnabled=true;updateShareToggleUI();}
     }
   }catch(e){}
+  if(window.FAMILY&&typeof FAMILY.init==='function'){try{await FAMILY.init();}catch(e){}}
+  if(window.PREMIUM&&typeof PREMIUM.init==='function'){try{await PREMIUM.init();}catch(e){}}
+  updatePremiumUI();
   await loadScans();switchTab('dashboard');showView('app');
   toast('Welcome back, '+name.split(' ')[0]+'!');
 }
@@ -1647,7 +1661,12 @@ async function loadScans(){
     } else {
       snap={forEach:function(){},docs:[]};
     }
-    scans=snap.docs.map(d=>({id:d.id,...d.data()}));renderScans();
+    const allScans=snap.docs.map(d=>({id:d.id,...d.data()}));
+    _totalScans=allScans.length;
+    // Free tier: last 10 visible; Premium: everything.
+    const lim=(window.PREMIUM&&PREMIUM.historyLimit&&PREMIUM.historyLimit())||Infinity;
+    scans=isFinite(lim)?allScans.slice(0,lim):allScans;
+    renderScans();
   }catch(e){console.error(e);}
 }
 
@@ -1669,7 +1688,8 @@ function renderScans(){
   document.getElementById('s-acct').textContent=(currentUser?.displayName||'Free').split(' ')[0];
   const html=scans.length?scans.map(scanItem).join(''):`<div class="empty-state"><div style="font-size:36px;margin-bottom:12px;opacity:.4">👁</div><p>No scans yet.</div>`;
   document.getElementById('dash-list').innerHTML=html;
-  document.getElementById('hist-list').innerHTML=html;
+  const lockedCount=_totalScans-scans.length;
+  document.getElementById('hist-list').innerHTML=html+(lockedCount>0?`<div class="hist-lock" onclick="openPremiumModal()" style="margin-top:10px;padding:14px 16px;background:linear-gradient(135deg,rgba(0,217,139,0.08),rgba(77,143,255,0.06));border:1px solid rgba(0,217,139,0.2);border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;"><div><div style="font-size:12px;font-weight:700;color:var(--text);">🔒 ${lockedCount} older scan${lockedCount>1?'s':''} locked</div><div style="font-size:10px;color:var(--text-3);margin-top:2px;">Free keeps your last 10. Upgrade for unlimited history.</div></div><span style="font-size:11px;font-weight:700;color:var(--green);white-space:nowrap;">✦ Upgrade</span></div>`:'');
   document.getElementById('prof-count').textContent=scans.length;
   const skelEl=document.getElementById('dash-skeleton');
   if(skelEl)skelEl.style.display='none';
@@ -2179,12 +2199,108 @@ async function enrichWithFoodFacts(result){
 
 // ── PREMIUM MODAL ─────────────────────────────────────────────────────────────
 window.openPremiumModal=()=>{
+  const isPrem=!!(window.PREMIUM&&PREMIUM.isPremium&&PREMIUM.isPremium());
+  const locked=document.getElementById('premiumLocked');
+  const active=document.getElementById('premiumActive');
+  if(locked)locked.style.display=isPrem?'none':'block';
+  if(active)active.style.display=isPrem?'block':'none';
   document.getElementById('waitlist-form').style.display='block';
   document.getElementById('waitlist-success').style.display='none';
   if(currentUser?.email){const el=document.getElementById('waitlist-email');if(el)el.value=currentUser.email;}
   document.getElementById('premiumModal').classList.add('open');
 };
 window.closePremiumModal=()=>document.getElementById('premiumModal').classList.remove('open');
+
+// ── PREMIUM PREVIEW TOGGLE ────────────────────────────────────────────────────
+window.previewPremium=async()=>{
+  if(!window.PREMIUM)return;
+  await PREMIUM.setPremium(true);
+  updatePremiumUI();
+  toast('Premium preview on — enjoy the full board ✦','');
+  closePremiumModal();
+};
+window.endPremiumPreview=async()=>{
+  if(!window.PREMIUM)return;
+  await PREMIUM.setPremium(false);
+  updatePremiumUI();
+  toast('Premium preview off — back to Free','');
+  closePremiumModal();
+};
+
+// ── PREMIUM UI STATE ──────────────────────────────────────────────────────────
+function updatePremiumUI(){
+  const prem=!!(window.PREMIUM&&PREMIUM.isPremium&&PREMIUM.isPremium());
+  const plan=document.getElementById('sb-plan');
+  if(plan)plan.textContent=prem?'Premium plan':'Free plan';
+  const navBtn=document.getElementById('navUpgradeBtn');
+  if(navBtn)navBtn.textContent=prem?'✦ Premium ✓':'✦ Upgrade';
+  const profRow=document.getElementById('prof-premium-row');
+  if(profRow)profRow.innerHTML=prem?'<span style="color:var(--green);font-weight:600">✦ Premium active</span>':'<a onclick="openPremiumModal()" style="color:var(--green);cursor:pointer;font-weight:600">✦ Upgrade to Premium →</a>';
+  const sideT=document.getElementById('premiumSideTitle');
+  const sideS=document.getElementById('premiumSideSub');
+  if(sideT)sideT.textContent=prem?"You're on Premium":'Unlock the full timeline';
+  if(sideS)sideS.textContent=prem?'All features live — thanks for supporting Vytreos':'Pro consensus · Unlimited history · Family plans';
+  renderFamilyChip();
+}
+
+// ── FAMILY PROFILES UI (wired to /family.js) ─────────────────────────────────
+window.openFamilyModal=()=>{
+  renderFamilyList();
+  document.getElementById('familyModal').classList.add('open');
+};
+function renderFamilyList(){
+  const list=document.getElementById('familyList');
+  if(!list)return;
+  const profiles=(window.FAMILY&&FAMILY.list&&FAMILY.list())||[];
+  const active=(window.FAMILY&&FAMILY.getActive&&FAMILY.getActive());
+  const limit=(window.PREMIUM&&PREMIUM.familyLimit&&PREMIUM.familyLimit())||1;
+  const prem=!!(window.PREMIUM&&PREMIUM.isPremium&&PREMIUM.isPremium());
+  const atLimit=profiles.length>=limit;
+  list.innerHTML=profiles.map(p=>{
+    const isActive=active&&active.id===p.id;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg-3);border:1px solid ${isActive?'rgba(0,217,139,.4)':'var(--border)'};border-radius:10px;margin-bottom:8px;">
+      <div style="width:30px;height:30px;border-radius:50%;background:var(--green-dim);color:var(--green);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;">${(p.name||'?')[0].toUpperCase()}</div>
+      <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--text);">${(p.name||'Member')} <span style="color:var(--text-3);font-size:10px;font-weight:400;">· ${p.relation||'self'}</span></div><div style="font-size:10px;color:var(--text-3);">${p.scanCount||0} scans</div></div>
+      ${isActive?'<span style="font-size:9px;font-weight:700;color:var(--green);border:1px solid rgba(0,217,139,.3);padding:2px 8px;border-radius:20px;">ACTIVE</span>':`<button onclick="familySwitch('${p.id}')" style="font-size:10px;padding:4px 10px;border-radius:20px;background:var(--bg-3);border:1px solid var(--border);color:var(--text-2);cursor:pointer;">Switch</button>`}
+    </div>`;
+  }).join('')||'<div style="text-align:center;color:var(--text-3);font-size:12px;padding:8px;">No profiles yet.</div>';
+  const addForm=document.getElementById('familyAddForm');
+  if(addForm)addForm.style.display=atLimit?'none':'block';
+  const lockNote=document.getElementById('familyLockNote');
+  if(lockNote)lockNote.style.display=(atLimit&&!prem)?'block':'none';
+}
+window.familySwitch=async id=>{
+  if(!window.FAMILY)return;
+  await FAMILY.switchTo(id);
+  renderFamilyList();renderFamilyChip();await loadScans();
+  toast('Switched to '+(FAMILY.getActive()?FAMILY.getActive().name:'profile'));
+};
+window.__familyAddHandler=async()=>{
+  if(!window.FAMILY)return;
+  const limit=(window.PREMIUM&&PREMIUM.familyLimit&&PREMIUM.familyLimit())||1;
+  if((FAMILY.list()||[]).length>=limit){
+    toast('Family profiles are Premium — up to '+limit+' on Free','err');
+    document.getElementById('familyModal').classList.remove('open');
+    openPremiumModal();
+    return;
+  }
+  const name=(document.getElementById('family-name')||{}).value?.trim();
+  const relation=(document.getElementById('family-relation')||{}).value||'other';
+  if(!name){toast('Give this member a name','err');return;}
+  try{
+    await FAMILY.create({name,relation});
+    document.getElementById('family-name').value='';
+    renderFamilyList();renderFamilyChip();
+    toast('Profile added — switch between members anytime','');
+  }catch(e){toast('Could not add profile','err');}
+};
+function renderFamilyChip(){
+  const c=document.getElementById('profileChipContainer');
+  if(!c)return;
+  const active=(window.FAMILY&&FAMILY.getActive&&FAMILY.getActive());
+  if(!active){c.innerHTML='';return;}
+  c.innerHTML=`<div onclick="openFamilyModal()" style="position:fixed;bottom:76px;right:16px;z-index:120;display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg-2);border:1px solid rgba(0,217,139,.3);border-radius:40px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.45);" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='rgba(0,217,139,.3)'"><div style="width:24px;height:24px;border-radius:50%;background:var(--green-dim);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">${(active.name||'?')[0].toUpperCase()}</div><span style="font-size:11px;font-weight:600;color:var(--text);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${active.name||'Me'}</span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3);"><path d="m6 9 6 6 6-6"/></svg></div>`;
+}
 window.joinWaitlist=async()=>{
   const email=document.getElementById('waitlist-email').value.trim();
   if(!email||!email.includes('@')){toast('Please enter a valid email','err');return;}
@@ -2290,7 +2406,8 @@ window.executeDeleteScan=async()=>{
   const btn=document.getElementById('confirmDeleteBtn');
   if(btn){btn.disabled=true;btn.textContent='Deleting...';}
   try{
-    await deleteDoc(doc(db,'users',currentUser.uid,'scans',scanToDelete));
+    const __delPid=(window.FAMILY&&FAMILY.getActive&&FAMILY.getActive())?FAMILY.getActive().id:((window.FAMILY&&window.FAMILY.DEFAULT_PROFILE_ID)||'self');
+    await deleteDoc(doc(db,'users',currentUser.uid,'profiles',__delPid,'scans',scanToDelete));
     closeDeleteModal();await loadScans();toast('Scan deleted');
   }catch(e){console.error(e);toast('Failed to delete','err');if(btn){btn.disabled=false;btn.textContent='Delete';}}
 };
@@ -2473,7 +2590,7 @@ window.runAnalysis=async function runAnalysis(imgDataUrl){
   function renderSteps(i,label){
     el.innerHTML=`<div class="analysis-loading"><div class="spinner" style="margin:0 auto 16px"></div><div class="loading-text">${label||'Running dual-model analysis…'}</div><div class="loading-step-list">${steps.map((s,j)=>`<div class="loading-step ${j<i?'done':j===i?'active':''}"><div class="step-dot"></div>${j<i?'✓ ':''}${s}</div>`).join('')}</div></div>`;
   }
-  renderSteps(0,'Preparing triple-model analysis…');
+  renderSteps(0,(window.PREMIUM&&PREMIUM.isPremium&&PREMIUM.isPremium())?'Preparing quad-model analysis…':'Preparing fast-lane analysis…');
   let idx=0;const timer=setInterval(()=>{idx=Math.min(idx+1,steps.length-1);renderSteps(idx);},3500);
 
   const age=document.getElementById('pref-age')?.value||'';
@@ -2488,11 +2605,12 @@ window.runAnalysis=async function runAnalysis(imgDataUrl){
 
   try{
     // Run all models in parallel — AI analysis + pre-screening
+    const __fullBoard=!!(window.PREMIUM&&PREMIUM.fullBoard&&PREMIUM.fullBoard());
     const [flashResult, proResult, groqResult, mistralResult, hfResult, roboResult]=await Promise.allSettled([
       callGemini('gemini-2.5-flash', base64, mediaType, prompt),
-      callGemini('gemini-2.5-pro', base64, mediaType, prompt),
+      __fullBoard?callGemini('gemini-2.5-pro', base64, mediaType, prompt):Promise.resolve(null),
       callGroqLLaVA(base64, mediaType, prompt),
-      callMistral(base64, mediaType, prompt),
+      __fullBoard?callMistral(base64, mediaType, prompt):Promise.resolve(null),
       callHuggingFace(base64, mediaType),
       callRoboflow(base64)
     ]);
@@ -2630,7 +2748,7 @@ window.saveScan=async()=>{
   if(!pendingResult||!currentUser)return;
   const btn=document.getElementById('saveBtn');if(btn){btn.disabled=true;btn.innerHTML='<span style="display:inline-block;width:12px;height:12px;border:2px solid rgba(0,0,0,0.3);border-top-color:#000;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px"></span>Saving…';}
   try{
-    await addDoc(collection(db,'users',currentUser.uid,'scans'),{
+    const scanPayload={
       nutrients:pendingResult.nutrients||[],
       summary:pendingResult.summary||'',
       recommendations:pendingResult.recommendations||[],
@@ -2638,7 +2756,10 @@ window.saveScan=async()=>{
       imageType:pendingResult.imageType||null,
       imageQuality:pendingResult.imageQuality||null,
       createdAt:serverTimestamp()
-    });
+    };
+    if(window.FAMILY&&FAMILY.addScanMeta){await FAMILY.addScanMeta(scanPayload);}
+    const __savePid=(window.FAMILY&&FAMILY.getActive&&FAMILY.getActive())?FAMILY.getActive().id:((window.FAMILY&&window.FAMILY.DEFAULT_PROFILE_ID)||'self');
+    await addDoc(collection(db,'users',currentUser.uid,'profiles',__savePid,'scans'),scanPayload);
     if(dataSharingEnabled){
       const prefs={age:document.getElementById('pref-age')?.value||'',sex:document.getElementById('pref-sex')?.value||'',diet:document.getElementById('pref-diet')?.value||'',goals:document.getElementById('pref-goals')?.value||''};
       addDoc(collection(db,'research_scans'),{
@@ -3267,7 +3388,7 @@ if (document.readyState === "loading") {
   <h2 style="font-family:'Fraunces',serif;font-size:24px;margin-bottom:6px;color:var(--text);">Family profiles</h2>
   <p style="font-size:12px;color:var(--text-2);margin-bottom:18px;line-height:1.6;">One subscription. One sign-in. Separate nutrient timelines for each member of your household.</p>
   <div id="familyList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px;"></div>
-  <div class="form-card" style="margin-top:6px;">
+  <div class="form-card" style="margin-top:6px;" id="familyAddForm">
     <h3 style="font-size:14px;font-weight:600;margin-bottom:4px;color:var(--text);">Add family member</h3>
     <div class="form-row">
       <div class="field"><label>Name</label><input id="family-name" type="text" placeholder="e.g., Alexey"></div>
@@ -3279,6 +3400,10 @@ if (document.readyState === "loading") {
       <button type="button" onclick="window.__familyAddHandler&&window.__familyAddHandler()" style="flex:1;padding:12px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;">Add</button>
       <button type="button" onclick="document.getElementById('familyModal').classList.remove('open')" style="flex:0 0 auto;padding:12px 16px;background:var(--bg-3);border:1px solid var(--border);color:var(--text-2);border-radius:40px;font-size:12px;cursor:pointer;font-family:'Outfit',sans-serif;">Close</button>
     </div>
+  </div>
+  <div id="familyLockNote" style="display:none;text-align:center;padding:14px;background:linear-gradient(135deg,rgba(0,217,139,0.08),rgba(77,143,255,0.06));border:1px solid rgba(0,217,139,0.2);border-radius:10px;cursor:pointer;" onclick="openPremiumModal()">
+    <div style="font-size:12px;font-weight:700;color:var(--text);">🔒 Free includes 1 profile</div>
+    <div style="font-size:11px;color:var(--text-2);margin-top:3px;">Upgrade to add up to 6 household members — <span style="color:var(--green);font-weight:700;">✦ Preview Premium</span></div>
   </div>
 </div></div>
 <div id="profileChipContainer"></div>
