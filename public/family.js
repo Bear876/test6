@@ -218,6 +218,44 @@
         });
         profiles = [defProf];
 
+        // Import any family profiles created earlier while the app was
+        // (incorrectly) running in guest mode — those were cached in
+        // localStorage only and never reached Firestore.
+        var guestCache = lsRead(null);
+        if (guestCache && Array.isArray(guestCache.profiles)) {
+          for (var gi = 0; gi < guestCache.profiles.length; gi++) {
+            var gp = guestCache.profiles[gi];
+            if (!gp || gp.id === DEFAULT_PROFILE_ID || gp.relation === 'self') continue;
+            var gpid = gp.id && String(gp.id).indexOf('p_') === 0 ? gp.id : newProfileId();
+            var gname = String(gp.name || '').trim() || 'Family member';
+            var grel = DEFAULT_RELATIONS.indexOf(gp.relation) !== -1 ? gp.relation : 'other';
+            try {
+              await setDoc(doc(userRef, 'profiles', gpid), {
+                name: gname,
+                relation: grel,
+                dob: gp.dob || null,
+                gender: gp.gender || null,
+                scanCount: gp.scanCount || 0,
+                isDefault: false,
+                createdAt: gp.createdAt || Date.now()
+              });
+              profiles.push({
+                id: gpid, name: gname, relation: grel,
+                dob: gp.dob || null, gender: gp.gender || null,
+                scanCount: gp.scanCount || 0, isDefault: false,
+                createdAt: gp.createdAt || Date.now()
+              });
+            } catch (gErr) {
+              console.warn('[family] guest profile import failed:', gErr);
+            }
+          }
+          // Restore the profile that was active in guest mode, if imported.
+          if (guestCache.activeProfileId && guestCache.activeProfileId !== DEFAULT_PROFILE_ID &&
+              profiles.some(function (p) { return p.id === guestCache.activeProfileId; })) {
+            state.activeProfileId = guestCache.activeProfileId;
+          }
+        }
+
         // Backfill any legacy scans sitting at users/{uid}/scans
         try {
           var legacyRef = collection(userRef, 'scans');

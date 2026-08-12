@@ -1540,6 +1540,16 @@ if(window.FAMILY&&FAMILY.registerFirebasePrimitives){
 
 let currentUser=null,isGuest=false,scans=[],pendingResult=null,pendingImgData=null,disclaimerSeen=false,webcamStream=null,lastScanTime=0,dataSharingEnabled=false,_totalScans=0;
 Object.defineProperty(window,"_scans",{get:()=>scans,configurable:true});
+// Classic scripts (family.js / premium.js) read Firebase state off `window`,
+// but this block is a module so `let`/`const` never land there. Expose them
+// explicitly — currentUser as a live accessor since the binding changes on
+// sign-in/out. Without this, the app always looked like a guest.
+try{
+  window.db=db;
+  window.fbApp=fbApp;
+  window.serverTimestamp=serverTimestamp;
+  Object.defineProperty(window,"currentUser",{get:function(){return currentUser;},configurable:true});
+}catch(_){}
 
 // ── AUTH OBSERVER ──────────────────────────────────────────────────────────────
 onAuthStateChanged(auth,async user=>{
@@ -3374,6 +3384,7 @@ if (document.readyState === "loading") {
       try { var v = fn(); W[name] = v; } catch(_) {}
     }
     _expose('scans',          function(){ return scans;          });
+    _expose('SCANS',          function(){ return scans;          });
     _expose('pendingResult',  function(){ return pendingResult;  });
     _expose('pendingImgData', function(){ return pendingImgData; });
     if (typeof toast      === 'function') try { W.toast       = toast;       } catch(_) {}
