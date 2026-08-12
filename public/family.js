@@ -143,10 +143,24 @@
   /* ─────────────────────────────────────────────────────────
      Profile lifecycle
      ───────────────────────────────────────────────────────── */
+  /* ── Real display name from the signed-in identity ──────── */
+  function realDisplayName() {
+    try {
+      if (typeof window === 'undefined' || !window.currentUser) return null;
+      var u = window.currentUser;
+      if (u.displayName && String(u.displayName).trim()) return String(u.displayName).trim();
+      if (u.email) {
+        var prefix = String(u.email).split('@')[0].trim();
+        if (prefix) return prefix;
+      }
+    } catch (e) { /* ignore */ }
+    return null;
+  }
+
   function defaultProfile(uid) {
     return {
       id: DEFAULT_PROFILE_ID,
-      name: uid ? 'Me' : 'Guest',
+      name: uid ? (realDisplayName() || 'Me') : 'Guest',
       relation: 'self',
       scanCount: 0,
       isDefault: true,
@@ -290,6 +304,25 @@
       }
 
       state.profiles = profiles;
+
+      // One-time rename: default profiles auto-created as "Me" (or "Guest"
+      // from the earlier bug) should show the user's actual name.
+      var realName = realDisplayName();
+      if (realName) {
+        var selfIdx = -1;
+        for (var si = 0; si < state.profiles.length; si++) {
+          if (state.profiles[si].id === DEFAULT_PROFILE_ID) { selfIdx = si; break; }
+        }
+        if (selfIdx !== -1 && (state.profiles[selfIdx].name === 'Me' || state.profiles[selfIdx].name === 'Guest')) {
+          state.profiles[selfIdx].name = realName;
+          try {
+            await setDoc(doc(userRef, 'profiles', DEFAULT_PROFILE_ID), { name: realName }, { merge: true });
+          } catch (rnErr) {
+            console.warn('[family] rename default profile failed:', rnErr);
+          }
+        }
+      }
+
       state.activeProfileId = userData.activeProfile || DEFAULT_PROFILE_ID;
       // Validate the active id exists; else fall back to first.
       if (!state.profiles.some(function (p) { return p.id === state.activeProfileId; })) {

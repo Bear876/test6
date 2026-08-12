@@ -2765,6 +2765,7 @@ window.saveScan=async()=>{
       caveats:pendingResult.caveats||null,
       imageType:pendingResult.imageType||null,
       imageQuality:pendingResult.imageQuality||null,
+      eye: pendingResult.eye || 'both',
       createdAt:serverTimestamp()
     };
     if(window.FAMILY&&FAMILY.addScanMeta){await FAMILY.addScanMeta(scanPayload);}
