@@ -57,6 +57,7 @@
 body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;}
 ::selection{background:var(--green-dim);color:var(--green);}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--bg-2);}::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:3px;}
+.eye-select-btn.active,.eye-filter-btn.active{background:var(--green-dim)!important;color:var(--green)!important;border:1px solid rgba(0,217,139,.35)!important;box-shadow:0 0 0 3px rgba(0,217,139,.12)!important;}
 
 /* ── VIEWS ── */
 .view{display:none;min-height:100vh;flex-direction:column;}
@@ -794,6 +795,34 @@ html{-webkit-text-size-adjust:100%;}
   </div>
 </div>
 
+
+<!-- ═══════════════════════════════════ VERIFY ═══════════════════════════════════ -->
+<div id="view-auth-verify" class="view">
+  <nav><div class="logo" onclick="showView('landing')"><div class="logo-pip"></div>Vytreos</div><div class="nav-links"><button class="btn btn-ghost" onclick="showView('auth-login')">Sign in</button></div></nav>
+  <div class="auth-wrap">
+    <div class="auth-box">
+      <div class="auth-logo"><div class="logo-pip"></div>Vytreos</div>
+      <div class="auth-headline">Confirm it is you</div>
+      <p class="auth-sub">We sent a 6-digit confirmation code to <b id="vf-email" style="color:var(--text);word-break:break-all;"></b>. Enter it below to finish signing in.</p>
+      <div class="auth-err" id="vf-err"></div>
+      <div style="display:flex;gap:8px;justify-content:center;margin:20px 0 8px;">
+        <input class="vf-digit" id="vf-d-0" inputmode="numeric" maxlength="1" autocomplete="one-time-code" oninput="vfInput(this,0)" onkeydown="if(event.key==='Backspace')vfBack(this,0)" style="width:44px;height:56px;text-align:center;font-size:24px;font-weight:700;background:var(--bg-3);border:1px solid var(--border-2);border-radius:12px;color:var(--text);font-family:'Syne',sans-serif;outline:none;caret-color:var(--green);">
+        <input class="vf-digit" id="vf-d-1" inputmode="numeric" maxlength="1" autocomplete="one-time-code" oninput="vfInput(this,1)" onkeydown="if(event.key==='Backspace')vfBack(this,1)" style="width:44px;height:56px;text-align:center;font-size:24px;font-weight:700;background:var(--bg-3);border:1px solid var(--border-2);border-radius:12px;color:var(--text);font-family:'Syne',sans-serif;outline:none;caret-color:var(--green);">
+        <input class="vf-digit" id="vf-d-2" inputmode="numeric" maxlength="1" autocomplete="one-time-code" oninput="vfInput(this,2)" onkeydown="if(event.key==='Backspace')vfBack(this,2)" style="width:44px;height:56px;text-align:center;font-size:24px;font-weight:700;background:var(--bg-3);border:1px solid var(--border-2);border-radius:12px;color:var(--text);font-family:'Syne',sans-serif;outline:none;caret-color:var(--green);">
+        <input class="vf-digit" id="vf-d-3" inputmode="numeric" maxlength="1" autocomplete="one-time-code" oninput="vfInput(this,3)" onkeydown="if(event.key==='Backspace')vfBack(this,3)" style="width:44px;height:56px;text-align:center;font-size:24px;font-weight:700;background:var(--bg-3);border:1px solid var(--border-2);border-radius:12px;color:var(--text);font-family:'Syne',sans-serif;outline:none;caret-color:var(--green);">
+        <input class="vf-digit" id="vf-d-4" inputmode="numeric" maxlength="1" autocomplete="one-time-code" oninput="vfInput(this,4)" onkeydown="if(event.key==='Backspace')vfBack(this,4)" style="width:44px;height:56px;text-align:center;font-size:24px;font-weight:700;background:var(--bg-3);border:1px solid var(--border-2);border-radius:12px;color:var(--text);font-family:'Syne',sans-serif;outline:none;caret-color:var(--green);">
+        <input class="vf-digit" id="vf-d-5" inputmode="numeric" maxlength="1" autocomplete="one-time-code" oninput="vfInput(this,5)" onkeydown="if(event.key==='Backspace')vfBack(this,5)" style="width:44px;height:56px;text-align:center;font-size:24px;font-weight:700;background:var(--bg-3);border:1px solid var(--border-2);border-radius:12px;color:var(--text);font-family:'Syne',sans-serif;outline:none;caret-color:var(--green);">
+      </div>
+      <div id="vf-dev" style="display:none;text-align:center;font-size:11px;color:var(--amber);margin:4px 0 8px;"></div>
+      <button class="auth-btn" id="vf-btn" onclick="verifyCode()">Verify →</button>
+      <div class="auth-switch" style="display:flex;gap:12px;justify-content:center;align-items:center;">
+        <a id="vf-resend" onclick="resendVerifyCode()" style="cursor:pointer;">Resend code</a>
+        <span style="color:var(--text-4);">·</span>
+        <a onclick="showView('auth-login')" style="cursor:pointer;">Back to sign in</a>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- ═══════════════════════════════════ APP ═══════════════════════════════════ -->
 <div id="view-app" class="view">
   <nav>
@@ -1538,7 +1567,7 @@ if(window.FAMILY&&FAMILY.registerFirebasePrimitives){
   FAMILY.registerFirebasePrimitives({collection,doc,addDoc,setDoc,getDoc,getDocs,query,orderBy,deleteDoc,updateDoc,serverTimestamp});
 }
 
-let currentUser=null,isGuest=false,scans=[],pendingResult=null,pendingImgData=null,disclaimerSeen=false,webcamStream=null,lastScanTime=0,dataSharingEnabled=false,_totalScans=0;
+let currentUser=null,isGuest=false,scans=[],pendingResult=null,pendingImgData=null,disclaimerSeen=false,webcamStream=null,lastScanTime=0,dataSharingEnabled=false,_totalScans=0,_awaitingVerify=false,_verifyEmail=null,_verifyStarted=false,_verifyResendAt=0;
 Object.defineProperty(window,"_scans",{get:()=>scans,configurable:true});
 // Classic scripts (family.js / premium.js) read Firebase state off `window`,
 // but this block is a module so `let`/`const` never land there. Expose them
@@ -1554,7 +1583,7 @@ try{
 // ── AUTH OBSERVER ──────────────────────────────────────────────────────────────
 onAuthStateChanged(auth,async user=>{
   window._hideLoader&&window._hideLoader();
-  if(user){currentUser=user;isGuest=false;await enterApp();}
+  if(user){currentUser=user;isGuest=false;if(_awaitingVerify){showVerifyGate();}else{const need=!localStorage.getItem('vy_verified_'+user.uid);if(need){_awaitingVerify=true;_verifyEmail=user.email;showVerifyGate();}else{await enterApp();}}}
   else{showView('landing');}
 },err=>{
   console.warn('Auth error:',err);
@@ -1591,11 +1620,8 @@ window.doSignup=async()=>{
     await updateProfile(cred.user,{displayName:name});
     setDoc(doc(db,'users',cred.user.uid),{name,email,createdAt:new Date().toISOString(),preferences:{}}).catch(()=>{});
     saveReferral(cred.user.uid);
-    // Send email verification
-    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js').then(({sendEmailVerification})=>{
-      sendEmailVerification(cred.user).catch(()=>{});
-    });
-    currentUser=cred.user;isGuest=false;await enterApp();
+    currentUser=cred.user;isGuest=false;
+    _verifyEmail=email;_awaitingVerify=true;showVerifyGate();
   }catch(err){
     aerr('su-err',err.code==='auth/email-already-in-use'?'An account with this email already exists.':err.code==='auth/invalid-email'?'Invalid email address.':'Something went wrong. Please try again.');
   }finally{btn.disabled=false;btn.textContent='Create account →';}
@@ -1613,11 +1639,102 @@ window.doLogin=async()=>{
   const btn=document.getElementById('li-btn');btn.disabled=true;btn.innerHTML='<span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,0.3);border-top-color:#000;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px"></span>Signing in…';
   try{
     const cred=await signInWithEmailAndPassword(auth,email,pass);
-    currentUser=cred.user;isGuest=false;await enterApp();
+    currentUser=cred.user;isGuest=false;
+    _verifyEmail=email;_awaitingVerify=true;showVerifyGate();
   }catch(err){
     aerr('li-err',['auth/user-not-found','auth/wrong-password','auth/invalid-credential'].includes(err.code)?'Incorrect email or password.':'Something went wrong. Please try again.');
   }finally{btn.disabled=false;btn.textContent='Sign in →';}
+}
+
+// ── EMAIL CONFIRMATION CODE (OTP) ──────────────────────────────────────────────
+let _verifyTimer=null;
+function showVerifyGate(){
+  if(!_verifyEmail)return;
+  showView('auth-verify');
+  const em=document.getElementById('vf-email');if(em)em.textContent=_verifyEmail;
+  const f0=document.getElementById('vf-d-0');if(f0)f0.focus();
+  if(_verifyStarted)return;_verifyStarted=true;startVerifyFlow();
+}
+async function startVerifyFlow(){await sendVerifyCode();}
+async function sendVerifyCode(){
+  const err=document.getElementById('vf-err');if(err)err.classList.remove('show');
+  try{
+    const r=await fetch('/api/sendcode',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'send',email:_verifyEmail})});
+    const j=await r.json();
+    if(j&&j.ok){
+      if(j.dev){const d=document.getElementById('vf-dev');if(d){d.style.display='block';d.textContent='Dev mode: no email service configured — code: '+j.code;}}
+      _verifyResendAt=Date.now()+(j.cooldownMs||60000);
+      startResendCountdown();
+      return j;
+    }
+    if(err){err.textContent=(j&&j.error)||'Could not send the code. Please try again.';err.classList.add('show');}
+  }catch(e){if(err){err.textContent='Network error sending the code. Please try again.';err.classList.add('show');}}
+  return null;
+}
+function startResendCountdown(){
+  const btn=document.getElementById('vf-resend');
+  if(!btn)return;
+  const tick=()=>{
+    const left=Math.max(0,Math.ceil((_verifyResendAt-Date.now())/1000));
+    if(left<=0){btn.disabled=false;btn.textContent='Resend code';if(_verifyTimer){clearInterval(_verifyTimer);_verifyTimer=null;}}
+    else{btn.disabled=true;btn.textContent='Resend in '+left+'s';}
+  };
+  tick();
+  if(_verifyTimer)clearInterval(_verifyTimer);
+  _verifyTimer=setInterval(tick,1000);
+}
+window.resendVerifyCode=async()=>{
+  const btn=document.getElementById('vf-resend');
+  if(btn&&btn.disabled)return;
+  await sendVerifyCode();
 };
+window.verifyCode=async()=>{
+  let code='';
+  document.querySelectorAll('.vf-digit').forEach(i=>{code+=i.value||'';});
+  const err=document.getElementById('vf-err');if(err)err.classList.remove('show');
+  if(code.length!==6){if(err){err.textContent='Please enter the 6-digit code.';err.classList.add('show');}return;}
+  const btn=document.getElementById('vf-btn');if(btn){btn.disabled=true;btn.textContent='Verifying…';}
+  try{
+    const r=await fetch('/api/verifycode',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'verify',email:_verifyEmail,code})});
+    const j=await r.json();
+    if(j&&j.ok){
+      try{localStorage.setItem('vy_verified_'+currentUser.uid,'1');}catch(_){}
+      _awaitingVerify=false;_verifyStarted=false;_verifyEmail=null;
+      if(_verifyTimer){clearInterval(_verifyTimer);_verifyTimer=null;}
+      await enterApp();
+      return;
+    }
+    if(err){
+      err.textContent=(j&&j.error)||'That code did not match. Try again.';
+      if(j&&j.attemptsLeft!=null)err.textContent+=' ('+j.attemptsLeft+' attempts left)';
+      err.classList.add('show');
+    }
+    document.querySelectorAll('.vf-digit').forEach(i=>{i.value='';});
+    const f0=document.getElementById('vf-d-0');if(f0)f0.focus();
+  }catch(e){if(err){err.textContent='Something went wrong. Try again.';err.classList.add('show');}}
+  finally{if(btn){btn.disabled=false;btn.textContent='Verify →';}}
+};
+window.vfInput=function(el,i){
+  el.value=(el.value||'').replace(/\D/g,'').slice(0,1);
+  if(el.value&&i<5){const n=document.getElementById('vf-d-'+(i+1));if(n)n.focus();}
+  if(i===5){let all='';for(let k=0;k<6;k++){const x=document.getElementById('vf-d-'+k);if(x)all+=x.value;}if(all.length===6)verifyCode();}
+};
+window.vfPaste=function(ev){
+  const cd=ev.clipboardData||window.clipboardData;
+  const txt=cd&&cd.getData?cd.getData('text').replace(/\D/g,''):'';
+  if(!txt)return;
+  ev.preventDefault();
+  const inputs=document.querySelectorAll('.vf-digit');
+  inputs.forEach((inp,k)=>{inp.value=txt[k]||'';});
+  if(txt.length===6)verifyCode();else if(inputs[txt.length])inputs[txt.length].focus();
+};
+window.vfBack=function(el,i){
+  if(!el.value&&i>0){const pr=document.getElementById('vf-d-'+(i-1));if(pr){pr.focus();pr.value='';}}
+};
+document.addEventListener('paste',function(ev){
+  const t=ev.target;
+  if(t&&t.classList&&t.classList.contains('vf-digit'))vfPaste(ev);
+});;
 
 
 
@@ -2804,7 +2921,7 @@ window.savePrefs=async()=>{
 };
 
 window.doLogout=async()=>{
-  stopWebcam();await signOut(auth);
+  stopWebcam();try{localStorage.removeItem('vy_verified_'+(currentUser?currentUser.uid:''));}catch(_){}await signOut(auth);
   currentUser=null;scans=[];pendingResult=null;pendingImgData=null;
   showView('landing');toast('Signed out');
 };

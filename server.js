@@ -19,6 +19,8 @@ const MAX_BYTES = 5_000_000; // matches api/analyze.js cap
 // Map URL → handler file under /api.
 const API_ROUTES = {
   '/api/analyze': 'analyze.js',
+  '/api/sendcode': 'code.js',
+  '/api/verifycode': 'code.js',
 };
 
 const MIME = {

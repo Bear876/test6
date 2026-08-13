@@ -1,5 +1,7 @@
 {
   "rewrites": [
+    { "source": "/api/sendcode", "destination": "/api/code" },
+    { "source": "/api/verifycode", "destination": "/api/code" },
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/(.*)", "destination": "/public/index.html" }
   ],
