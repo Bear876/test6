@@ -10,6 +10,27 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Load .env.local (dev secrets) if present, mirroring Vercel's env behaviour,
+// so keys added via freebuff-env reach the preview process. Existing process
+// env (e.g. Vercel production) always wins.
+function loadLocalEnv(file) {
+  let raw;
+  try { raw = fs.readFileSync(file, 'utf8'); } catch { return; }
+  for (const line of raw.split('\n')) {
+    const m = /^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/.exec(line);
+    if (!m) continue;
+    const key = m[1];
+    if (process.env[key] !== undefined) continue;
+    let val = m[2].trim();
+    if (val.length >= 2 &&
+        ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'")))) {
+      val = val.slice(1, -1);
+    }
+    if (val) process.env[key] = val;
+  }
+}
+loadLocalEnv(path.join(__dirname, '.env.local'));
+
 const PORT = Number(process.env.PORT) || 3000;
 const HOST = '0.0.0.0';
 const PUBLIC_DIR = path.join(__dirname, 'public');
