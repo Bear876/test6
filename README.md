@@ -25,6 +25,7 @@
 │                                             │      • groq-llava       (Groq Llama-4-Scout)
 │                                             │      • gemini-*         (Google Gemini default)
 │                                             │  ← body-size cap + model allowlist + request id logging
+│  api/code.js  (Vercel serverless fn)        │  ← POST /api/sendcode + /api/verifycode (email OTP via Gmail SMTP App Password, or Resend)
 └─────────────────────────────────────────────┘
 ```
 
@@ -33,7 +34,7 @@ The whole frontend is one self-contained HTML file to keep the prototype fast to
 ## Run locally (preview)
 
 ```bash
-npm install   # creates lock file; no runtime deps
+npm install   # installs nodemailer (the only runtime dep)
 npm start     # listens on 0.0.0.0:$PORT (default 3000)
 ```
 
@@ -56,7 +57,7 @@ Don't forget to add your provider keys in **API keys** (project settings) so unf
 
 ## Environment variables
 
-See [`.env.example`](./.env.example). Every key is optional; an un-set provider returns a 503 with `{ error: "<Provider> not configured" }` and the UI shows it gracefully.
+Every key is optional; an un-set provider returns a 503 with `{ error: "<Provider> not configured" }` and the UI shows it gracefully. The confirmation-code flow falls back to dev mode (code shown in the UI) when neither `GMAIL_USER` + `GMAIL_APP_PASSWORD` nor `RESEND_API_KEY` is set.
 
 | Variable             | Provider routed when `model` is one of…         |
 |----------------------|--------------------------------------------------|
@@ -65,8 +66,20 @@ See [`.env.example`](./.env.example). Every key is optional; an un-set provider 
 | `HF_API_KEY`         | `hf-biomed`                                       |
 | `ROBOFLOW_API_KEY`   | `roboflow`                                        |
 | `GROQ_API_KEY`       | `groq-llava`                                      |
+| `GMAIL_USER`         | Email confirmation codes — Gmail SMTP via App Password (free, no domain). Takes priority over Resend. |
+| `GMAIL_APP_PASSWORD` | The 16-char app password from Gmail → Google Account → Security → 2-Step Verification → App passwords (spaces optional). |
+| `RESEND_API_KEY`     | Email confirmation codes (`/api/sendcode`, `/api/verifycode`) — fallback when Gmail isn't configured |
+| `VYTREOS_EMAIL_FROM` | Sender for confirmation emails (defaults: `Vytreos <{GMAIL_USER}>` for Gmail, `Vytreos <onboarding@resend.dev>` for Resend) |
 
 `PLAUSIBLE_DOMAIN` and `SENTRY_DSN` (optional) are documented in the same file — add them when wiring those services.
+
+## Authentication
+
+Sign-up / sign-in uses **Firebase Auth** (email + password, or Google) with Firestore for user records and scan history. Firebase config lives in `public/index.html` (`fovea-b028b`).
+
+- **Email confirmation code:** after email/password sign-up or sign-in, a 6-digit OTP is sent by email and must be entered before entering the app. `api/code.js` sends via **Gmail SMTP** when `GMAIL_USER` + `GMAIL_APP_PASSWORD` are set (free, no domain needed), falls back to **Resend** (`RESEND_API_KEY`), then to dev mode (code shown on screen). Codes expire after 10 minutes, allow 5 attempts, and have a 60s resend cooldown.
+- **Google sign-in:** popup flow with a redirect fallback. To enable it, turn on the Google provider in Firebase Console → Authentication → Sign-in method, and add the app's domain under **Authorized domains** (Firebase auto-creates the OAuth client). No separate Google Cloud project is required.
+- Once verified, users land in the dashboard with their scan history stored per-account under `users/{uid}/profiles/{profile}/scans`.
 
 ## AI accuracy & anti-hallucination pipeline
 

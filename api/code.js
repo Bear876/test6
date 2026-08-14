@@ -5,9 +5,12 @@
 //   POST /api/sendcode    { action:'send',   email }
 //   POST /api/verifycode  { action:'verify', email, code }
 //
-// Delivery uses Resend (RESEND_API_KEY). When no key is configured the code
-// is returned in the response as a dev-mode fallback so the flow is fully
-// testable in preview before an email key is added.
+// Delivery, first configured wins:
+//   1. Gmail SMTP via App Password — GMAIL_USER + GMAIL_APP_PASSWORD. Free,
+//      no domain needed; set up Gmail 2-Step Verification → App passwords.
+//   2. Resend — RESEND_API_KEY (needs a verified domain for real users).
+//   3. Dev mode — no service configured; the code is returned in the response
+//      so the flow is fully testable in preview before credentials are added.
 //
 // NOTE: codes live in an in-memory Map with a 10-minute expiry. That is
 // reliable in the Freebuff preview (single process) and fine for an early
@@ -15,12 +18,33 @@
 // instance within the window. Swap for a durable store (Firestore/Redis)
 // when the app grows.
 
+import nodemailer from 'nodemailer';
+
 const COOLDOWN_MS = 60_000;      // min time between sends per email
 const TTL_MS = 10 * 60_000;      // code lifetime
 const MAX_ATTEMPTS = 5;          // wrong guesses before the code is voided
 
 // email -> { code, exp, attempts, sentAt }
 const CODES = new Map();
+
+// Lazy Gmail SMTP transporter — created only when GMAIL creds are configured.
+let gmailTransporter = null;
+function getGmailTransporter() {
+  if (!gmailTransporter) {
+    gmailTransporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.GMAIL_USER,
+        // Gmail shows app passwords with spaces ("abcd efgh ijkl mnop");
+        // the spaces are not part of the password, so strip them defensively.
+        pass: String(process.env.GMAIL_APP_PASSWORD || '').replace(/\s+/g, ''),
+      },
+    });
+  }
+  return gmailTransporter;
+}
 
 function cleanup() {
   const now = Date.now();
@@ -53,43 +77,50 @@ export default async function handler(req, res) {
     const code = newCode();
     CODES.set(email, { code, exp: Date.now() + TTL_MS, attempts: 0, sentAt: Date.now() });
 
-    const apiKey = process.env.RESEND_API_KEY;
-    if (!apiKey) {
+    const gmailUser = process.env.GMAIL_USER;
+    const gmailPass = process.env.GMAIL_APP_PASSWORD;
+    const resendKey = process.env.RESEND_API_KEY;
+
+    if (!gmailUser && !resendKey) {
       // Dev mode: no email service configured yet — surface the code so the
-      // flow works in preview. Once RESEND_API_KEY is set, codes go by email.
+      // flow works in preview. Configure Gmail (GMAIL_USER + GMAIL_APP_PASSWORD)
+      // or Resend (RESEND_API_KEY) to deliver real emails.
       console.log(`[code] dev-mode code for ${email}: ${code}`);
       return res.status(200).json({ ok: true, dev: true, code, cooldownMs: COOLDOWN_MS });
     }
 
-    try {
-      const from = process.env.VYTREOS_EMAIL_FROM || 'Vytreos <onboarding@resend.dev>';
-      const r = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-        body: JSON.stringify({
-          from,
-          to: [email],
-          subject: 'Your Vytreos confirmation code',
-          html: `<div style="font-family:Arial,Helvetica,sans-serif;max-width:480px;margin:0 auto;padding:24px;">
+    const html = `<div style="font-family:Arial,Helvetica,sans-serif;max-width:480px;margin:0 auto;padding:24px;">
   <div style="font-size:22px;font-weight:700;color:#0b0e11;margin-bottom:12px;">Vytreos</div>
   <h2 style="color:#0b0e11;font-size:18px;margin:0 0 8px;">Your confirmation code</h2>
   <p style="color:#444;font-size:14px;line-height:1.6;">Use the code below to finish signing in. It expires in 10 minutes.</p>
   <div style="font-size:34px;font-weight:700;letter-spacing:10px;color:#00b074;background:#f2f4f7;border-radius:12px;padding:18px 24px;text-align:center;margin:16px 0;">${code}</div>
   <p style="color:#888;font-size:12px;line-height:1.6;">If you did not request this code, you can safely ignore this email.</p>
-</div>`
-        })
-      });
-      if (!r.ok) {
-        const err = await r.json().catch(() => ({}));
-        console.warn(`[code] Resend ${r.status}:`, err?.message);
-        return res.status(502).json({ error: 'Could not send the email right now. Please try again in a moment.' });
+</div>`;
+
+    try {
+      if (gmailUser && gmailPass) {
+        const from = process.env.VYTREOS_EMAIL_FROM || `Vytreos <${gmailUser}>`;
+        await getGmailTransporter().sendMail({ from, to: email, subject: 'Your Vytreos confirmation code', html });
+        console.log(`[code] sent to ${email} via Gmail SMTP`);
+      } else {
+        const from = process.env.VYTREOS_EMAIL_FROM || 'Vytreos <onboarding@resend.dev>';
+        const r = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${resendKey}` },
+          body: JSON.stringify({ from, to: [email], subject: 'Your Vytreos confirmation code', html })
+        });
+        if (!r.ok) {
+          const err = await r.json().catch(() => ({}));
+          console.warn(`[code] Resend ${r.status}:`, err?.message);
+          return res.status(502).json({ error: 'Could not send the email right now. Please try again in a moment.' });
+        }
+        console.log(`[code] sent to ${email} via Resend`);
       }
     } catch (e) {
-      console.warn('[code] Resend exception:', e.message);
+      console.warn('[code] send exception:', e.message);
       return res.status(502).json({ error: 'Could not send the email right now. Please try again in a moment.' });
     }
 
-    console.log(`[code] sent to ${email}`);
     return res.status(200).json({ ok: true, dev: false, cooldownMs: COOLDOWN_MS });
   }
 
