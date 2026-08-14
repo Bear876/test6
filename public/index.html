@@ -170,6 +170,12 @@ h1 em{font-style:italic;color:var(--green);}
 .auth-err.show{display:block;}
 .auth-switch{text-align:center;margin-top:20px;font-size:12px;color:var(--text-3);}
 .auth-switch a{color:var(--green);text-decoration:none;font-weight:600;cursor:pointer;}
+.google-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:13px 14px;border-radius:40px;background:var(--bg-3);border:1px solid var(--border-2);color:var(--text);font-size:14px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;}
+.google-btn:hover{background:var(--bg-2);border-color:var(--green);}
+.google-btn:disabled{opacity:.5;cursor:not-allowed;}
+.google-btn svg{flex-shrink:0;}
+.auth-divider{display:flex;align-items:center;gap:12px;margin:16px 0 14px;color:var(--text-3);font-size:11px;text-transform:uppercase;letter-spacing:.08em;}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border);}
 .divider{display:flex;align-items:center;gap:12px;margin:20px 0;}
 .divider span{font-size:11px;color:var(--text-3);white-space:nowrap;letter-spacing:.06em;text-transform:uppercase;}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
@@ -769,6 +775,9 @@ html{-webkit-text-size-adjust:100%;}
       <div class="auth-headline">Create your account</div>
       <p class="auth-sub">Start building your retinal health record. Start in minutes.</p>
       <div class="auth-err" id="su-err"></div>
+      <button class="google-btn" id="google-btn-su" onclick="googleSignIn()"><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.3 6.1 29.4 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.3 6.1 29.4 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C40.8 36.4 44 30.7 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg><span>Continue with Google</span></button>
+      <div class="auth-err" id="google-err-su"></div>
+      <div class="auth-divider"><span>or continue with email</span></div>
       <div class="field"><label>Full name</label><input type="text" id="su-name" placeholder="Jane Smith"><div class="ferr" id="e-su-name"></div></div>
       <div class="field"><label>Email address</label><input type="email" id="su-email" placeholder="jane@example.com"><div class="ferr" id="e-su-email"></div></div>
       <div class="field"><label>Password</label><input type="password" id="su-pass" placeholder="Minimum 8 characters"><div class="pw-hint">8+ chars · one number · one special character</div><div class="ferr" id="e-su-pass"></div></div>
@@ -787,6 +796,9 @@ html{-webkit-text-size-adjust:100%;}
       <div class="auth-headline">Welcome back</div>
       <p class="auth-sub">Sign in to view your retinal health trends and run new scans.</p>
       <div class="auth-err" id="li-err"></div>
+      <button class="google-btn" id="google-btn-li" onclick="googleSignIn()"><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.3 6.1 29.4 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.3 6.1 29.4 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C40.8 36.4 44 30.7 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg><span>Continue with Google</span></button>
+      <div class="auth-err" id="google-err-li"></div>
+      <div class="auth-divider"><span>or sign in with email</span></div>
       <div class="field"><label>Email address</label><input type="email" id="li-email" placeholder="jane@example.com"><div class="ferr" id="e-li-email"></div></div>
       <div class="field"><label>Password</label><input type="password" id="li-pass" placeholder="Your password"><div class="ferr" id="e-li-pass"></div></div>
       <button class="auth-btn" id="li-btn" onclick="doLogin()">Sign in →</button>
@@ -1548,7 +1560,7 @@ html{-webkit-text-size-adjust:100%;}
 <script src="/premium.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile,GoogleAuthProvider,signInWithPopup,signInWithRedirect,getRedirectResult}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import{getFirestore,collection,addDoc,getDocs,query,orderBy,doc,setDoc,getDoc,deleteDoc,updateDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import{getStorage,ref,uploadString,getDownloadURL}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
@@ -1583,7 +1595,7 @@ try{
 // ── AUTH OBSERVER ──────────────────────────────────────────────────────────────
 onAuthStateChanged(auth,async user=>{
   window._hideLoader&&window._hideLoader();
-  if(user){currentUser=user;isGuest=false;if(_awaitingVerify){showVerifyGate();}else{const need=!localStorage.getItem('vy_verified_'+user.uid);if(need){_awaitingVerify=true;_verifyEmail=user.email;showVerifyGate();}else{await enterApp();}}}
+  if(user){currentUser=user;isGuest=false;if(_awaitingVerify){showVerifyGate();}else if(user.emailVerified){await enterApp();}else{const need=!localStorage.getItem('vy_verified_'+user.uid);if(need){_awaitingVerify=true;_verifyEmail=user.email;showVerifyGate();}else{await enterApp();}}}
   else{showView('landing');}
 },err=>{
   console.warn('Auth error:',err);
@@ -1645,6 +1657,49 @@ window.doLogin=async()=>{
     aerr('li-err',['auth/user-not-found','auth/wrong-password','auth/invalid-credential'].includes(err.code)?'Incorrect email or password.':'Something went wrong. Please try again.');
   }finally{btn.disabled=false;btn.textContent='Sign in →';}
 }
+
+// ── GOOGLE SIGN IN ─────────────────────────────────────────────────────────────
+function showGoogleErr(msg){
+  ['google-err-su','google-err-li'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el&&el.offsetParent!==null){el.textContent=msg;el.classList.add('show');}
+  });
+}
+async function afterGoogleAuth(user){
+  try{localStorage.setItem('vy_verified_'+user.uid,'1');}catch(_){}
+  try{
+    const ref=doc(db,'users',user.uid);
+    const snap=await getDoc(ref);
+    if(!snap.exists()){
+      await setDoc(ref,{name:user.displayName||(user.email?user.email.split('@')[0]:'User'),email:user.email||'',createdAt:new Date().toISOString(),preferences:{}});
+    }
+  }catch(e){console.warn('google user doc:',e);}
+  if(typeof saveReferral==='function'){try{saveReferral(user.uid);}catch(_){}}
+}
+window.googleSignIn=async()=>{
+  const btn=Array.from(document.querySelectorAll('.google-btn')).find(b=>b.offsetParent!==null)||document.querySelector('.google-btn');
+  const orig=btn?btn.innerHTML:'';
+  if(btn){btn.disabled=true;btn.innerHTML='<span>Connecting to Google…</span>';}
+  const provider=new GoogleAuthProvider();
+  try{
+    const cred=await signInWithPopup(auth,provider);
+    await afterGoogleAuth(cred.user);
+  }catch(err){
+    const code=err&&err.code;
+    if(code==='auth/popup-blocked'||code==='auth/cancelled-popup-request'||code==='auth/popup-closed-by-user'||code==='auth/operation-not-supported-in-this-environment'){
+      try{await signInWithRedirect(auth,provider);}catch(e2){showGoogleErr('Google sign-in could not start here. Please try again.');console.warn('redirect fallback:',e2);}
+    }else{
+      showGoogleErr(code==='auth/unauthorized-domain'
+        ?'Google sign-in is not enabled for this domain yet. Add it in Firebase → Authentication → Settings → Authorized domains.'
+        :'Google sign-in failed. Please try again.');
+      console.warn('google sign-in:',err);
+    }
+  }finally{
+    if(btn){btn.disabled=false;btn.innerHTML=orig;}
+  }
+};
+// Completes a redirect-based Google sign-in (fallback when popups are blocked).
+getRedirectResult(auth).then(r=>{if(r&&r.user)afterGoogleAuth(r.user);}).catch(()=>{});
 
 // ── EMAIL CONFIRMATION CODE (OTP) ──────────────────────────────────────────────
 let _verifyTimer=null;
