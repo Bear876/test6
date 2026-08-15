@@ -149,7 +149,7 @@ export default async function handler(req, res) {
 
     // ── GEMINI ───────────────────────────────────────────────────────────────
     const GEMINI_KEY = process.env.GEMINI_KEY;
-    if (!GEMINI_KEY) return res.status(500).json({ error: 'Gemini not configured' });
+    if (!GEMINI_KEY) return res.status(503).json({ error: 'Gemini not configured' });
     try {
       const gemRes = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_KEY}`,

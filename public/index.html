@@ -2115,13 +2115,15 @@ Return ONLY valid JSON — no markdown, no backticks, no preamble:
 
 
 // ── HUGGING FACE BiomedCLIP ──────────────────────────────────────────────────
+let _modelFailReasons={};
+
 async function callHuggingFace(base64, mediaType){
   try{
     const res=await fetch('/api/analyze',{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'hf-biomed',base64,mediaType,prompt:''})
     });
-    if(!res.ok){console.warn('HF error:',res.status);return null;}
+    if(!res.ok){const body=await res.json().catch(()=>({}));_modelFailReasons['hf-biomed']=body?.error||'HTTP '+res.status;console.warn('HF error:',res.status);return null;}
     const data=await res.json();
     return data.result||null;
   }catch(e){console.warn('HF fetch error:',e.message);return null;}
@@ -2134,7 +2136,7 @@ async function callRoboflow(base64){
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'roboflow',base64,mediaType:'image/jpeg',prompt:''})
     });
-    if(!res.ok){console.warn('Roboflow error:',res.status);return null;}
+    if(!res.ok){const body=await res.json().catch(()=>({}));_modelFailReasons['roboflow']=body?.error||'HTTP '+res.status;console.warn('Roboflow error:',res.status);return null;}
     const data=await res.json();
     return data.result||null;
   }catch(e){console.warn('Roboflow fetch error:',e.message);return null;}
@@ -2182,7 +2184,7 @@ async function callMistral(base64, mediaType, prompt){
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'mistral-vision',base64,mediaType,prompt:prompt.substring(0,4000)})
     });
-    if(!res.ok){console.warn('Mistral error:',res.status);return null;}
+    if(!res.ok){const body=await res.json().catch(()=>({}));_modelFailReasons['mistral-vision']=body?.error||'HTTP '+res.status;console.warn('Mistral error:',res.status);return null;}
     const data=await res.json();
     if(!data.result)return null;
     const raw=data.result.replace(/```json|```/g,'').trim();
@@ -2200,7 +2202,7 @@ async function callGroqLLaVA(base64, mediaType, prompt){
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'groq-llava',base64,mediaType,prompt:prompt.substring(0,3000)+'\nReturn ONLY valid JSON as specified.'})
     });
-    if(!res.ok){console.warn('Groq error:',res.status);return null;}
+    if(!res.ok){const body=await res.json().catch(()=>({}));_modelFailReasons['groq-llava']=body?.error||'HTTP '+res.status;console.warn('Groq error:',res.status);return null;}
     const data=await res.json();
     if(!data.result)return null;
     const raw=data.result.replace(/```json|```/g,'').trim();
@@ -2250,6 +2252,7 @@ async function callGemini(model, base64, mediaType, prompt, retries=2){
       if(!res.ok){
         const body=await res.json().catch(()=>({}));
         const msg=body?.error||'HTTP '+res.status;
+        _modelFailReasons[model]=msg;
         console.warn(model+' error:',msg);return null;
       }
       const data=await res.json();
@@ -2816,9 +2819,10 @@ var result=null;
 if(__validResults.length>0&&window.ACCURACY){
   result=ACCURACY.consensusMerge(__validResults);
   if(result) result=ACCURACY.validateOutput(result);
-}else{
+}
+if(!result){
   // Fallback to existing pairwise merge if module unavailable
-  result=mergeResults(resA,resB);
+  if(resA||resB){result=mergeResults(resA,resB);}
     if(result&&resC){result=mergeResults(result,resC);}
     else if(!result&&resC){result=resC;}
     if(result&&resD){result=mergeResults(result,resD);}
@@ -2826,7 +2830,14 @@ if(__validResults.length>0&&window.ACCURACY){
     if(!result){
       result=await callGemini('gemini-2.5-flash-lite', base64, mediaType, prompt);
     }
-    if(!result) throw new Error('Analysis failed — please wait a moment and retry.');
+    if(!result){
+      const reasons=Object.values(_modelFailReasons||{}).filter(Boolean);
+      if(reasons.length>0&&reasons.every(r=>/not configured/i.test(r))){
+        throw new Error('AI analysis is not configured on this server yet - no provider API key found (e.g. GEMINI_KEY). Add a key, then try again.');
+      }
+      throw new Error('Analysis failed — please wait a moment and retry.');
+    }
+}
 
     // Apply pre-screening quality modifier
     if(preScreen.anomalyFlags.length>0&&result.confidenceNote){
@@ -2842,7 +2853,6 @@ if(__validResults.length>0&&window.ACCURACY){
     const modelCount=[resA,resB,resC,resD].filter(Boolean).length;
     const src=modelCount>=2?modelCount+'-model consensus':'AI analysis complete';
     toast('Analysis complete · '+src);
-  }
   }catch(err){
     clearInterval(timer);console.error(err);
     el.innerHTML=`<div class="analysis-idle" style="color:var(--amber);">🌿 Let’s give it another try<br><span style="font-size:11px;color:var(--text-3);display:block;margin-top:6px;font-family:'Space Mono',monospace;">${err.message}</span><br><button onclick="window.retryAnalysis()" style="margin-top:14px;padding:9px 22px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;">Try again</button></div>`;
