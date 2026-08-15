@@ -26,8 +26,9 @@ window.filterByEye = function(eye) {
   document.querySelectorAll('.eye-filter-btn').forEach(b =>
     b.classList.toggle('active', b.dataset.eye === eye));
   if (typeof window.renderScans === 'function') {
-    // Re-render with filter applied via DOM
+    // Re-render, re-enrich (fresh DOM has no eye data yet), then filter.
     window.renderScans();
+    enrichScanItems();
     applyEyeFilter();
   }
 };
@@ -37,8 +38,7 @@ function applyEyeFilter() {
     return;
   }
   document.querySelectorAll('.scan-item').forEach(el => {
-    const eyePill = el.querySelector('.eye-pill');
-    el.style.display = (eyePill && eyePill.textContent.toLowerCase().includes(_eyeFilter)) ? '' : 'none';
+    el.style.display = el.dataset.eye === _eyeFilter ? '' : 'none';
   });
 }
 
@@ -154,7 +154,7 @@ function installFeatures() {
     panel.insertAdjacentHTML('afterend', `<div id="eyeSelector" style="margin-bottom:14px;">
       <div style="font-size:10px;font-weight:600;color:var(--text-3);margin-bottom:6px;letter-spacing:.06em;text-transform:uppercase;">Scanning which eye?</div>
       <div style="display:flex;gap:5px;">
-        <button class="eye-select-btn active" data-eye="both" onclick="setScanEye('both')" style="flex:1;padding:7px 6px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;background:var(--green-dim);color:var(--green);border:1px solid rgba(0,217,139,.3);transition:all .12s;">👁 Both</button>
+        <button class="eye-select-btn active" data-eye="both" onclick="setScanEye('both')" style="flex:1;padding:7px 6px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;background:var(--bg-3);color:var(--text-2);border:1px solid var(--border);transition:all .12s;">👁 Both</button>
         <button class="eye-select-btn" data-eye="left" onclick="setScanEye('left')" style="flex:1;padding:7px 6px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;background:var(--bg-3);color:var(--text-2);border:1px solid var(--border);transition:all .12s;">👁 Left</button>
         <button class="eye-select-btn" data-eye="right" onclick="setScanEye('right')" style="flex:1;padding:7px 6px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;background:var(--bg-3);color:var(--text-2);border:1px solid var(--border);transition:all .12s;">👁 Right</button>
       </div>
@@ -166,7 +166,7 @@ function installFeatures() {
     const list = document.querySelector(sel);
     if (list && !list.parentElement.querySelector('.eye-filter-bar')) {
       list.insertAdjacentHTML('beforebegin', `<div class="eye-filter-bar" style="display:flex;gap:4px;margin-bottom:10px;">
-        <button class="eye-filter-btn active" data-eye="all" onclick="filterByEye('all')" style="padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;background:var(--green-dim);color:var(--green);border:1px solid rgba(0,217,139,.2);">All</button>
+        <button class="eye-filter-btn active" data-eye="all" onclick="filterByEye('all')" style="padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;background:transparent;color:var(--text-3);border:1px solid var(--border);">All</button>
         <button class="eye-filter-btn" data-eye="left" onclick="filterByEye('left')" style="padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;background:transparent;color:var(--text-3);border:1px solid var(--border);">OS</button>
         <button class="eye-filter-btn" data-eye="right" onclick="filterByEye('right')" style="padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;background:transparent;color:var(--text-3);border:1px solid var(--border);">OD</button>
       </div>`);
@@ -203,22 +203,24 @@ function installFeatures() {
   _installed = true;
 }
 
-// Enrich scan items with eye pill after rendering
+// Enrich scan items with eye pill + data-eye after rendering.
+// Scans carry Firestore string ids (openScan('abc123')), so look the
+// scan up by id rather than assuming the onclick index matches scans[].
 function enrichScanItems() {
+  if (!window.scans) return;
   document.querySelectorAll('.scan-item').forEach(el => {
-    if (el.querySelector('.eye-pill') || el.dataset.eyeEnriched) return;
-    el.dataset.eyeEnriched = '1';
-    const dateEl = el.querySelector('.scan-date');
-    if (!dateEl) return;
-    // Find scan index from onclick attribute
+    if (el.dataset.eyeEnriched) return;
     const onclick = el.getAttribute('onclick') || '';
-    const match = onclick.match(/openScan\((\d+)\)/);
-    if (match && window.scans && window.scans[parseInt(match[1])]) {
-      const eye = window.scans[parseInt(match[1])].eye;
-      if (eye && eye !== 'both') {
-        const pill = eyePillHTML(eye);
-        dateEl.insertAdjacentHTML('afterbegin', pill);
-      }
+    const match = onclick.match(/openScan\((['"]?)(.*?)\1\)/);
+    if (!match) return;
+    const scan = window.scans.find(s => String(s.id) === match[2]);
+    if (!scan) return;
+    el.dataset.eyeEnriched = '1';
+    const eye = scan.eye || 'both';
+    el.dataset.eye = eye;
+    if (eye !== 'both') {
+      const dateEl = el.querySelector('.scan-date');
+      if (dateEl) dateEl.insertAdjacentHTML('afterbegin', eyePillHTML(eye));
     }
   });
 }
@@ -228,7 +230,7 @@ const _origSwitchTab = window.switchTab;
 if (_origSwitchTab) {
   window.switchTab = function(tab) {
     _origSwitchTab(tab);
-    setTimeout(() => { installFeatures(); enrichScanItems(); }, 150);
+    setTimeout(() => { installFeatures(); enrichScanItems(); applyEyeFilter(); }, 150);
   };
 }
 
@@ -248,6 +250,7 @@ function startPolling() {
     if (appView && appView.classList.contains('active') && getComputedStyle(appView).display !== 'none') {
       installFeatures();
       enrichScanItems();
+      applyEyeFilter(); // keep active OS/OD filter applied after re-renders
     }
   }, 800);
 }
@@ -255,7 +258,7 @@ startPolling();
 
 // Also trigger on tab visibility
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden) { installFeatures(); enrichScanItems(); }
+  if (!document.hidden) { installFeatures(); enrichScanItems(); applyEyeFilter(); }
 });
 
 console.log('🔬 Vytreos features active: eye tracking, CSV export, nutrition v2, lifestyle log');
