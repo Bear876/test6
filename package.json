@@ -7,7 +7,8 @@
   "engines": { "node": ">=18" },
   "keywords": ["retinal", "wellness", "ai-vision", "pwa", "vercel"],
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "node test-accuracy.mjs && node test-vq.mjs && node test-premium.mjs"
   },
   "dependencies": {
     "nodemailer": "^6.9.16"
