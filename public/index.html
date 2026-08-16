@@ -615,16 +615,11 @@ html{-webkit-text-size-adjust:100%;}
     <div class="grid-bg"></div>
     <div class="hero" style="position:relative;">
       <div class="hero-text">
-        <div class="hero-eyebrow"><div class="hero-eyebrow-dot"></div>Retinal health tracking · Early access</div>
+        <div class="hero-eyebrow"><div class="hero-eyebrow-dot"></div>Retinal health tracking · Free to try</div>
         <h1>Track your eye health, <em>over time</em></h1>
         <p class="hero-sub">Vytreos uses AI to analyze retinal photographs and track changes in your ocular biomarkers over time — spotting trends that a single snapshot never could.</p>
         <div class="hero-actions">
           <button class="btn btn-green" onclick="showView('auth-signup')">Start tracking</button>
-          <button class="btn btn-outline" onclick="document.getElementById('landing-email').focus()">Get early access</button>
-        </div>
-        <div style="margin-top:16px;display:flex;gap:8px;max-width:400px;">
-          <input id="landing-email" type="email" placeholder="your@email.com" style="flex:1;padding:11px 16px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:40px;font-size:13px;color:var(--text);font-family:'Outfit',sans-serif;outline:none;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
-          <button onclick="collectLandingEmail()" style="padding:11px 18px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;">Notify me</button>
         </div>
         <p class="hero-note">✦ Experimental · For wellness exploration only &nbsp;·&nbsp; Not a medical device &nbsp;·&nbsp; Start tracking today</p>
           <div class="mobile-hero-steps" style="display:none;">
@@ -1336,7 +1331,7 @@ html{-webkit-text-size-adjust:100%;}
         <div style="margin-top:24px;background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:28px 32px;">
           <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:8px;">🎁 Invite friends</div>
           <div style="font-family:'Fraunces',serif;font-size:18px;color:var(--text);margin-bottom:8px;">Your personal invite link</div>
-          <div style="font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:16px;">Share this link with friends. When they sign up using your link, they get credited to your account — founding members get early premium access.</div>
+          <div style="font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:16px;">Share this link with friends. When they sign up using your link, they get credited to your account — founding members get 40% off Premium.</div>
           <div id="referral-loading" style="font-size:12px;color:var(--text-3);margin-bottom:12px;">Generating your link...</div>
           <div id="referral-content" style="display:none;">
             <div style="display:flex;gap:8px;margin-bottom:14px;">
@@ -1417,7 +1412,7 @@ html{-webkit-text-size-adjust:100%;}
     <div class="premium-modal-header">
       <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:8px">✦ Vytreos Premium</div>
       <div style="font-family:'Fraunces',serif;font-size:26px;color:var(--text);margin-bottom:6px">One subscription. A full eye-health timeline.</div>
-      <div style="font-size:13px;color:var(--text-2)">Premium is in development. Join the waitlist for early access and a founding member discount.</div>
+      <div style="font-size:13px;color:var(--text-2)">Premium is live in beta — preview every feature free, no card required.</div>
     </div>
     <div class="premium-modal-body">
       <div class="prem-feat-grid">
@@ -1453,16 +1448,6 @@ html{-webkit-text-size-adjust:100%;}
         </div>
       </div>
       <div id="premiumLocked">
-      <div id="waitlist-form">
-        <div style="font-size:12px;color:var(--text-2);margin-bottom:10px;font-weight:600;">Join the waitlist — be first to know when Premium launches:</div>
-        <div style="display:flex;gap:8px;">
-          <input id="waitlist-email" type="email" placeholder="your@email.com" style="flex:1;padding:11px 14px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:'Outfit',sans-serif;color:var(--text);outline:none;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
-          <button onclick="joinWaitlist()" style="padding:11px 20px;background:linear-gradient(135deg,var(--green),#00b8ff);color:#000;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;">Join →</button>
-        </div>
-      </div>
-      <div id="waitlist-success" style="display:none;text-align:center;padding:16px;background:var(--green-dim);border:1px solid rgba(0,217,139,.2);border-radius:10px;color:var(--green);font-size:13px;font-weight:600;">
-        ✓ You're on the list! We'll email you when Premium launches.
-      </div>
       <button onclick="previewPremium()" style="width:100%;margin-top:14px;padding:13px;background:linear-gradient(135deg,var(--green),#00b8ff);color:#000;border:none;border-radius:40px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;">🔓 Preview Premium free — no card</button>
       </div>
       <div id="premiumActive" style="display:none;text-align:center;padding:20px;background:var(--green-dim);border:1px solid rgba(0,217,139,.25);border-radius:14px;">
@@ -1471,7 +1456,7 @@ html{-webkit-text-size-adjust:100%;}
         <div style="font-size:12px;color:var(--text-2);line-height:1.7;margin-bottom:14px;">Unlimited history · full-model consensus · up to 6 family profiles are all live for you.</div>
         <button onclick="endPremiumPreview()" style="padding:9px 22px;background:var(--bg-3);border:1px solid var(--border);color:var(--text-2);border-radius:40px;font-size:12px;cursor:pointer;font-family:'Outfit',sans-serif;">End preview</button>
       </div>
-      <div style="text-align:center;font-size:11px;color:var(--text-3);margin-top:10px;">No spam · Unsubscribe anytime · Founding members get 40% off</div>
+      <div style="text-align:center;font-size:11px;color:var(--text-3);margin-top:10px;">Founding members get 40% off when billing launches</div>
     </div>
   </div>
 </div>
@@ -1595,7 +1580,7 @@ try{
 // ── AUTH OBSERVER ──────────────────────────────────────────────────────────────
 onAuthStateChanged(auth,async user=>{
   window._hideLoader&&window._hideLoader();
-  if(user){currentUser=user;isGuest=false;if(_awaitingVerify){showVerifyGate();}else if(user.emailVerified){await enterApp();}else{const need=!localStorage.getItem('vy_verified_'+user.uid);if(need){_awaitingVerify=true;_verifyEmail=user.email;showVerifyGate();}else{await enterApp();}}}
+  if(user){currentUser=user;isGuest=false;if(_awaitingVerify){showVerifyGate();}else{const need=!localStorage.getItem('vy_verified_'+user.uid);if(need){_awaitingVerify=true;_verifyEmail=user.email;showVerifyGate();}else{await enterApp();}}}
   else{showView('landing');}
 },err=>{
   console.warn('Auth error:',err);
@@ -1666,7 +1651,6 @@ function showGoogleErr(msg){
   });
 }
 async function afterGoogleAuth(user){
-  try{localStorage.setItem('vy_verified_'+user.uid,'1');}catch(_){}
   try{
     const ref=doc(db,'users',user.uid);
     const snap=await getDoc(ref);
@@ -2389,9 +2373,6 @@ window.openPremiumModal=()=>{
   const active=document.getElementById('premiumActive');
   if(locked)locked.style.display=isPrem?'none':'block';
   if(active)active.style.display=isPrem?'block':'none';
-  document.getElementById('waitlist-form').style.display='block';
-  document.getElementById('waitlist-success').style.display='none';
-  if(currentUser?.email){const el=document.getElementById('waitlist-email');if(el)el.value=currentUser.email;}
   document.getElementById('premiumModal').classList.add('open');
 };
 window.closePremiumModal=()=>document.getElementById('premiumModal').classList.remove('open');
@@ -2486,15 +2467,6 @@ function renderFamilyChip(){
   if(!active){c.innerHTML='';return;}
   c.innerHTML=`<div onclick="openFamilyModal()" style="position:fixed;bottom:76px;right:16px;z-index:120;display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg-2);border:1px solid rgba(0,217,139,.3);border-radius:40px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.45);" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='rgba(0,217,139,.3)'"><div style="width:24px;height:24px;border-radius:50%;background:var(--green-dim);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">${(active.name||'?')[0].toUpperCase()}</div><span style="font-size:11px;font-weight:600;color:var(--text);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${active.name||'Me'}</span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3);"><path d="m6 9 6 6 6-6"/></svg></div>`;
 }
-window.joinWaitlist=async()=>{
-  const email=document.getElementById('waitlist-email').value.trim();
-  if(!email||!email.includes('@')){toast('Please enter a valid email','err');return;}
-  try{
-    await setDoc(doc(db,'waitlist',email.replace(/[.#$[\]]/g,'_')),{email,uid:currentUser?.uid||null,joinedAt:serverTimestamp()});
-    document.getElementById('waitlist-form').style.display='none';
-    document.getElementById('waitlist-success').style.display='block';
-  }catch(e){console.error(e);toast('Something went wrong - try again','err');}
-};
 
 // ── REFERRAL SYSTEM ───────────────────────────────────────────────────────────
 function getReferralCode(){
@@ -2606,17 +2578,6 @@ window.shareResults=async()=>{
   try{await navigator.clipboard.writeText(text);toast('Results copied to clipboard!');}catch(e){toast('Share not supported','err');}
 };
 
-// ── LANDING EMAIL ─────────────────────────────────────────────────────────────
-window.collectLandingEmail=async()=>{
-  const input=document.getElementById('landing-email');if(!input)return;
-  const email=input.value.trim();
-  if(!email||!email.includes('@')){toast('Please enter a valid email','err');return;}
-  try{
-    await setDoc(doc(db,'waitlist',email.replace(/[.#$[\]]/g,'_')),{email,source:'landing',joinedAt:serverTimestamp()});
-    input.value='';input.placeholder='You are on the list!';input.style.borderColor='var(--green)';
-    toast('You are on the early access list!');
-  }catch(e){input.value='';input.placeholder='You are on the list!';toast('You are on the early access list!');}
-};
 
 // ── ONBOARDING ────────────────────────────────────────────────────────────────
 function showOnboarding(){
