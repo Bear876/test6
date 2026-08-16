@@ -1547,7 +1547,7 @@ html{-webkit-text-size-adjust:100%;}
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile,GoogleAuthProvider,signInWithPopup,signInWithRedirect,getRedirectResult}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import{getFirestore,collection,addDoc,getDocs,query,orderBy,doc,setDoc,getDoc,deleteDoc,updateDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import{getStorage,ref,uploadString,getDownloadURL}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+import{getStorage,ref,uploadString,getDownloadURL,deleteObject}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 // Gemini key handled server-side via /api/analyze
 const fbApp=initializeApp({
@@ -2565,6 +2565,7 @@ window.executeDeleteScan=async()=>{
   try{
     const __delPid=(window.FAMILY&&FAMILY.getActive&&FAMILY.getActive())?FAMILY.getActive().id:((window.FAMILY&&window.FAMILY.DEFAULT_PROFILE_ID)||'self');
     await deleteDoc(doc(db,'users',currentUser.uid,'profiles',__delPid,'scans',scanToDelete));
+    try{await deleteObject(ref(store,'users/'+currentUser.uid+'/scans/'+scanToDelete+'.jpg'));}catch(err){/* no stored photo */}
     closeDeleteModal();await loadScans();toast('Scan deleted');
   }catch(e){console.error(e);toast('Failed to delete','err');if(btn){btn.disabled=false;btn.textContent='Delete';}}
 };
@@ -2913,7 +2914,22 @@ window.saveScan=async()=>{
     };
     if(window.FAMILY&&FAMILY.addScanMeta){await FAMILY.addScanMeta(scanPayload);}
     const __savePid=(window.FAMILY&&FAMILY.getActive&&FAMILY.getActive())?FAMILY.getActive().id:((window.FAMILY&&window.FAMILY.DEFAULT_PROFILE_ID)||'self');
-    await addDoc(collection(db,'users',currentUser.uid,'profiles',__savePid,'scans'),scanPayload);
+    const __scanRef=await addDoc(collection(db,'users',currentUser.uid,'profiles',__savePid,'scans'),scanPayload);
+    // Persist the actual photo to Storage so history/trends keep the image.
+    // Fire-and-forget: a failed upload (e.g. Storage rules) must never block saving.
+    const __imgData=pendingImgData;
+    if(__imgData){
+      (async()=>{
+        try{
+          const __imgRef=ref(store,'users/'+currentUser.uid+'/scans/'+__scanRef.id+'.jpg');
+          await uploadString(__imgRef,__imgData,'data_url');
+          const __url=await getDownloadURL(__imgRef);
+          await updateDoc(__scanRef,{imageUrl:__url});
+          const hit=scans.find(x=>x.id===__scanRef.id);
+          if(hit){hit.imageUrl=__url;renderScans();}
+        }catch(err){console.warn('scan photo upload failed:',err);}
+      })();
+    }
     if(dataSharingEnabled){
       const prefs={age:document.getElementById('pref-age')?.value||'',sex:document.getElementById('pref-sex')?.value||'',diet:document.getElementById('pref-diet')?.value||'',goals:document.getElementById('pref-goals')?.value||''};
       addDoc(collection(db,'research_scans'),{
