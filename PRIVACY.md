@@ -8,18 +8,18 @@ Vytreos ("we", "us") operates a retinal-eye-health exploration web app. This pol
 
 - The web app loads in your browser; no account is required to use it.
 - When you start an analysis, **your retinal photograph leaves your device** so it can be processed by the AI provider matching the model you selected (or the default Gemini fallback).
-- We currently do **not** persist your retinal photo on a Vytreos-owned server: it is buffered in browser memory, forwarded to the chosen AI provider, then we discard it on the server side.
+- We do **not** persist your full-resolution retinal photo on a Vytreos-owned server: it is buffered in browser memory, forwarded to the chosen AI provider, then discarded on the server side. If you save a scan while signed in, we keep only a small low-resolution thumbnail on the scan record so you can recognize it in your history — deleting the scan deletes the thumbnail.
 
 ## What we collect
 
 | Data | When | Where it's stored |
 |---|---|---|
-| Retinal photo (base64) | When you click "Analyze" | In-memory only; forwarded to the selected AI provider; discarded server-side after the call. |
-| Scan metadata (date, nutrient list, narrative) | If you sign in and save a scan | Would be stored in a future backend; today it lives only in your browser's localStorage. |
+| Retinal photo (base64) | When you click "Analyze" | Not persisted in full; if you save a scan, a small low-resolution thumbnail is stored on the scan record and removed when you delete the scan. |
+| Scan metadata (date, nutrient list, narrative) | If you sign in and save a scan | Stored in your account's Firestore profile so you can see trends across visits; deleted with the scan. |
 | Provider API response | When you ask for an analysis | Held briefly server-side, then discarded. |
 | Standard server logs | Every request | Aggregated counts, response status, request ID, byte length. Not matched to a person. |
 
-If you sign up for an account in the future, we may store scan metadata keyed to your account so you can see trends across visits. We will never sell or rent that data.
+We never sell or rent your data.
 
 ## Third-party AI providers
 
