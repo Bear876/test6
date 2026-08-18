@@ -1547,7 +1547,6 @@ html{-webkit-text-size-adjust:100%;}
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile,GoogleAuthProvider,signInWithPopup,signInWithRedirect,getRedirectResult}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import{getFirestore,collection,addDoc,getDocs,query,orderBy,doc,setDoc,getDoc,deleteDoc,updateDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import{getStorage,ref,uploadString,getDownloadURL,deleteObject}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 // Gemini key handled server-side via /api/analyze
 const fbApp=initializeApp({
@@ -1559,7 +1558,7 @@ const fbApp=initializeApp({
   appId:"1:778702623300:web:2249509d3cd3e839e8a211",
   measurementId:"G-Y5BVP33V3P"
 });
-const auth=getAuth(fbApp),db=getFirestore(fbApp),store=getStorage(fbApp);
+const auth=getAuth(fbApp),db=getFirestore(fbApp);
 if(window.FAMILY&&FAMILY.registerFirebasePrimitives){
   FAMILY.registerFirebasePrimitives({collection,doc,addDoc,setDoc,getDoc,getDocs,query,orderBy,deleteDoc,updateDoc,serverTimestamp});
 }
@@ -1840,7 +1839,7 @@ function fmtDate(ts){if(!ts)return'—';const d=ts.toDate?ts.toDate():new Date(t
 
 function scanItem(s){
   const lows=(s.nutrients||[]).filter(n=>n.status==='low');
-  const thumbHtml=s.imageUrl?`<img src="${s.imageUrl}" style="width:48px;height:48px;object-fit:cover;border-radius:7px;">`:`<svg width="24" height="24" viewBox="0 0 140 140" fill="none"><circle cx="70" cy="70" r="55" stroke="rgba(0,217,139,0.35)" stroke-width="1.5"/><circle cx="70" cy="70" r="8" fill="rgba(255,180,80,0.6)"/></svg>`;
+  const thumbHtml=(s.thumb||s.imageUrl)?`<img src="${s.thumb||s.imageUrl}" style="width:48px;height:48px;object-fit:cover;border-radius:7px;">`:`<svg width="24" height="24" viewBox="0 0 140 140" fill="none"><circle cx="70" cy="70" r="55" stroke="rgba(0,217,139,0.35)" stroke-width="1.5"/><circle cx="70" cy="70" r="8" fill="rgba(255,180,80,0.6)"/></svg>`;
   return`<div class="scan-item" style="position:relative;" data-nutrients="${(s.nutrients||[]).map(n=>n.name).join(',').toLowerCase()}" data-type="${s.imageType||''}" data-has-low="${lows.length>0?'1':'0'}" onclick="openScan('${s.id}')"><div class="scan-thumb">${thumbHtml}</div><div class="scan-info"><div class="scan-date">${fmtDate(s.createdAt)}</div><div class="scan-summary">${(s.nutrients||[]).length} nutrients assessed${s.imageType?` · ${s.imageType}`:''}</div></div><div class="scan-badges">${lows.map(n=>`<span class="badge badge-warn">${n.name} low</span>`).join('')||'<span class="badge badge-ok">All normal</span>'}</div><button onclick="event.stopPropagation();confirmDeleteScan('${s.id}')" style="margin-left:auto;flex-shrink:0;background:transparent;border:1px solid var(--border);color:var(--text-3);border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-3)'">Delete</button></div>`;
 }
 
@@ -1870,7 +1869,7 @@ function renderScans(){
 window.openScan=id=>{
   const s=scans.find(x=>x.id===id);if(!s)return;
   document.getElementById('modal-body').innerHTML=`
-    ${s.imageUrl?`<img src="${s.imageUrl}" class="modal-img">`:''}
+    ${(s.thumb||s.imageUrl)?`<img src="${s.thumb||s.imageUrl}" class="modal-img">`:''}
     <div style="font-family:'Fraunces',serif;font-size:22px;margin-bottom:4px">Scan — ${fmtDate(s.createdAt)}</div>
     <div class="meta-pills" style="margin-bottom:16px">${s.imageType?`<span class="meta-pill">${s.imageType}</span>`:''}${s.imageQuality?`<span class="meta-pill">${s.imageQuality} quality</span>`:''}${s.nutrients?`<span class="meta-pill">${s.nutrients.length} nutrients</span>`:''}</div>
     ${buildRows(s.nutrients||[])}
@@ -1913,12 +1912,11 @@ function buildRows(nutrients,animate=false){
 }
 
 // ── FILE UPLOAD ─────────────────────────────────────────────────────────────────
-function compressImage(dataUrl, maxSizeKB=2500, quality=0.85){
+function compressImage(dataUrl, maxSizeKB=2500, quality=0.85, maxDim=1400){
   return new Promise(resolve=>{
     const img=new Image();
     img.onload=()=>{
       let w=img.width,h=img.height;
-      const maxDim=1400;
       if(w>maxDim||h>maxDim){const r=Math.min(maxDim/w,maxDim/h);w=Math.round(w*r);h=Math.round(h*r);}
       const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
       canvas.getContext('2d').drawImage(img,0,0,w,h);
@@ -2565,7 +2563,6 @@ window.executeDeleteScan=async()=>{
   try{
     const __delPid=(window.FAMILY&&FAMILY.getActive&&FAMILY.getActive())?FAMILY.getActive().id:((window.FAMILY&&window.FAMILY.DEFAULT_PROFILE_ID)||'self');
     await deleteDoc(doc(db,'users',currentUser.uid,'profiles',__delPid,'scans',scanToDelete));
-    try{await deleteObject(ref(store,'users/'+currentUser.uid+'/scans/'+scanToDelete+'.jpg'));}catch(err){/* no stored photo */}
     closeDeleteModal();await loadScans();toast('Scan deleted');
   }catch(e){console.error(e);toast('Failed to delete','err');if(btn){btn.disabled=false;btn.textContent='Delete';}}
 };
@@ -2613,7 +2610,7 @@ const MODAL_CONTENT={
   privacy:{
     title:'Privacy Policy',
     body:`<p style="margin-bottom:16px;"><strong>Last updated: May 2026</strong></p>
-<p style="margin-bottom:12px;"><strong>What we collect</strong><br>When you create an account, we collect your name and email. When you run a scan, we store the AI-generated analysis results (nutrient scores, summary, recommendations). We do not store the actual images you upload — they are sent to AI models for analysis and discarded.</p>
+<p style="margin-bottom:12px;"><strong>What we collect</strong><br>When you create an account, we collect your name and email. When you run a scan, we store the AI-generated analysis results (nutrient scores, summary, recommendations) and a small low-resolution thumbnail so you can recognize past scans. Original uploads are sent to AI models for analysis and never stored in full.</p>
 <p style="margin-bottom:12px;"><strong>How we use your data</strong><br>Your scan data is used to show you your history and trends within the app. If you opt into research contribution, anonymized scan results (no name, no email, no images) are stored separately to help improve Vytreos. You can disable this at any time in Profile settings.</p>
 <p style="margin-bottom:12px;"><strong>Third-party services</strong><br>Vytreos uses Firebase (Google) for authentication and data storage, and multiple AI APIs (Google Gemini, Groq, Mistral, HuggingFace, Roboflow) to analyze images. Images are transmitted to these services and subject to their privacy policies.</p>
 <p style="margin-bottom:12px;"><strong>Data security</strong><br>Your data is stored in Firebase Firestore with security rules that ensure only you can access your account data. We use HTTPS for all transmissions.</p>
@@ -2915,20 +2912,15 @@ window.saveScan=async()=>{
     if(window.FAMILY&&FAMILY.addScanMeta){await FAMILY.addScanMeta(scanPayload);}
     const __savePid=(window.FAMILY&&FAMILY.getActive&&FAMILY.getActive())?FAMILY.getActive().id:((window.FAMILY&&window.FAMILY.DEFAULT_PROFILE_ID)||'self');
     const __scanRef=await addDoc(collection(db,'users',currentUser.uid,'profiles',__savePid,'scans'),scanPayload);
-    // Persist the actual photo to Storage so history/trends keep the image.
-    // Fire-and-forget: a failed upload (e.g. Storage rules) must never block saving.
-    const __imgData=pendingImgData;
-    if(__imgData){
-      (async()=>{
-        try{
-          const __imgRef=ref(store,'users/'+currentUser.uid+'/scans/'+__scanRef.id+'.jpg');
-          await uploadString(__imgRef,__imgData,'data_url');
-          const __url=await getDownloadURL(__imgRef);
-          await updateDoc(__scanRef,{imageUrl:__url});
-          const hit=scans.find(x=>x.id===__scanRef.id);
-          if(hit){hit.imageUrl=__url;renderScans();}
-        }catch(err){console.warn('scan photo upload failed:',err);}
-      })();
+    // Free-tier photo memory: keep only a small low-res thumbnail inside the scan
+    // doc (no paid Storage). The full-resolution photo is never persisted.
+    if(pendingImgData){
+      try{
+        const __thumb=await compressImage(pendingImgData,80,0.6,480);
+        await updateDoc(__scanRef,{thumb:__thumb});
+        const hit=scans.find(x=>x.id===__scanRef.id);
+        if(hit){hit.thumb=__thumb;renderScans();}
+      }catch(err){console.warn('thumbnail save failed:',err);}
     }
     if(dataSharingEnabled){
       const prefs={age:document.getElementById('pref-age')?.value||'',sex:document.getElementById('pref-sex')?.value||'',diet:document.getElementById('pref-diet')?.value||'',goals:document.getElementById('pref-goals')?.value||''};
