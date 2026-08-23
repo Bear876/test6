@@ -155,6 +155,7 @@
     }
 
     emit('changed', { premium: v, source: state.source });
+    try { if (root && root.track) root.track('premium_toggled', { enabled: v, source: state.source }); } catch (e) {}
     return v;
   }
 

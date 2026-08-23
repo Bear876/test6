@@ -5,7 +5,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(reg){try{reg.unregister();}catch(_){}})});}</script>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(err){console.warn('SW registration failed:',err);});});}</script>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#06080a">
@@ -1379,6 +1379,18 @@ html{-webkit-text-size-adjust:100%;}
             ✓ Thank you! Your anonymized scan data will contribute to Vytreos's research dataset.
           </div>
         </div>
+
+        <!-- REPORT A PROBLEM CARD -->
+        <div style="margin-top:24px;background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:28px 32px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:8px;">🛠 Report a problem</div>
+          <div style="font-family:'Fraunces',serif;font-size:18px;color:var(--text);margin-bottom:8px;">Found a bug? Tell us what happened.</div>
+          <div style="font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:12px;">Include what you were doing when it broke. We read every report.</div>
+          <textarea id="report-text" placeholder="e.g. The OTP email took 5 minutes to arrive…" style="width:100%;min-height:90px;padding:12px 14px;background:var(--bg-3);border:1px solid var(--border);border-radius:10px;font-size:13px;color:var(--text);font-family:'Outfit',sans-serif;outline:none;resize:vertical;box-sizing:border-box;"></textarea>
+          <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+            <button onclick="sendReport()" style="padding:11px 22px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;">Send report</button>
+            <a href="mailto:kanavsah@gmail.com?subject=Vytreos%20bug%20report" style="padding:11px 22px;background:var(--bg-3);border:1px solid var(--border);border-radius:40px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-2);text-decoration:none;font-family:'Outfit',sans-serif;">Email instead</a>
+          </div>
+        </div>
       </div>
 
     </div><!-- /app-content -->
@@ -1557,6 +1569,8 @@ html{-webkit-text-size-adjust:100%;}
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile,GoogleAuthProvider,signInWithPopup,signInWithRedirect,getRedirectResult}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import{getFirestore,collection,addDoc,getDocs,query,orderBy,doc,setDoc,getDoc,deleteDoc,updateDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import{getAnalytics,logEvent,isSupported}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
+import{getMessaging,getToken}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
 
 // Gemini key handled server-side via /api/analyze
 const fbApp=initializeApp({
@@ -1569,6 +1583,13 @@ const fbApp=initializeApp({
   measurementId:"G-Y5BVP33V3P"
 });
 const auth=getAuth(fbApp),db=getFirestore(fbApp);
+// ── Analytics (free, same Firebase project) ────────────────────────────────
+let _analytics=null;
+if(typeof isSupported==='function'){isSupported().then(ok=>{if(ok){try{_analytics=getAnalytics(fbApp);}catch(e){}}}).catch(()=>{});}
+window.track=function(name,params){try{if(_analytics)logEvent(_analytics,name,params||{});}catch(e){}};
+// ── Cloud Messaging (push reminders) ───────────────────────────────────────
+let firebaseMessaging=null;
+try{firebaseMessaging=getMessaging(fbApp);}catch(e){}
 if(window.FAMILY&&FAMILY.registerFirebasePrimitives){
   FAMILY.registerFirebasePrimitives({collection,doc,addDoc,setDoc,getDoc,getDocs,query,orderBy,deleteDoc,updateDoc,serverTimestamp});
 }
@@ -1626,6 +1647,7 @@ window.doSignup=async()=>{
     await updateProfile(cred.user,{displayName:name});
     setDoc(doc(db,'users',cred.user.uid),{name,email,createdAt:new Date().toISOString(),preferences:{}}).catch(()=>{});
     saveReferral(cred.user.uid);
+    window.track('sign_up',{method:'email'});
     currentUser=cred.user;isGuest=false;
     _verifyEmail=email;_awaitingVerify=true;showVerifyGate();
   }catch(err){
@@ -1645,6 +1667,7 @@ window.doLogin=async()=>{
   const btn=document.getElementById('li-btn');btn.disabled=true;btn.innerHTML='<span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,0.3);border-top-color:#000;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px"></span>Signing in…';
   try{
     const cred=await signInWithEmailAndPassword(auth,email,pass);
+    window.track('login',{method:'email'});
     currentUser=cred.user;isGuest=false;
     _verifyEmail=email;_awaitingVerify=true;showVerifyGate();
   }catch(err){
@@ -1665,6 +1688,9 @@ async function afterGoogleAuth(user){
     const snap=await getDoc(ref);
     if(!snap.exists()){
       await setDoc(ref,{name:user.displayName||(user.email?user.email.split('@')[0]:'User'),email:user.email||'',createdAt:new Date().toISOString(),preferences:{}});
+      window.track('sign_up',{method:'google'});
+    }else{
+      window.track('login',{method:'google'});
     }
   }catch(e){console.warn('google user doc:',e);}
   if(typeof saveReferral==='function'){try{saveReferral(user.uid);}catch(_){}}
@@ -1746,6 +1772,7 @@ window.verifyCode=async()=>{
     const r=await fetch('/api/verifycode',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'verify',email:_verifyEmail,code})});
     const j=await r.json();
     if(j&&j.ok){
+      window.track('otp_verified');
       try{localStorage.setItem('vy_verified_'+currentUser.uid,'1');}catch(_){}
       _awaitingVerify=false;_verifyStarted=false;_verifyEmail=null;
       if(_verifyTimer){clearInterval(_verifyTimer);_verifyTimer=null;}
@@ -2391,13 +2418,26 @@ function requestPushPermission(){
   document.body.appendChild(banner);
   setTimeout(()=>banner?.remove(),12000);
 }
+// Paste your Firebase Cloud Messaging web-push VAPID key here (public — safe to
+// expose to browsers). Get it: Firebase console → Project settings → Cloud
+// Messaging → Web push certificates. Leave empty to keep the banner dormant.
+const VAPID_KEY='';
 window.enablePush=async()=>{
   document.getElementById('pushBanner')?.remove();
   try{
     const perm=await Notification.requestPermission();
-    if(perm==='granted'){toast('Weekly reminders enabled!');if(currentUser)setDoc(doc(db,'users',currentUser.uid),{pushEnabled:true},{merge:true}).catch(()=>{});}
-    else{toast('Notifications blocked — enable in browser settings','err');}
-  }catch(e){console.warn('Push error:',e);}
+    if(perm!=='granted'){toast('Notifications blocked — enable in browser settings','err');return;}
+    if(!VAPID_KEY||!firebaseMessaging){
+      toast('Reminders need a one-time setup — they\'ll be live soon','err');
+      return;
+    }
+    const tok=await getToken(firebaseMessaging,{vapidKey:VAPID_KEY}).catch(()=>null);
+    if(!tok){toast('Could not register this device for reminders','err');return;}
+    if(currentUser){setDoc(doc(db,'users',currentUser.uid),{pushEnabled:true,pushToken:tok,pushAt:serverTimestamp()},{merge:true}).catch(()=>{});}
+    localStorage.setItem('vy_push_tok',tok);
+    toast('Weekly reminders enabled!');
+    window.track('push_enabled');
+  }catch(e){console.warn('Push error:',e);toast('Could not enable reminders — try again','err');}
 };
 
 // ── NIH + USDA ENRICHMENT ─────────────────────────────────────────────────────
@@ -2430,6 +2470,7 @@ async function enrichWithFoodFacts(result){
 
 // ── PREMIUM MODAL ─────────────────────────────────────────────────────────────
 window.openPremiumModal=()=>{
+  window.track('premium_modal_open');
   const isPrem=!!(window.PREMIUM&&PREMIUM.isPremium&&PREMIUM.isPremium());
   const locked=document.getElementById('premiumLocked');
   const active=document.getElementById('premiumActive');
@@ -2701,7 +2742,7 @@ const MODAL_CONTENT={
 <p style="margin-bottom:16px;font-weight:700;color:var(--text);">What camera should I use?</p>
 <p style="margin-bottom:20px;">The best option is a fundus photograph from your eye doctor (ask for a retinal photo at your next exam — usually $20-40 as an add-on). For phone photos, use natural light, no flash, and angle the phone slightly to avoid corneal reflection. Pull your lower eyelid down gently to expose the inner pink tissue.</p>
 <p style="margin-bottom:16px;font-weight:700;color:var(--text);">Are my images stored?</p>
-<p style="margin-bottom:20px;">No. Your images are sent to AI models for analysis and immediately discarded. Only the analysis results (nutrient scores, summary) are saved to your account.</p>
+<p style="margin-bottom:20px;">No. Your full-resolution photo is sent to AI models for analysis and never stored. If you save a scan, a small low-resolution thumbnail is kept on your account so you can recognize past scans — it is deleted when you delete the scan.</p>
 <p style="margin-bottom:16px;font-weight:700;color:var(--text);">How many scans can I do?</p>
 <p style="margin-bottom:20px;">Free accounts can run up to 10 scans per day. Scanning weekly or monthly gives the most meaningful trend data.</p>
 <p style="margin-bottom:16px;font-weight:700;color:var(--text);">Why do I get different results on the same image?</p>
@@ -2875,6 +2916,7 @@ if(!result){
     renderAnalysis(result);
     const modelCount=[resA,resB,resC,resD].filter(Boolean).length;
     const src=modelCount>=2?modelCount+'-model consensus':'AI analysis complete';
+    window.track('scan_completed',{models:modelCount});
     toast('Analysis complete · '+src);
   }catch(err){
     clearInterval(timer);console.error(err);
@@ -2958,6 +3000,80 @@ function renderAnalysis(r){
   setTimeout(()=>document.querySelectorAll('[data-t]').forEach(b=>{b.style.width=b.dataset.t+'%';}),60);
 }
 
+// ── ACCURACY FEEDBACK (fixes the previously dead 👍/👎 buttons) ────────────────
+window.__accuracyFeedback=async function(btn,vote){
+  if(!currentUser){toast('Sign in to send feedback','err');return;}
+  const names=((pendingResult&&pendingResult.nutrients)||[]).map(n=>n.name).slice(0,12);
+  let ns=null;
+  try{if(window.ACCURACY&&ACCURACY.computeNutriScore){const s=ACCURACY.computeNutriScore((pendingResult&&pendingResult.nutrients)||[]);if(typeof s.score==='number'&&isFinite(s.score))ns=s.score;}}catch(_){}
+  try{
+    await addDoc(collection(db,'feedback'),{
+      vote:vote==='up'?'useful':'inaccurate',
+      uid:currentUser.uid,
+      email:currentUser.email||'',
+      nutrients:names,
+      nutriScore:ns,
+      imageType:(pendingResult&&pendingResult.imageType)||null,
+      userAgent:(navigator.userAgent||'').slice(0,200),
+      createdAt:serverTimestamp()
+    });
+    window.track('feedback',{vote:vote==='up'?'useful':'inaccurate'});
+  }catch(e){console.warn('feedback save:',e);toast('Could not send feedback','err');return;}
+  const box=btn&&btn.closest('.scan-feedback');
+  if(box){box.querySelectorAll('.feedback-btn').forEach(b=>{b.style.opacity=.4;b.style.pointerEvents='none';});}
+  if(btn){btn.style.opacity=1;btn.style.borderColor='var(--green)';}
+  toast('Thanks — your feedback helps us improve!');
+};
+
+// ── RESEARCH DATA SHARING TOGGLE (was referenced but never defined — dead UI) ──
+function renderShareToggle(){
+  const t=document.getElementById('share-toggle'),k=document.getElementById('share-knob'),l=document.getElementById('share-label');
+  if(!t)return;
+  t.style.background=dataSharingEnabled?'rgba(0,217,139,0.25)':'var(--bg-4)';
+  t.style.borderColor=dataSharingEnabled?'rgba(0,217,139,0.5)':'var(--border-2)';
+  if(k){k.style.left=dataSharingEnabled?'26px':'3px';k.style.background=dataSharingEnabled?'var(--green)':'var(--text-3)';}
+  if(l){l.textContent=dataSharingEnabled?'ON':'OFF';l.style.color=dataSharingEnabled?'var(--green)':'var(--text-3)';}
+}
+window.updateShareToggleUI=renderShareToggle;
+window.toggleDataSharing=async()=>{
+  if(!currentUser){toast('Sign in to contribute to research','err');return;}
+  dataSharingEnabled=!dataSharingEnabled;
+  renderShareToggle();
+  const st=document.getElementById('share-status');
+  if(st)st.style.display=dataSharingEnabled?'block':'none';
+  try{
+    await setDoc(doc(db,'users',currentUser.uid),{'preferences.dataSharing':dataSharingEnabled},{merge:true});
+    window.track('research_toggle',{enabled:dataSharingEnabled});
+    toast(dataSharingEnabled?'Research contribution on — thank you!':'Research contribution off');
+  }catch(e){console.warn('share pref:',e);toast('Could not save preference','err');}
+};
+
+// ── REPORT A PROBLEM ─────────────────────────────────────────────────────────
+window.sendReport=async function(){
+  const t=document.getElementById('report-text');
+  const msg=(t&&t.value||'').trim();
+  if(!msg){toast('Please describe the problem first','err');if(t)t.focus();return;}
+  try{
+    if(currentUser){
+      await addDoc(collection(db,'feedback'),{
+        type:'problem',
+        message:msg.slice(0,4000),
+        uid:currentUser.uid,
+        email:currentUser.email||'',
+        url:location.href,
+        userAgent:(navigator.userAgent||'').slice(0,300),
+        createdAt:serverTimestamp()
+      });
+      window.track('report_sent');
+    }else{
+      location.href='mailto:kanavsah@gmail.com?subject='+encodeURIComponent('Vytreos bug report')+'&body='+encodeURIComponent(msg);
+      return;
+    }
+    if(t)t.value='';
+    toast('Report sent — thank you!');
+  }catch(e){console.warn('report:',e);toast('Could not send — please email us instead','err');}
+};
+
 // ── SAVE SCAN ──────────────────────────────────────────────────────────────────
 window.saveScan=async()=>{
   if(!pendingResult||!currentUser)return;
@@ -2999,7 +3115,7 @@ window.saveScan=async()=>{
         contributedAt:serverTimestamp()
       }).catch(()=>{});
     }
-    pendingResult=null;pendingImgData=null;await loadScans();toast('Scan saved!');
+    pendingResult=null;pendingImgData=null;await loadScans();window.track('scan_saved');toast('Scan saved!');
     setTimeout(()=>{resetUpload();switchTab('history');},900);
   }catch(e){
     console.error(e);toast('Failed to save — try again','err');
@@ -3014,7 +3130,8 @@ window.savePrefs=async()=>{
       age:document.getElementById('pref-age').value,
       sex:document.getElementById('pref-sex').value,
       diet:document.getElementById('pref-diet').value,
-      goals:document.getElementById('pref-goals').value
+      goals:document.getElementById('pref-goals').value,
+      dataSharing:dataSharingEnabled
     }},{merge:true});
     toast('Preferences saved');
   }catch(e){toast('Failed to save','err');}
