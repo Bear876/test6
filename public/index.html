@@ -925,10 +925,20 @@ html{-webkit-text-size-adjust:100%;}
         </div>
 
         
-<div class="nutriscore-strip" style="display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:18px 22px;margin-bottom:14px;">
-  <div style="font-family:'Fraunces',serif;font-size:34px;color:var(--text);line-height:1;"><span id="nutriscore-num">—</span><div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--text-3);letter-spacing:.14em;text-transform:uppercase;margin-top:2px;">NutriScore</div></div>
-  <div style="height:38px;position:relative;"><svg id="nutriscore-trend-svg" width="100%" height="38" viewBox="0 0 400 38" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"></svg><div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--text-3);margin-top:2px;">last 12 scans</div></div>
-  <div style="text-align:right;"><div id="nutriscore-delta" style="font-family:'Space Mono',monospace;font-size:11px;color:var(--text-3);"></div><div id="nutriscore-flags" style="font-family:'Space Mono',monospace;font-size:10px;color:var(--amber);margin-top:2px;"></div></div>
+<div class="nutriscore-strip" style="display:grid;grid-template-columns:auto 1fr auto;gap:8px 20px;align-items:center;background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:16px 22px;margin-bottom:14px;">
+  <div style="display:flex;flex-direction:column;justify-content:center;">
+    <div style="height:36px;display:flex;align-items:center;"><span id="nutriscore-num" style="font-family:'Fraunces',serif;font-size:36px;color:var(--text);line-height:1;">—</span></div>
+    <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--text-3);letter-spacing:.14em;text-transform:uppercase;margin-top:6px;">NutriScore</div>
+  </div>
+  <div style="display:flex;flex-direction:column;justify-content:center;min-width:0;">
+    <div style="height:36px;display:flex;align-items:center;"><svg id="nutriscore-trend-svg" width="100%" height="36" viewBox="0 0 400 36" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"></svg></div>
+    <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--text-3);letter-spacing:.08em;text-transform:uppercase;margin-top:6px;text-align:center;">last 12 scans</div>
+  </div>
+  <div style="display:flex;flex-direction:column;justify-content:center;text-align:right;">
+    <div style="height:36px;display:flex;align-items:center;justify-content:flex-end;"><div id="nutriscore-delta" style="font-family:'Space Mono',monospace;font-size:12px;color:var(--text-3);line-height:1;">—</div></div>
+    <div id="nutriscore-flags" style="font-family:'Space Mono',monospace;font-size:9px;color:var(--amber);margin-top:6px;"></div>
+  </div>
+</div>
 </div>
 <div class="stats-row">
           <div class="stat-card">
@@ -1837,6 +1847,59 @@ async function loadScans(){
 
 function fmtDate(ts){if(!ts)return'—';const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
 
+function renderNutriScore(){
+  const numEl=document.getElementById('nutriscore-num');
+  const svgEl=document.getElementById('nutriscore-trend-svg');
+  const deltaEl=document.getElementById('nutriscore-delta');
+  const flagsEl=document.getElementById('nutriscore-flags');
+  if(!numEl||!svgEl||!deltaEl||!flagsEl)return;
+  const scores=scans.slice().reverse().map(s=>{
+    try{
+      const sc=(window.ACCURACY&&ACCURACY.computeNutriScore)?ACCURACY.computeNutriScore(s.nutrients||[]).score:(window.PDF&&PDF.computeNutriScore?PDF.computeNutriScore(s):null);
+      return (typeof sc==='number'&&isFinite(sc))?sc:null;
+    }catch(e){return null;}
+  }).filter(v=>v!==null);
+  if(scores.length===0){
+    numEl.textContent='—';
+    deltaEl.textContent='—';
+    deltaEl.style.color='var(--text-3)';
+    flagsEl.textContent=scans.length?'no score yet — scan again':'run a scan to start';
+    svgEl.innerHTML='';
+    return;
+  }
+  const lastScore=scores[scores.length-1];
+  numEl.textContent=String(lastScore);
+  if(scores.length>=2){
+    const prev=scores[scores.length-2];
+    const d=lastScore-prev;
+    deltaEl.textContent=d>0?`+${d} vs last`:(d<0?`${d} vs last`:'unchanged');
+    deltaEl.style.color=d>0?'var(--green)':d<0?'var(--red)':'var(--text-3)';
+  } else {
+    deltaEl.textContent='first scan';
+    deltaEl.style.color='var(--text-3)';
+  }
+  const recent=scores.slice(-12);
+  const W=400,H=36,pad=5;
+  const minV=Math.min.apply(null,recent),maxV=Math.max.apply(null,recent);
+  const lo=minV===maxV?Math.max(0,minV-10):minV;
+  const hi=minV===maxV?Math.min(100,maxV+10):maxV;
+  const xi=i=>recent.length===1?W/2:pad+(W-2*pad)*(i/(recent.length-1));
+  const yi=v=>H-pad-((v-lo)/(hi-lo))*(H-2*pad);
+  const pts=recent.map((v,i)=>xi(i).toFixed(1)+','+yi(v).toFixed(1));
+  const col=lastScore<40?'var(--red)':lastScore>75?'var(--green)':'var(--amber)';
+  svgEl.innerHTML=`<polyline points="${pts.join(' ')}" fill="none" stroke="${col}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>`;
+  const wrap=svgEl.parentElement;
+  if(wrap){
+    wrap.style.position='relative';
+    let dot=wrap.querySelector('.ns-dot');
+    if(!dot){dot=document.createElement('span');dot.className='ns-dot';dot.style.cssText='position:absolute;width:7px;height:7px;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;';wrap.appendChild(dot);}
+    dot.style.left=(xi(recent.length-1)/W*100)+'%';
+    dot.style.top=(yi(lastScore)/H*100)+'%';
+    dot.style.background=col;
+  }
+  flagsEl.textContent=recent.length<2?'scan again soon for trends':'';
+}
+
 function scanItem(s){
   const lows=(s.nutrients||[]).filter(n=>n.status==='low');
   const thumbHtml=(s.thumb||s.imageUrl)?`<img src="${s.thumb||s.imageUrl}" style="width:48px;height:48px;object-fit:cover;border-radius:7px;">`:`<svg width="24" height="24" viewBox="0 0 140 140" fill="none"><circle cx="70" cy="70" r="55" stroke="rgba(0,217,139,0.35)" stroke-width="1.5"/><circle cx="70" cy="70" r="8" fill="rgba(255,180,80,0.6)"/></svg>`;
@@ -1864,6 +1927,7 @@ function renderScans(){
   if(emptyEl)emptyEl.style.display=scans.length===0?'block':'none';
   populateTrends();
   populateCompare();
+  renderNutriScore();
 }
 
 window.openScan=id=>{
@@ -2899,8 +2963,10 @@ window.saveScan=async()=>{
   if(!pendingResult||!currentUser)return;
   const btn=document.getElementById('saveBtn');if(btn){btn.disabled=true;btn.innerHTML='<span style="display:inline-block;width:12px;height:12px;border:2px solid rgba(0,0,0,0.3);border-top-color:#000;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px"></span>Saving…';}
   try{
+    const __ns=(window.ACCURACY&&ACCURACY.computeNutriScore)?ACCURACY.computeNutriScore(pendingResult.nutrients||[]).score:null;
     const scanPayload={
       nutrients:pendingResult.nutrients||[],
+      _nutriScore:(typeof __ns==='number'&&isFinite(__ns))?__ns:null,
       summary:pendingResult.summary||'',
       recommendations:pendingResult.recommendations||[],
       caveats:pendingResult.caveats||null,
