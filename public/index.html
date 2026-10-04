@@ -615,9 +615,9 @@ html{-webkit-text-size-adjust:100%;}
     <div class="grid-bg"></div>
     <div class="hero" style="position:relative;">
       <div class="hero-text">
-        <div class="hero-eyebrow"><div class="hero-eyebrow-dot"></div>Retinal health tracking · Free to try</div>
+        <div class="hero-eyebrow"><div class="hero-eyebrow-dot"></div>Experimental retinal wellness · Free to try</div>
         <h1>Track your eye health, <em>over time</em></h1>
-        <p class="hero-sub">Vytreos uses AI to analyze retinal photographs and track changes in your ocular biomarkers over time — spotting trends that a single snapshot never could.</p>
+        <p class="hero-sub">Vytreos uses AI to look for visual patterns in eye photographs and show how those experimental signals change over time — spotting trends that a single snapshot never could.</p>
         <div class="hero-actions">
           <button class="btn btn-green" onclick="showView('auth-signup')">Start tracking</button>
         </div>
@@ -704,7 +704,7 @@ html{-webkit-text-size-adjust:100%;}
     <div class="features-inner">
       <div class="section-label">How it works</div>
       <div class="section-title">Build your retinal health record</div>
-      <div class="section-sub">Scan regularly. Watch your biomarkers evolve. Catch changes before they become problems.</div>
+      <div class="section-sub">Scan regularly. Watch your signals evolve. Spot trends worth bringing to a professional.</div>
       <div class="feature-grid">
         <div class="feature-card">
           <div class="feature-icon">📸</div>
@@ -714,12 +714,12 @@ html{-webkit-text-size-adjust:100%;}
         <div class="feature-card">
           <div class="feature-icon">📈</div>
           <h3>AI tracks changes over time</h3>
-          <p>Vytreos' AI examines vessel caliber, macular pigment, disc color, and other ocular markers — flagging shifts between scans that single snapshots miss entirely.</p>
+          <p>Vytreos' AI looks for visual patterns across scans — vessel appearance, macular color, disc color — and flags shifts worth a closer look. Exploratory only, never diagnostic.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">🔍</div>
           <h3>Spot trends, not just snapshots</h3>
-          <p>Your dashboard shows how each biomarker is moving — improving, stable, or worth watching — so you can act early and track whether lifestyle changes are working.</p>
+          <p>Your dashboard shows how each signal is moving — improving, stable, or worth watching — so you can follow trends over time and discuss them with a professional.</p>
         </div>
       </div>
     </div>
@@ -757,6 +757,7 @@ html{-webkit-text-size-adjust:100%;}
       <a href="/terms.html" style="font-size:12px;color:var(--text-3);cursor:pointer;text-decoration:underline;">Terms of Service</a>
       <a onclick="showModal('faq')" style="font-size:12px;color:var(--text-3);cursor:pointer;text-decoration:underline;">FAQ</a>
       <a onclick="showModal('about')" style="font-size:12px;color:var(--text-3);cursor:pointer;text-decoration:underline;">About</a>
+      <a onclick="showModal('methodology')" style="font-size:12px;color:var(--text-3);cursor:pointer;text-decoration:underline;">Methodology</a>
     </div>
   </div>
 </div>
@@ -1063,7 +1064,7 @@ html{-webkit-text-size-adjust:100%;}
         <div class="desktop-scan">
         <div class="disclaimer-banner">
           <span style="font-size:15px;flex-shrink:0">ℹ️</span>
-          <div><strong>For wellness use only.</strong> Results are AI-generated estimates and do not constitute medical diagnosis. Always consult a qualified healthcare professional. <a onclick="openDisclaimer()" style="color:var(--green);cursor:pointer;font-weight:600">Full disclaimer →</a></div>
+          <div><strong>For wellness use only.</strong> Results are AI-generated estimates and do not constitute medical diagnosis. Always consult a qualified healthcare professional. <a onclick="openDisclaimer()" style="color:var(--green);cursor:pointer;font-weight:600">Full disclaimer →</a> <a onclick="showModal('methodology')" style="color:var(--green);cursor:pointer;font-weight:600">How the score works →</a> <a onclick="showModal('amd')" style="color:var(--green);cursor:pointer;font-weight:600">AMD basics →</a></div>
         </div>
         <div class="analyzer-grid">
           <div>
@@ -1365,7 +1366,7 @@ html{-webkit-text-size-adjust:100%;}
               <div style="font-family:'Fraunces',serif;font-size:18px;color:var(--text);margin-bottom:8px;">Help train the next generation of Vytreos</div>
               <div style="font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:12px;">Opt in to anonymously contribute your retinal scans and nutrient signals to Vytreos's research dataset. This data will be used to train a specialized AI model for ocular nutrition analysis — helping make Vytreos more accurate for everyone over time.</div>
               <div style="font-size:11px;color:var(--text-3);line-height:1.7;">
-                ✦ Your identity is never shared &nbsp;·&nbsp; ✦ Only scan data and health prefs are included &nbsp;·&nbsp; ✦ You can opt out at any time
+                ✦ Your identity is never shared &nbsp;·&nbsp; ✦ Only scan data and health prefs are included &nbsp;·&nbsp; ✦ Opt out anytime — stops future sharing (shared data is anonymous, so it can't be linked back to you)
               </div>
             </div>
             <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding-top:4px;">
@@ -1377,6 +1378,17 @@ html{-webkit-text-size-adjust:100%;}
           </div>
           <div id="share-status" style="display:none;margin-top:16px;padding:10px 14px;background:var(--green-dim);border:1px solid rgba(0,217,139,.2);border-radius:8px;font-size:12px;color:var(--green);font-weight:600;">
             ✓ Thank you! Your anonymized scan data will contribute to Vytreos's research dataset.
+          </div>
+        </div>
+
+        <!-- DATA CONTROLS CARD -->
+        <div style="margin-top:24px;background:rgba(220,50,50,0.05);border:1px solid rgba(220,50,50,0.25);border-radius:14px;padding:28px 32px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--red);margin-bottom:8px;">🔐 Your data</div>
+          <div style="font-family:'Fraunces',serif;font-size:18px;color:var(--text);margin-bottom:8px;">Export it, or delete it — your call.</div>
+          <div style="font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:14px;">You own your data. Export a JSON copy of your scans and profiles, delete individual scans from History, or wipe everything below. Deletions are permanent.</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button onclick="exportMyData()" style="padding:11px 22px;background:var(--bg-3);border:1px solid var(--border);border-radius:40px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-2);font-family:'Outfit',sans-serif;">⬇ Export my data</button>
+            <button onclick="openDeleteAllModal()" style="padding:11px 22px;background:rgba(220,50,50,0.12);border:1px solid rgba(220,50,50,0.4);border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;color:var(--red);font-family:'Outfit',sans-serif;">Delete all my data</button>
           </div>
         </div>
 
@@ -1495,6 +1507,19 @@ html{-webkit-text-size-adjust:100%;}
 </div>
 
 <!-- ═══════════════════════════════════ DELETE CONFIRM MODAL ═══════════════════════════════════ -->
+<div class="modal-overlay" id="deleteAllModal" onclick="if(event.target===this)closeDeleteAllModal()">
+  <div class="modal" style="max-width:440px;text-align:center;padding:36px 32px;">
+    <div style="font-size:32px;margin-bottom:12px">🔐</div>
+    <div style="font-family:'Fraunces',serif;font-size:22px;margin-bottom:8px;color:var(--text)">Delete ALL your data?</div>
+    <div style="font-size:13px;color:var(--text-2);margin-bottom:14px;line-height:1.6;">This permanently deletes <strong>every scan</strong>, your <strong>profiles, preferences and settings</strong>, and your referral record, then signs you out. This cannot be undone.</div>
+    <div style="font-size:12px;color:var(--text-3);margin-bottom:20px;line-height:1.6;">Two honest exceptions: anonymized research shares contain no link to you, so they can't be located and removed — and feedback you sent stays in our support inbox (email us to have it removed).</div>
+    <div style="display:flex;gap:10px;justify-content:center;">
+      <button onclick="closeDeleteAllModal()" style="padding:10px 24px;background:var(--bg-3);border:1px solid var(--border);color:var(--text-2);border-radius:40px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;">Cancel</button>
+      <button id="confirmDeleteAllBtn" onclick="executeDeleteAll()" style="padding:10px 24px;background:var(--red);color:#fff;border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;">Delete everything</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="deleteModal" onclick="if(event.target===this)closeDeleteModal()">
   <div class="modal" style="max-width:380px;text-align:center;padding:36px 32px;">
     <div style="font-size:32px;margin-bottom:12px">🗑</div>
@@ -2637,7 +2662,7 @@ async function saveReferral(uid){
 }
 
 // ── DANGEROUS FINDINGS ────────────────────────────────────────────────────────
-const DANGEROUS_FINDINGS=[{nutrient:'Vitamin A',level:30,message:'Severe Vitamin A deficiency can cause irreversible vision loss.'},{nutrient:'Iron',level:25,message:'Severe iron deficiency anemia detected.'},{nutrient:'Vitamin B12',level:25,message:'Severe B12 deficiency can cause permanent nerve damage.'},{nutrient:'Zinc',level:20,message:'Severe zinc deficiency affecting eye health.'}];
+const DANGEROUS_FINDINGS=[{nutrient:'Vitamin A',level:30,message:'Very low Vitamin A estimate — confirm with a blood test. Severe, untreated deficiency can affect vision.'},{nutrient:'Iron',level:25,message:'Very low Iron estimate — anemia can only be confirmed with a blood test.'},{nutrient:'Vitamin B12',level:25,message:'Very low Vitamin B12 estimate — confirm with a blood test. Prolonged deficiency can affect nerves.'},{nutrient:'Zinc',level:20,message:'Very low Zinc estimate — worth confirming with a blood test.'}];
 function checkDangerousFindings(result){
   if(!result||!result.nutrients)return;
   for(const danger of DANGEROUS_FINDINGS){
@@ -2649,7 +2674,7 @@ function showDangerAlert(message){
   const existing=document.getElementById('dangerAlert');if(existing)existing.remove();
   const el=document.createElement('div');el.id='dangerAlert';
   el.style.cssText='position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:9999;background:#1a0a0a;border:1px solid var(--red);border-radius:12px;padding:16px 20px;max-width:420px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.6);';
-  el.innerHTML=`<div style="display:flex;align-items:flex-start;gap:12px;"><div style="font-size:22px;flex-shrink:0">⚠️</div><div><div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:4px;">Potential concern detected</div><div style="font-size:12px;color:var(--text-2);line-height:1.6;margin-bottom:12px;">${message} This is not a diagnosis — please consult an eye care professional.</div><button onclick="findNearbyEyeCare()" style="padding:8px 16px;background:var(--red);color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;margin-right:8px;">Find eye care near me</button><button onclick="document.getElementById('dangerAlert').remove()" style="padding:8px 16px;background:var(--bg-3);border:1px solid var(--border);color:var(--text-2);border-radius:20px;font-size:12px;cursor:pointer;">Dismiss</button></div></div>`;
+  el.innerHTML=`<div style="display:flex;align-items:flex-start;gap:12px;"><div style="font-size:22px;flex-shrink:0">⚠️</div><div><div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:4px;">Strong low AI signal</div><div style="font-size:12px;color:var(--text-2);line-height:1.6;margin-bottom:12px;">${message} This is not a diagnosis — please consult an eye care professional.</div><button onclick="findNearbyEyeCare()" style="padding:8px 16px;background:var(--red);color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;margin-right:8px;">Find eye care near me</button><button onclick="document.getElementById('dangerAlert').remove()" style="padding:8px 16px;background:var(--bg-3);border:1px solid var(--border);color:var(--text-2);border-radius:20px;font-size:12px;cursor:pointer;">Dismiss</button></div></div>`;
   document.body.appendChild(el);
 }
 window.findNearbyEyeCare=()=>{
@@ -2712,6 +2737,16 @@ window.addEventListener('unhandledrejection',e=>{
 
 // ── MODAL SYSTEM ─────────────────────────────────────────────────────────────
 const MODAL_CONTENT={
+  amd:{title:'AMD & eye-health basics',body:`<p style="margin-bottom:12px;"><strong>What AMD is.</strong> Age-related macular degeneration (AMD) damages the macula — the small central part of the retina behind sharp, detailed vision (reading, faces, driving). Early useful changes often appear <em>near the fovea</em>: tiny yellow deposits called drusen, uneven pigmentation, and — in the "wet" form — fluid or bleeding under the retina. The "dry" form is gradual; the "wet" form moves faster but is treatable if caught early.</p>
+<p style="margin-bottom:12px;"><strong>The nutrition link.</strong> The AREDS and AREDS2 trials showed that a specific formulation of vitamins C and E, zinc, copper, and lutein/zeaxanthin reduced the risk of progressing to advanced AMD in people who <em>already had</em> intermediate or advanced disease. In AMD the goal of supplementation is slowing progression — not reversing damage. Lutein and zeaxanthin are also the pigments that make up macular pigment, which is why they carry the highest weights in Vytreos' NutriScore.</p>
+<p style="margin-bottom:12px;"><strong>What Vytreos does — and does not — do.</strong> Vytreos looks for visual patterns in photos you take and turns them into <em>experimental wellness estimates</em>. It does not image the macula the way a clinical camera does, it does not screen for or detect AMD, and its nutrient scores are not validated biomarkers. The only way to check for AMD is a dilated eye exam with an eye-care professional, often with OCT or clinical fundus photography.</p>
+<p style="margin-bottom:12px;"><strong>Do not change supplements based on this app.</strong> High-dose formulations can be harmful for some people — for example, beta-carotene increased lung-cancer risk in current and former smokers in AREDS. Decisions about supplements belong with your doctor.</p>
+<p style="margin-bottom:0;"><strong>See a clinician promptly</strong> if you notice sudden distortion of straight lines, a sudden blur, or a blank or dark spot in your central vision.</p>`},
+  methodology:{title:'How Vytreos works',body:`<p style="margin-bottom:12px;"><strong>What Vytreos is.</strong> An experimental wellness tool: you photograph your eye, several vision models independently estimate nutrient-related signals from the image, and the app merges their votes into one report you can track over time. It is not a medical device and is not validated for diagnosis.</p>
+<p style="margin-bottom:12px;"><strong>Pipeline.</strong> 1) An automated pre-screen rejects photos with too much glare or blur. 2) A vision gate verifies the image is actually an eye. 3) Multiple models each return strict JSON constrained to a fixed 24-nutrient allowlist. 4) Results are merged by consensus: per nutrient we take the median level (robust to one outlier model) and recompute confidence from model agreement — ≥66% of models flagged it = high, ≥34% = medium, otherwise low. Each nutrient shows its agreement (e.g. "3/4 models"). 5) Unknown nutrient names or invalid values are dropped and flagged as possible hallucinations.</p>
+<p style="margin-bottom:12px;"><strong>The NutriScore (0–100)</strong> is a confidence-weighted mean of the per-nutrient levels:<br><code style="display:block;padding:10px 12px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;font-size:12px;margin:8px 0;">score = round( Σ(level × nutrient weight × confidence multiplier) / Σ(nutrient weight) )</code>Eye-relevant nutrients count more — Lutein 1.4, Zeaxanthin and Omega-3 1.3, Vitamins A/D 1.2, down to Calcium, Potassium and Taurine 0.7 (unknown names default to 1.0). Confidence scales each contribution: high ×1.0, medium ×0.85, low ×0.65 — so low-confidence findings are discounted rather than trusted at face value. Bands: below 40 low, 40–75 ok, above 75 high.</p>
+<p style="margin-bottom:12px;"><strong>Known limitations (please read).</strong> — Oculomics (inferring systemic nutrition from eye images) is emerging research, not established clinical science. — There is no ground-truth lab data behind each scan yet; a validation study with university collaborators is planned. — Phone photos differ from clinical fundus cameras; lighting, camera and gaze all change the input. — AI outputs vary between runs, so scans with low confidence, poor quality or single-model results are labeled in the interface. — Results never replace a blood test, an eye exam, or a clinician's judgment.</p>
+<p style="margin-bottom:0;"><strong>For reviewers:</strong> the exact scoring and merge logic lives in <code>public/accuracy.js</code> — <code>computeNutriScore()</code> and <code>consensusMerge()</code>. Data handling is described in the Privacy Policy.</p>`},
   privacy:{
     title:'Privacy Policy',
     body:`<p style="margin-bottom:16px;"><strong>Last updated: May 2026</strong></p>
@@ -2933,6 +2968,16 @@ function renderAnalysis(r){
   const qualityBadge=r.imageQuality?`<span class="meta-pill" style="border-color:${qualityColors[r.imageQuality]||'var(--border)'};color:${qualityColors[r.imageQuality]||'var(--text-3)'}">Photo quality: ${r.imageQuality}</span>`:'';
   const meta=`<div class="meta-pills">${r.imageType?`<span class="meta-pill">${typeMap[r.imageType]||r.imageType}</span>`:''}${qualityBadge}${r.nutrients?`<span class="meta-pill">${r.nutrients.length} nutrients assessed</span>`:''}${ensemblePill}</div>`;
   const confNote=r.confidenceNote?`<div class="caveat-box" style="margin-bottom:14px;border-left-color:var(--blue)">ℹ ${r.confidenceNote}</div>`:'';
+  const __nu=Array.isArray(r.nutrients)?r.nutrients:[];
+  const __low=__nu.filter(x=>x&&x.confidence==='low');
+  const __lowRatio=__nu.length?__low.length/__nu.length:0;
+  const __hall=Array.isArray(r._hallucinationFlags)&&r._hallucinationFlags.length>0;
+  const __uncertainParts=[];
+  if(__lowRatio>=0.4)__uncertainParts.push(__low.length+' of '+__nu.length+' signals are low-confidence');
+  if(__hall)__uncertainParts.push('some model outputs were flagged as unreliable and dropped');
+  if(!__uncertainParts.length&&r._ensemble===false)__uncertainParts.push('only one model analyzed this scan, so there is no model agreement to check');
+  const qualityBox=r.imageQuality==='poor'?`<div class="caveat-box" style="margin-bottom:14px;border-left-color:var(--amber);background:rgba(245,166,35,.07);">⚠ <strong style="color:var(--amber)">Photo quality: poor — results below may be unreliable.</strong><br><span style="font-size:12px;">Retake tips: natural light (no flash), hold about 30cm away, keep the eye steady and in focus, and fill the frame with the eye.</span><br><button onclick="window.retakePhoto&&window.retakePhoto()" style="margin-top:10px;padding:9px 20px;background:var(--green);color:var(--bg);border:none;border-radius:40px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;">↺ Take another photo</button></div>`:'';
+  const uncertainBox=__uncertainParts.length?`<div class="caveat-box" style="margin-bottom:14px;border-left-color:var(--amber);">⚠ <strong style="color:var(--amber)">Treat this as exploratory.</strong> ${__uncertainParts.join('; ')}. These are AI-generated wellness estimates — not validated for diagnosing nutrient status or eye disease. Confirm anything concerning with a professional.</div>`:'';
   const rows=buildRows(r.nutrients||[],true);
   // Simple dietary recommendations
   const quickFoods={'Iron':'Spinach, lentils, beef, chicken liver','Vitamin B12':'Salmon, eggs, milk, beef liver','Folate':'Spinach, avocado, black beans, asparagus','Vitamin C':'Bell peppers, kiwi, oranges, strawberries','Vitamin A':'Sweet potato, carrots, spinach, eggs','Lutein':'Kale, spinach, corn, eggs','Zeaxanthin':'Corn, eggs, orange peppers','Omega-3':'Salmon, sardines, walnuts, flaxseed','Zinc':'Oysters, beef, pumpkin seeds, chickpeas','Magnesium':'Almonds, spinach, dark chocolate, black beans','Vitamin D':'Salmon, fortified milk, egg yolk','Riboflavin':'Milk, almonds, eggs, spinach','Niacin':'Chicken, tuna, peanuts, salmon','Choline':'Eggs, chicken, soybeans','Bioflavonoids':'Citrus fruits, berries, green tea','Vitamin K':'Kale, spinach, broccoli','B6':'Chickpeas, salmon, banana, chicken','Biotin':'Eggs, almonds, sweet potato','Antioxidants':'Blueberries, dark chocolate, green tea','Vitamin E':'Almonds, olive oil, avocado'};
@@ -2947,7 +2992,7 @@ function renderAnalysis(r){
           <span style="font-size:12px;color:var(--text-2);">${foods}</span>
         </div>`;
       }).join('')
-    :'<div style="font-size:13px;color:var(--text-3);padding:8px 0;">No deficiencies detected — keep scanning to track changes.</div>';
+    :'<div style="font-size:13px;color:var(--text-3);padding:8px 0;">No low signals on this scan — keep scanning to track changes over time.</div>';
   // NIH/USDA enrichment panel
   const nihPanel=r.nihData&&Object.keys(r.nihData).length?`
     <div style="margin-top:20px;background:var(--bg-3);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
@@ -2987,7 +3032,7 @@ function renderAnalysis(r){
       <button onclick="shareResults()" style="padding:12px 20px;background:var(--bg-3);border:1px solid var(--border);border-radius:40px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-2);font-family:'Outfit',sans-serif;white-space:nowrap;">↗ Share results</button>
     </div>`;
   document.getElementById('analysisState').innerHTML=`
-    ${meta}${confNote}${rows}
+    ${meta}${qualityBox}${uncertainBox}${confNote}${rows}
     ${r.summary?`<div class="ai-narrative">${r.summary}</div>`:''}
     ${recs?`<div class="recs-section"><h4>Dietary recommendations</h4>${recs}</div>`:''}
     ${r.caveats?`<div class="caveat-box">▸ ${r.caveats}</div>`:''}
@@ -3049,6 +3094,62 @@ window.toggleDataSharing=async()=>{
 };
 
 // ── REPORT A PROBLEM ─────────────────────────────────────────────────────────
+// ── DATA CONTROLS (export / delete everything) ─────────────────────────────
+window.exportMyData=async function(){
+  if(!currentUser){toast('Sign in to export your data','err');return;}
+  toast('Preparing your export…');
+  try{
+    const uid=currentUser.uid;
+    const out={exportedAt:new Date().toISOString(),user:{uid:uid,email:currentUser.email||'',displayName:currentUser.displayName||''},profiles:[],scans:[]};
+    const profSnap=await getDocs(collection(db,'users',uid,'profiles'));
+    const profIds=profSnap.docs.map(d=>d.id);
+    if(profSnap.empty&&profIds.indexOf('self')<0)profIds.push('self');
+    for(const pd of profSnap.docs){out.profiles.push(Object.assign({id:pd.id},pd.data()));}
+    for(const pid of profIds){
+      const sc=await getDocs(collection(db,'users',uid,'profiles',pid,'scans'));
+      sc.docs.forEach(sd=>out.scans.push(Object.assign({profileId:pid,id:sd.id},sd.data())));
+    }
+    const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download='vytreos-data-export.json';
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(function(){URL.revokeObjectURL(url);},4000);
+    window.track('data_exported');
+    toast('Export downloaded');
+  }catch(e){console.warn('export:',e);toast('Export failed','err');}
+};
+window.openDeleteAllModal=()=>{if(currentUser){document.getElementById('deleteAllModal').classList.add('open');}else{toast('Sign in first','err');}};
+window.closeDeleteAllModal=()=>{document.getElementById('deleteAllModal').classList.remove('open');};
+window.executeDeleteAll=async()=>{
+  const btn=document.getElementById('confirmDeleteAllBtn');
+  if(btn){btn.disabled=true;btn.textContent='Deleting…';}
+  try{
+    const uid=currentUser&&currentUser.uid;
+    if(!uid)throw new Error('not signed in');
+    const profSnap=await getDocs(collection(db,'users',uid,'profiles'));
+    const profIds=profSnap.docs.map(d=>d.id);
+    const actPid=(window.FAMILY&&FAMILY.getActive&&FAMILY.getActive())?FAMILY.getActive().id:null;
+    for(const x of ['self',actPid]){if(x&&profIds.indexOf(x)<0)profIds.push(x);}
+    for(const pid of profIds){
+      const sc=await getDocs(collection(db,'users',uid,'profiles',pid,'scans'));
+      for(const sd of sc.docs){await deleteDoc(sd.ref);}
+    }
+    try{await deleteDoc(doc(db,'users',uid));}catch(e){console.warn('account doc:',e);}
+    try{await deleteDoc(doc(db,'referrals',uid));}catch(e){console.warn('referral doc:',e);}
+    window.track('data_deleted_all');
+    scans=[];_totalScans=0;
+    try{await loadScans();}catch(e){}
+    closeDeleteAllModal();
+    toast('All your data has been deleted');
+    setTimeout(function(){try{window.doLogout();}catch(e){}},1000);
+  }catch(e){
+    console.warn('delete all:',e);
+    toast('Could not delete everything — please try again','err');
+    if(btn){btn.disabled=false;btn.textContent='Delete everything';}
+  }
+};
+
 window.sendReport=async function(){
   const t=document.getElementById('report-text');
   const msg=(t&&t.value||'').trim();
@@ -3422,6 +3523,11 @@ window.resetWebcam=()=>{
   document.getElementById('webcamPrev').classList.remove('show');document.getElementById('webcamPrev').src='';
   document.getElementById('webcamStart').style.display='';document.getElementById('webcamReUp').style.display='none';
   resetPanel();pendingResult=null;pendingImgData=null;
+};
+window.retakePhoto=()=>{
+  try{resetWebcam();}catch(_){}
+  try{resetPanel();pendingResult=null;pendingImgData=null;const fi=document.getElementById('fileInput');if(fi)fi.value='';}catch(_){}
+  const uz=document.getElementById('uploadZone');if(uz)uz.scrollIntoView({behavior:'smooth',block:'center'});
 };
 
 // ── DRAG & DROP ─────────────────────────────────────────────────────────────────
