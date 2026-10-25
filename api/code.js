@@ -19,13 +19,61 @@
 // when the app grows.
 
 import nodemailer from 'nodemailer';
+import crypto from 'node:crypto';
 
 const COOLDOWN_MS = 60_000;      // min time between sends per email
 const TTL_MS = 10 * 60_000;      // code lifetime
 const MAX_ATTEMPTS = 5;          // wrong guesses before the code is voided
 
+// Abuse limits: the per-email cooldown alone still allows email-bombing many
+// different addresses (or brute-forcing codes across requests). These cap both.
+const SEND_PER_IP_MAX = 6;       // sends per IP per hour
+const SEND_GLOBAL_MAX = 60;      // sends per hour across all IPs (protects the mailbox quota)
+const VERIFY_PER_IP_MAX = 30;    // verify attempts per IP per hour
+const HOUR_MS = 60 * 60_000;
+
 // email -> { code, exp, attempts, sentAt }
 const CODES = new Map();
+
+// ip -> { sendWindowStart, sendCount, verifyWindowStart, verifyCount }
+const IP_HITS = new Map();
+let globalSendWindowStart = Date.now();
+let globalSendCount = 0;
+
+function clientIp(req) {
+  const fwd = req.headers['x-forwarded-for'];
+  if (typeof fwd === 'string' && fwd.length > 0) return fwd.split(',')[0].trim();
+  const real = req.headers['x-real-ip'];
+  if (typeof real === 'string' && real.length > 0) return real;
+  return 'local';
+}
+
+function ipHit(ip, kind, max, now = Date.now()) {
+  let e = IP_HITS.get(ip);
+  if (!e) { e = {}; IP_HITS.set(ip, e); }
+  const startKey = kind + 'WindowStart';
+  const countKey = kind + 'Count';
+  if (!e[startKey] || now - e[startKey] > HOUR_MS) { e[startKey] = now; e[countKey] = 0; }
+  e[countKey] = (e[countKey] || 0) + 1;
+  return e[countKey] <= max;
+}
+
+function globalSendOk(now = Date.now()) {
+  if (!globalSendWindowStart || now - globalSendWindowStart > HOUR_MS) {
+    globalSendWindowStart = now;
+    globalSendCount = 0;
+  }
+  globalSendCount += 1;
+  return globalSendCount <= SEND_GLOBAL_MAX;
+}
+
+// Constant-time code comparison: hash both sides to a fixed length first so
+// timingSafeEqual never sees unequal buffers (which would throw/leak length).
+function codesMatch(a, b) {
+  const ha = crypto.createHash('sha256').update(String(a)).digest();
+  const hb = crypto.createHash('sha256').update(String(b)).digest();
+  return crypto.timingSafeEqual(ha, hb) && String(a) === String(b);
+}
 
 // Lazy Gmail SMTP transporter — created only when GMAIL creds are configured.
 let gmailTransporter = null;
@@ -61,13 +109,18 @@ export default async function handler(req, res) {
 
   const body = req.body || {};
   const email = String(body.email || '').trim().toLowerCase();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
     return res.status(400).json({ error: 'A valid email address is required.' });
   }
   cleanup();
+  const ip = clientIp(req);
 
   // ── SEND ───────────────────────────────────────────────────────────────────
   if (body.action === 'send') {
+    if (!ipHit(ip, 'send', SEND_PER_IP_MAX) || !globalSendOk()) {
+      console.warn(`[code] send limit hit ip=${ip}`);
+      return res.status(429).json({ error: 'Too many codes requested — please try again later.' });
+    }
     const prev = CODES.get(email);
     if (prev && Date.now() - prev.sentAt < COOLDOWN_MS) {
       const waitMs = COOLDOWN_MS - (Date.now() - prev.sentAt);
@@ -126,6 +179,9 @@ export default async function handler(req, res) {
 
   // ── VERIFY ─────────────────────────────────────────────────────────────────
   if (body.action === 'verify') {
+    if (!ipHit(ip, 'verify', VERIFY_PER_IP_MAX)) {
+      return res.status(429).json({ error: 'Too many attempts — please try again later.' });
+    }
     const code = String(body.code || '').trim();
     const entry = CODES.get(email);
 
@@ -140,7 +196,7 @@ export default async function handler(req, res) {
       CODES.delete(email);
       return res.status(400).json({ error: 'Too many incorrect attempts. Request a new code.' });
     }
-    if (entry.code !== code) {
+    if (!codesMatch(entry.code, code)) {
       entry.attempts += 1;
       return res.status(400).json({ error: 'That code did not match.', attemptsLeft: MAX_ATTEMPTS - entry.attempts });
     }
@@ -152,3 +208,6 @@ export default async function handler(req, res) {
 
   return res.status(400).json({ error: 'Unknown action.' });
 }
+
+// Test-only exports (Vercel only routes the default export).
+export const _internals = { codesMatch, ipHit, globalSendOk, clientIp, SEND_PER_IP_MAX, SEND_GLOBAL_MAX, VERIFY_PER_IP_MAX };

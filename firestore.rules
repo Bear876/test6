@@ -5,10 +5,12 @@ service cloud.firestore {
     match /users/{userId}/{document=**} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
-    // Referral codes (readable by signed-in users so invites can be matched)
+    // Referral codes (readable by signed-in users so invites can be matched).
+    // A user may only create/update their OWN referral doc — the client always
+    // writes referrals/{own uid}, so this blocks hijacking someone else's entry.
     match /referrals/{uid} {
       allow read: if request.auth != null;
-      allow create: if request.auth != null;
+      allow create, update: if request.auth != null && request.auth.uid == uid;
     }
     // Research data sharing — write-only (never readable from the client)
     match /research_scans/{entry} {

@@ -576,6 +576,7 @@ html{-webkit-text-size-adjust:100%;}
 /* Mobile wizard capture mode: once the user picks camera/upload, reveal the
    full scan panel (normally hidden on <=768px) and hide the wizard steps. */
 @media(max-width:768px){#tab-analyzer.wizard-mode .mobile-wizard{display:none!important;}#tab-analyzer.wizard-mode .desktop-scan{display:block!important;}}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px;}
 @media(min-width:769px){.wizard-trigger{display:none!important;}}
 @media(max-width:768px){.mobile-hide-wizard .scan-mode-tabs,.mobile-hide-wizard .upload-zone,.mobile-hide-wizard .webcam-wrap,.mobile-hide-wizard .webcam-start-zone{display:none!important;}.wizard-trigger{display:block!important;}}
 </style>
@@ -2088,16 +2089,15 @@ function resetPanel(){
 // ── ANALYSIS ────────────────────────────────────────────────────────────────────
 
 function buildPrompt(ctx,diet,goals){
-  try{prompt+=window.ACCURACY&&ACCURACY.appendSchema?ACCURACY.appendSchema(prompt,{}):prompt;}catch(e){}
-return `You are a specialist ophthalmologist and clinical nutritionist with 20 years of experience reading retinal and anterior segment photographs for nutritional biomarkers. You have studied thousands of documented cases of nutrient deficiency with confirmed ocular manifestations.
+return `You analyze retinal and anterior segment photographs and describe what is visible, using standard clinical descriptions of eye anatomy. The nutrient scores you produce are EXPLORATORY SIGNALS for personal wellness tracking — not measurements, not diagnoses, and not validated indicators of nutrient status. Never invent findings to produce them.
 
-ABSOLUTE RULES — violating these is a critical failure:
-1. NEVER say a finding is normal/healthy if you see pathological features. A pale optic disc, drusen, vessel narrowing, pale conjunctiva, Bitot spots, or corneal haze are NEVER normal.
-2. NEVER give a score of 80+ if you see ANY concerning features for that nutrient — 80+ means genuinely healthy with no findings.
-3. NEVER fabricate findings not visible in the image. But equally — NEVER overlook real pathological findings.
-4. You must be MORE suspicious of pathology than health. When in doubt between healthy and borderline, score 55-65 not 85.
-5. Apply clinical skepticism: most people scanning have sub-optimal nutrition. A scan with zero findings is suspicious — re-examine carefully.
-6. Think like a clinician seeing a patient, not like a chatbot trying to be reassuring.
+ABSOLUTE RULES:
+1. Report ONLY what is actually visible in the image. If a region is out of frame, blurry, or obscured, mark it not assessable and score the linked nutrients confidence "low" — do not guess.
+2. If you see a clearly described abnormal feature (e.g. pale optic disc, drusen, vessel narrowing, pale conjunctiva), report it precisely and score the linked nutrients lower, citing the visible feature as evidence.
+3. If you see NO abnormal feature for a nutrient, say so plainly and score honestly. Do not manufacture low scores to appear thorough, and do not inflate scores to appear reassuring. When genuinely uncertain, use the middle of the range (45-65) with confidence "low".
+4. Confidence reflects IMAGE quality and anatomical visibility — not the size of the score. Poor-quality images must mark every finding confidence "low".
+5. Describe any observed pathology factually and neutrally. Never name a diagnosis and never claim certainty about a person's nutrient status from a photograph.
+6. Output only the JSON contract specified at the end of this prompt.
 
 USER PROFILE: ${ctx}
 
@@ -2182,7 +2182,7 @@ Apply these mandatory scoring rules:
 • Score 31-55: Definite abnormality present, moderate severity.
 • Score 56-79: Borderline or mild finding. Warrants monitoring.
 • Score 80-100: ONLY if the region looks genuinely healthy with NO concerning features.
-• Default bias: When uncertain between 65 and 80, choose 65. When uncertain between 75 and 85, choose 75.
+• When genuinely uncertain, use the middle of the range (45-65) with lower confidence — do not bias scores toward either "healthy" or "unhealthy".
 • Do NOT give 80+ if you identified ANY pathological feature for that nutrient.
 
 ━━━ STEP 4 — ANTI-BIAS CHECK ━━━
@@ -2191,13 +2191,13 @@ Before finalizing, ask yourself:
 - Did I miss any common findings (disc pallor, drusen, vessel changes)?
 - For a fundus photo: Is the disc TRULY healthy pink? Is the macula TRULY richly pigmented? Are vessels TRULY normal caliber?
 - For a phone photo: Is the conjunctiva TRULY salmon-pink, or just not white?
-If you have 3+ nutrients all scoring 85+, re-examine the image. That would be unusual.
+- Am I inventing findings to avoid returning a clean result? A photo with no visible abnormality is a valid result — report it honestly.
 
 ━━━ STEP 5 — RECOMMENDATIONS ━━━
 For each nutrient with status "low":
 - Name specific food, exact amount, frequency (e.g. "85g cooked beef liver 2x/week provides 5mg B12")
 - Account for diet: ${diet||'omnivore'} and goals: ${goals||'general wellness'}
-- Mention supplement dose if food sources are insufficient
+- Do NOT recommend supplement doses — these photo estimates cannot justify them. Suggest food sources, and note that a blood test can confirm status
 - Prioritize the 3 most deficient nutrients
 
 ━━━ OUTPUT RULES ━━━
@@ -2217,17 +2217,19 @@ Return ONLY valid JSON — no markdown, no backticks, no preamble:
 
 // ── HUGGING FACE BiomedCLIP ──────────────────────────────────────────────────
 let _modelFailReasons={};
+// Client-side guard: never let one stuck provider hang the whole analysis.
+const __reqSignal=()=>(typeof AbortSignal!=='undefined'&&AbortSignal.timeout)?AbortSignal.timeout(60000):undefined;
 
 async function callHuggingFace(base64, mediaType){
   try{
     const res=await fetch('/api/analyze',{
       method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'hf-biomed',base64,mediaType,prompt:''})
+      body:JSON.stringify({model:'hf-biomed',base64,mediaType,prompt:''}),signal:__reqSignal()
     });
     if(!res.ok){const body=await res.json().catch(()=>({}));_modelFailReasons['hf-biomed']=body?.error||'HTTP '+res.status;console.warn('HF error:',res.status);return null;}
     const data=await res.json();
     return data.result||null;
-  }catch(e){console.warn('HF fetch error:',e.message);return null;}
+  }catch(e){_modelFailReasons['hf-biomed']=(e&&e.name==='TimeoutError')?'timed out after 60s':e.message;console.warn('HF fetch error:',e.message);return null;}
 }
 
 // ── ROBOFLOW EYE DETECTION ────────────────────────────────────────────────────
@@ -2235,12 +2237,12 @@ async function callRoboflow(base64){
   try{
     const res=await fetch('/api/analyze',{
       method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'roboflow',base64,mediaType:'image/jpeg',prompt:''})
+      body:JSON.stringify({model:'roboflow',base64,mediaType:'image/jpeg',prompt:''}),signal:__reqSignal()
     });
     if(!res.ok){const body=await res.json().catch(()=>({}));_modelFailReasons['roboflow']=body?.error||'HTTP '+res.status;console.warn('Roboflow error:',res.status);return null;}
     const data=await res.json();
     return data.result||null;
-  }catch(e){console.warn('Roboflow fetch error:',e.message);return null;}
+  }catch(e){_modelFailReasons['roboflow']=(e&&e.name==='TimeoutError')?'timed out after 60s':e.message;console.warn('Roboflow fetch error:',e.message);return null;}
 }
 
 // Function to parse HF/Roboflow/Vision pre-screening into confidence modifier
@@ -2283,17 +2285,15 @@ async function callMistral(base64, mediaType, prompt){
   try{
     const res=await fetch('/api/analyze',{
       method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'mistral-vision',base64,mediaType,prompt:prompt.substring(0,4000)})
+      body:JSON.stringify({model:'mistral-vision',base64,mediaType,prompt:prompt.substring(0,4000)}),signal:__reqSignal()
     });
     if(!res.ok){const body=await res.json().catch(()=>({}));_modelFailReasons['mistral-vision']=body?.error||'HTTP '+res.status;console.warn('Mistral error:',res.status);return null;}
     const data=await res.json();
     if(!data.result)return null;
-    const raw=data.result.replace(/```json|```/g,'').trim();
-    try{return JSON.parse(raw);}catch(e){}
-    const m=raw.match(/\{[\s\S]*\}/);
-    if(m){try{return JSON.parse(m[0]);}catch(e){}}
+    const __parsed=(window.ACCURACY&&ACCURACY.extractJSON)?ACCURACY.extractJSON(data.result):null;
+    if(__parsed&&typeof __parsed==='object')return __parsed;
     console.warn('Mistral JSON parse failed');return null;
-  }catch(e){console.warn('Mistral fetch error:',e.message);return null;}
+  }catch(e){_modelFailReasons['mistral-vision']=(e&&e.name==='TimeoutError')?'timed out after 60s':e.message;console.warn('Mistral fetch error:',e.message);return null;}
 }
 
 // ── GROQ + LLaVA ─────────────────────────────────────────────────────────────
@@ -2301,17 +2301,15 @@ async function callGroqLLaVA(base64, mediaType, prompt){
   try{
     const res=await fetch('/api/analyze',{
       method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'groq-llava',base64,mediaType,prompt:prompt.substring(0,3000)+'\nReturn ONLY valid JSON as specified.'})
+      body:JSON.stringify({model:'groq-llava',base64,mediaType,prompt:prompt.substring(0,3000)+'\nReturn ONLY valid JSON as specified.'}),signal:__reqSignal()
     });
     if(!res.ok){const body=await res.json().catch(()=>({}));_modelFailReasons['groq-llava']=body?.error||'HTTP '+res.status;console.warn('Groq error:',res.status);return null;}
     const data=await res.json();
     if(!data.result)return null;
-    const raw=data.result.replace(/```json|```/g,'').trim();
-    try{return JSON.parse(raw);}catch(e){}
-    const m=raw.match(/\{[\s\S]*\}/);
-    if(m){try{return JSON.parse(m[0]);}catch(e){}}
-    console.warn('Groq JSON parse failed:',raw.slice(0,120));return null;
-  }catch(e){console.warn('Groq fetch error:',e.message);return null;}
+    const __parsed=(window.ACCURACY&&ACCURACY.extractJSON)?ACCURACY.extractJSON(data.result):null;
+    if(__parsed&&typeof __parsed==='object')return __parsed;
+    console.warn('Groq JSON parse failed');return null;
+  }catch(e){_modelFailReasons['groq-llava']=(e&&e.name==='TimeoutError')?'timed out after 60s':e.message;console.warn('Groq fetch error:',e.message);return null;}
 }
 
 // ── OPEN FOOD FACTS ──────────────────────────────────────────────────────────
@@ -2344,7 +2342,7 @@ async function callGemini(model, base64, mediaType, prompt, retries=2){
     try{
       const res=await fetch('/api/analyze',{
         method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({model,base64,mediaType,prompt})
+        body:JSON.stringify({model,base64,mediaType,prompt}),signal:__reqSignal()
       });
       if(res.status===429){
         if(attempt<=retries){await new Promise(r=>setTimeout(r,attempt*12000));continue;}
@@ -2358,9 +2356,15 @@ async function callGemini(model, base64, mediaType, prompt, retries=2){
       }
       const data=await res.json();
       if(!data.result){console.warn(model+' empty response');return null;}
-      try{return JSON.parse(data.result.replace(/```json|```/g,'').trim());}
-      catch(e){console.warn(model+' JSON parse failed:',data.result.slice(0,200));return null;}
-    }catch(e){console.warn(model+' fetch error:',e.message);return null;}
+      // Robust extraction: models sometimes wrap JSON in prose — the accuracy
+      // module strips fences and finds the {...} block before we give up.
+      const __parsed=(window.ACCURACY&&ACCURACY.extractJSON)?ACCURACY.extractJSON(data.result):null;
+      if(__parsed&&typeof __parsed==='object')return __parsed;
+      console.warn(model+' JSON parse failed:',data.result.slice(0,200));return null;
+    }catch(e){
+      _modelFailReasons[model]=(e&&e.name==='TimeoutError')?'timed out after 60s':(e.message||'fetch failed');
+      console.warn(model+' fetch error:',e.message);return null;
+    }
   }
   return null;
 }
@@ -2679,7 +2683,7 @@ window.findNearbyEyeCare=()=>{
 
 // ── DELETE SCAN ───────────────────────────────────────────────────────────────
 let scanToDelete=null;
-window.confirmDeleteScan=(id)=>{scanToDelete=id;document.getElementById('deleteModal').classList.add('open');};
+window.confirmDeleteScan=(id)=>{scanToDelete=id;const b=document.getElementById('confirmDeleteBtn');if(b){b.disabled=false;b.textContent='Delete';}document.getElementById('deleteModal').classList.add('open');};
 window.closeDeleteModal=()=>{document.getElementById('deleteModal').classList.remove('open');scanToDelete=null;};
 window.executeDeleteScan=async()=>{
   if(!scanToDelete||!currentUser)return;
@@ -2844,6 +2848,7 @@ window.filterHistory=()=>{
 window.retryAnalysis=function(){if(window._pendingImgData)window.runAnalysis(window._pendingImgData);};
 window.runAnalysis=async function runAnalysis(imgDataUrl){
   window._pendingImgData=imgDataUrl;
+  _modelFailReasons={};
   // Rate limit: 10 scans per day
   if(currentUser){
     const today=new Date().toDateString();
@@ -2858,19 +2863,21 @@ window.runAnalysis=async function runAnalysis(imgDataUrl){
 
   const el=document.getElementById('analysisState');
 
-  const steps=[
-    'Pre-screening image quality & eye detection',
-    'Model 1: scanning for pathological signs',
-    'Model 2: cross-validating findings',
-    'Model 3: independent verification',
-    'Correlating ocular signals to nutrients',
-    'Merging consensus & enriching results'
-  ];
+  // Honest progress: the steps mirror the models that will actually run (2 on
+  // the free tier, 4 with Premium) and advance as each model settles — no fake
+  // timer-driven progression.
+  const __isPrem=!!(window.PREMIUM&&PREMIUM.isPremium&&PREMIUM.isPremium());
+  const __modelNames=__isPrem?['Gemini 2.5 Flash','Gemini 2.5 Pro','Groq LLaVA','Mistral Pixtral']:['Gemini 2.5 Flash','Groq LLaVA'];
+  const steps=['Checking photo quality & eye visibility']
+    .concat(__modelNames.map((m,i)=>`Model ${i+1} of ${__modelNames.length}: ${m} analyzing`))
+    .concat(['Merging consensus & scoring']);
   function renderSteps(i,label){
     el.innerHTML=`<div class="analysis-loading"><div class="spinner" style="margin:0 auto 16px"></div><div class="loading-text">${label||'Running dual-model analysis…'}</div><div class="loading-step-list">${steps.map((s,j)=>`<div class="loading-step ${j<i?'done':j===i?'active':''}"><div class="step-dot"></div>${j<i?'✓ ':''}${s}</div>`).join('')}</div></div>`;
   }
-  renderSteps(0,(window.PREMIUM&&PREMIUM.isPremium&&PREMIUM.isPremium())?'Preparing quad-model analysis…':'Preparing fast-lane analysis…');
-  let idx=0;const timer=setInterval(()=>{idx=Math.min(idx+1,steps.length-1);renderSteps(idx);},3500);
+  let timer=null;
+  let __modelDone=0;
+  const __tick=()=>{__modelDone++;renderSteps(Math.min(__modelDone,steps.length-1));};
+  renderSteps(0,__isPrem?'Preparing 4-model analysis…':'Preparing 2-model analysis…');
 
   const age=document.getElementById('pref-age')?.value||'';
   const sex=document.getElementById('pref-sex')?.value||'';
@@ -2886,10 +2893,10 @@ window.runAnalysis=async function runAnalysis(imgDataUrl){
     // Run all models in parallel — AI analysis + pre-screening
     const __fullBoard=!!(window.PREMIUM&&PREMIUM.fullBoard&&PREMIUM.fullBoard());
     const [flashResult, proResult, groqResult, mistralResult, hfResult, roboResult]=await Promise.allSettled([
-      callGemini('gemini-2.5-flash', base64, mediaType, prompt),
-      __fullBoard?callGemini('gemini-2.5-pro', base64, mediaType, prompt):Promise.resolve(null),
-      callGroqLLaVA(base64, mediaType, prompt),
-      __fullBoard?callMistral(base64, mediaType, prompt):Promise.resolve(null),
+      callGemini('gemini-2.5-flash', base64, mediaType, prompt).then(v=>{__tick();return v;}),
+      __fullBoard?callGemini('gemini-2.5-pro', base64, mediaType, prompt).then(v=>{__tick();return v;}):Promise.resolve(null),
+      callGroqLLaVA(base64, mediaType, prompt).then(v=>{__tick();return v;}),
+      __fullBoard?callMistral(base64, mediaType, prompt).then(v=>{__tick();return v;}):Promise.resolve(null),
       callHuggingFace(base64, mediaType),
       callRoboflow(base64)
     ]);
@@ -2929,9 +2936,17 @@ if(!result){
       if(reasons.length>0&&reasons.every(r=>/not configured/i.test(r))){
         throw new Error('AI analysis is not configured on this server yet - no provider API key found (e.g. GEMINI_KEY). Add a key, then try again.');
       }
-      throw new Error('Analysis failed — please wait a moment and retry.');
+      const __firstReason=(Object.values(_modelFailReasons||{}).filter(Boolean))[0];
+      throw new Error('Analysis failed'+(__firstReason?' — '+__firstReason:'')+'. Please wait a moment and retry.');
     }
 }
+
+    // Transparency: if some models failed while others succeeded, say so on the
+    // result instead of silently presenting a thinner consensus as complete.
+    const __failList=Object.entries(_modelFailReasons||{}).filter(kv=>kv[1]).slice(0,4).map(kv=>kv[0]+' ('+kv[1]+')');
+    if(result&&__failList.length){
+      result.confidenceNote=(result.confidenceNote?result.confidenceNote+' ':'')+'Some models did not respond: '+__failList.join(', ')+'.';
+    }
 
     // Apply pre-screening quality modifier
     if(preScreen.anomalyFlags.length>0&&result.confidenceNote){
@@ -3114,7 +3129,7 @@ window.exportMyData=async function(){
     toast('Export downloaded');
   }catch(e){console.warn('export:',e);toast('Export failed','err');}
 };
-window.openDeleteAllModal=()=>{if(currentUser){document.getElementById('deleteAllModal').classList.add('open');}else{toast('Sign in first','err');}};
+window.openDeleteAllModal=()=>{if(currentUser){const b=document.getElementById('confirmDeleteAllBtn');if(b){b.disabled=false;b.textContent='Delete everything';}document.getElementById('deleteAllModal').classList.add('open');}else{toast('Sign in first','err');}};
 window.closeDeleteAllModal=()=>{document.getElementById('deleteAllModal').classList.remove('open');};
 window.executeDeleteAll=async()=>{
   const btn=document.getElementById('confirmDeleteAllBtn');
